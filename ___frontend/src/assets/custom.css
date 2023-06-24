@@ -1,0 +1,68 @@
+@import './base.css';
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus,
+.page-link:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  /* background-color: none; */
+}
+
+.btn-primary {
+  background-color: #27566d !important;
+  outline: none !important;
+  border: none !important;
+}
+
+.btn-primary:hover {
+  background-color: #193f52 !important;
+}
+
+.bouncing {
+  animation: up-down 2s ease-in-out infinite alternate-reverse both;
+}
+
+.hover-tilt-X {
+  transition: all ease-in-out 0.4s;
+}
+
+
+.hover-tilt-X:hover {
+  transform: translateX(5px);
+}
+
+.hover-tilt-Y {
+  transition: all ease-in-out 0.4s;
+}
+
+
+.hover-tilt-Y:hover {
+  transform: translateY(-5px);
+}
+
+@-webkit-keyframes up-down {
+  0% {
+    transform: translateY(10px);
+  }
+
+  100% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes up-down {
+  0% {
+    transform: translateY(10px);
+  }
+
+  100% {
+    transform: translateY(-10px);
+  }
+}
+
+.general-body {
+  padding-bottom: 300px;
+  background-color: var(--bs-light);
+}
