@@ -15,6 +15,12 @@ import 'bootstrap/dist/js/bootstrap.min.js'
 import './assets/custom.css'
 import 'animate.css';
 
+// npm install vue-toast-notification@^3.0
+import 'vue-toast-notification/dist/theme-sugar.css';
+
+import internetErrorComponent from '@/components/InternetError.vue'
+app.component('internetErrorComponent', internetErrorComponent);
+
 
 import Vue3EasyDataTable from 'vue3-easy-data-table';
 import 'vue3-easy-data-table/dist/style.css';

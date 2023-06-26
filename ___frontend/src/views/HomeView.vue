@@ -1,12 +1,12 @@
 <template>
   <div class="main min-vh-100  general-body">
-    <nav class="navbar m-0 p-0">
+    <!-- <nav class="navbar m-0 p-0">
       <div class="container-fluid p-0">
         <span></span>
         <RouterLink to="/about" class="m-3 float-end text-muted small  fw-bolder">About Cup
         </RouterLink>
       </div>
-    </nav>
+    </nav> -->
 
     <!-- <div class="tint px-lg-5 min-vh-100"> -->
     <div class="animate__animated  animate__bounceInUp">
@@ -15,8 +15,9 @@
           <div class="col-12 col-md-8 ">
             <img class="anglican_logo bouncing" src="@/assets/images/anglican_logo.png" alt="anglican_logo">
             <div>DIOCESE OF LAGOS MAINLAND</div>
-            <div class="fw-bolder fs-5">ANGLICAN COMMUNION</div>
-            <div class="large-text animate__animated animate__heartBeat animate__delay-2s">Bishop's Cup 2023</div>
+            <div class="fw-bolder fs-5 d-none d-md-block">CHURCH OF NIGERIA ANGLICAN COMMUNION</div>
+            <div class="fw-bolder fs-5 d-md-none">CHURCH OF NIGERIA <br> ANGLICAN COMMUNION</div>
+            <div class="large-text animate__animated animate__pulse animate__delay-1s">Bishop's Cup 2023</div>
 
             <div> 11TH AUG. 2023 - 23 AUG. 2023 </div>
           </div>

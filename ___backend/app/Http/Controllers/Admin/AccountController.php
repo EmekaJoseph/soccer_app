@@ -59,6 +59,7 @@ class AccountController extends BaseController
         $data = [
             'id' => $account->user_id,
             'email' => $account->email,
+            'firstname' => $account->firstname,
             'token' => $account->createToken('_token')->plainTextToken,
         ];
 
@@ -72,7 +73,6 @@ class AccountController extends BaseController
         } catch (\Throwable $th) {
         }
     }
-
 
 
     // create Tournament
@@ -165,8 +165,9 @@ class AccountController extends BaseController
         DB::table('tbl_groups')->truncate();
         DB::table('tbl_results')->truncate();
         DB::table('tbl_schedules')->truncate();
-        DB::table('tbl_standings')->truncate();
-        DB::table('tbl_tournament')->truncate();
+        DB::table('tbl_standings_cup')->truncate();
+        DB::table('tbl_standings_league')->truncate();
+        // DB::table('tbl_tournament')->truncate();
         DB::table('tbl_teams')->truncate();
 
         return response()->json('done', 200);

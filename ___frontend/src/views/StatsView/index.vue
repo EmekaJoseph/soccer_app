@@ -9,12 +9,12 @@
                 <div class="row justify-content-center ">
                     <div class="col-md-10 col-lg-6">
                         <div class="d-flex justify-content-between menu mb-0">
-                            <div @click="currentShowing = 'standings'" class="menu-item"
+                            <div @click="showPanel('standings')" class="menu-item"
                                 :class="{ ' shadow-sm menu-active': currentShowing == 'standings' }">STANDINGS
                             </div>
-                            <div @click="currentShowing = 'matches'" class="menu-item"
+                            <div @click="showPanel('matches')" class="menu-item"
                                 :class="{ ' shadow-sm menu-active': currentShowing == 'matches' }">MATCHES</div>
-                            <div @click="currentShowing = 'results'" class="menu-item"
+                            <div @click="showPanel('results')" class="menu-item"
                                 :class="{ 'shadow-sm menu-active': currentShowing == 'results' }">RESULTS</div>
                             <!-- <div class="menu-item">LIVE</div> -->
                         </div>
@@ -46,8 +46,8 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
-import { onMounted, ref } from 'vue'
-import { useStatsStore } from './statsStore'
+import { onMounted, ref, onUnmounted } from 'vue'
+import { useStatsStore } from '@/store/statsStore'
 
 import StandingsPanel from './standings.vue'
 import ResultsPanel from './results.vue'
@@ -65,6 +65,19 @@ onMounted(() => {
     stats.getResults()
     stats.getSchedules()
     stats.getTourDetails()
+})
+
+function showPanel(name: string) {
+    currentShowing.value = name;
+    window.scrollTo(0, 0);
+}
+
+let interval = setInterval(() => {
+    stats.getStandings()
+}, 10000)
+
+onUnmounted(() => {
+    clearInterval(interval)
 })
 </script>
 

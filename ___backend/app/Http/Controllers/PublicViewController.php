@@ -7,6 +7,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 use App\Models\TournamentModel;
 use App\Models\Standings_LeagueModel;
@@ -95,7 +96,7 @@ class PublicViewController extends BaseController
             'away_score',
             'match_stage',
             'date_played'
-        )->where('tour_id', $tour_id)->orderBy('date_played')->get();
+        )->where('tour_id', $tour_id)->orderByDesc('date_played')->get();
         if (sizeof($results) > 0) {
             foreach ($results as $result) {
                 if ($result->away_score < $result->home_score) {
@@ -116,13 +117,14 @@ class PublicViewController extends BaseController
     // function to get schedules
     public function schedules(Request $req, $tour_id)
     {
+        $today = Carbon::now()->toDateString();
         $results = ScheduleModel::select(
             'home_team',
             'away_team',
             'match_stage',
             'venue',
             'kick_off'
-        )->where('tour_id', $tour_id)->orderBy('kick_off')->get();
+        )->where('tour_id', $tour_id)->where('kick_off', '>=', $today)->orderBy('kick_off')->get();
         if (sizeof($results) > 0) {
             foreach ($results as $result) {
                 $result->home_team = (TeamModel::find($result->home_team))->team_name;

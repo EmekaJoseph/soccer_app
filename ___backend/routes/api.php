@@ -42,6 +42,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
 
     Route::resource('team', TeamsController::class);
+    Route::get('getTournamentTeams/{tour_id}', [TeamsController::class, 'getTournamentTeams']);
 
     Route::resource('schedule', ScheduleController::class);
 

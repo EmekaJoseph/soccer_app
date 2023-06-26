@@ -2,7 +2,47 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import api from '@/store/axiosManager'
 
-export const useStatsStore = defineStore('stats', () => {
+export const useUserDataStore = defineStore('dataStore', () => {
+
+  const tournaments = ref<any>([])
+  const tournamentTeams = ref<any>([])
+
+  async function getTournaments() {
+    try {
+      let resp = await api.getTournaments()
+      if (resp.status == 200) {
+        tournaments.value = resp.data
+      }
+      // console.log(resp);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function getTournamentTeams(id: string) {
+    try {
+      let resp = await api.getTournamentTeams(id)
+      if (resp.status == 200) {
+        tournamentTeams.value = resp.data
+      }
+      // console.log(resp);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+  // ###################################################
+
   const tour_id = ref<any>('')
   const tour_title = ref<any>('')
   const tour_type = ref<any>('')
@@ -12,6 +52,10 @@ export const useStatsStore = defineStore('stats', () => {
   const apiError = ref<boolean>(false)
   const apiLoading = ref<boolean>(true)
   // const doubleCount = computed(() => count.value * 2)
+
+
+
+
 
 
   async function getTourDetails() {
@@ -30,6 +74,7 @@ export const useStatsStore = defineStore('stats', () => {
     }
   }
 
+
   async function getStandings() {
     try {
       let resp = await api.standings(tour_id.value)
@@ -38,6 +83,7 @@ export const useStatsStore = defineStore('stats', () => {
       // console.log(resp);
 
     } catch (error) {
+      apiLoading.value = false
       apiError.value = true
     }
   }
@@ -49,6 +95,7 @@ export const useStatsStore = defineStore('stats', () => {
       apiLoading.value = false
       console.log(resp);
     } catch (error) {
+      apiLoading.value = false
       apiError.value = true
     }
   }
@@ -60,12 +107,19 @@ export const useStatsStore = defineStore('stats', () => {
       apiLoading.value = false
       // console.log(resp);
     } catch (error) {
+      apiLoading.value = false
       apiError.value = true
     }
   }
 
   return {
     apiError,
+    getTournaments,
+    getTournamentTeams,
+    tournaments,
+    tournamentTeams,
+
+
     apiLoading,
     tour_title,
     tour_type,

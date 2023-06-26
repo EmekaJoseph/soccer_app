@@ -13,6 +13,7 @@ use App\Models\TeamModel;
 use App\Models\TournamentModel;
 use App\Models\Standings_LeagueModel;
 use App\Models\Standings_CupModel;
+use App\Models\ResultModel;
 
 use Intervention\Image\ImageManagerStatic as Image;
 
@@ -27,7 +28,6 @@ class TeamsController extends BaseController
         $rules = [
             'team_name' => 'required',
             'tour_id' => 'required',
-            'team_brief' => 'required',
         ];
 
         $validator = Validator::make($req->all(),  $rules);
@@ -82,16 +82,28 @@ class TeamsController extends BaseController
     }
 
 
+
     // show all teams in tournament
-    public function index(Request $req)
+    public function getTournamentTeams(Request $req, $tour_id)
     {
-        $tour_id = $req->input('tour_id');
         $thisTournament = TournamentModel::find($tour_id);
         if (!$tour_id) {
             return response()->json('invalid tournament', 203);
         }
         return response()->json($thisTournament->relatedTeams, 200);
     }
+
+
+    // show all teams in tournament
+    // public function index(Request $req)
+    // {
+    //     $tour_id = $req->input('tour_id');
+    //     $thisTournament = TournamentModel::find($tour_id);
+    //     if (!$tour_id) {
+    //         return response()->json('invalid tournament', 203);
+    //     }
+    //     return response()->json($thisTournament->relatedTeams, 200);
+    // }
 
 
     // get team details
@@ -112,9 +124,10 @@ class TeamsController extends BaseController
         $team = TeamModel::find($team_id);
         $team->delete();
 
-        // delete from standings too
+        // delete from standings and results
         Standings_CupModel::where('team_id', $team_id)->delete();
         Standings_LeagueModel::where('team_id', $team_id)->delete();
+        ResultModel::where('away_team', $team_id)->orWhere('home_team', $team_id)->delete();
     }
 
 

@@ -3,18 +3,19 @@
         <img src="@/assets/images/loader.gif" width="40" alt="">
     </div>
     <div v-else>
-        <div v-if="stats.apiError" class="d-flex justify-content-center align-items-center mt-5">
-            Error fetching data, Try reloading the page or come back later.
+        <div v-if="stats.apiError" class="mt-5">
+            <internetErrorComponent />
         </div>
         <div v-else>
-            <div v-if="!stats.tourSchedules.length" class="d-flex justify-content-center align-items-center mt-5">
-                No matches to show
+            <div v-if="!stats.tourSchedules.length"
+                class="d-flex justify-content-center align-items-center text-center mt-5">
+                No schedules matches yet, <br> Come back later.
             </div>
             <div v-else class="animate__animated  animate__bounceInUp">
                 <div v-for="({ match_stage, kick_off, home_team, away_team, venue }, i) in stats.tourSchedules" :key="i"
                     class="card bg-white rounded-0 mb-4">
                     <div class="card-header fw-bolder text-center">
-                        {{ match_stage ? match_stage : 'Match' }} -
+                        {{ match_stage ? match_stage : 'Match' }}. <br>
                         {{ dateFormat(kick_off) }},
                         {{ new Date(kick_off).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}
                     </div>
@@ -37,12 +38,12 @@
 </template>
 
 <script setup lang="ts">
-import { useStatsStore } from './statsStore';
+import { useStatsStore } from '@/store/statsStore';
 import { useDateFormat } from '@vueuse/core';
 
 const stats = useStatsStore();
 
-const dateFormat = (date: any) => useDateFormat(new Date(date), 'DD/MMMM/YYYY').value
+const dateFormat = (date: any) => useDateFormat(new Date(date), 'ddd, DD MMMM YYYY').value
 
 </script>
 

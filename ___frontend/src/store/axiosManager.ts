@@ -43,14 +43,30 @@ export default {
         return $instance.get(`view/tour_data/${tour_id}`,)
     },
 
+    login(data: object) {
+        return $instance.post(`userLogin`, JSON.stringify(data))
+    },
 
-    // login(data: object) {
-    //     return $instance.post(`user/login`, JSON.stringify(data))
-    // },
+    logout() {
+        return $instance.get(`userLogout`,)
+    },
 
-    // logout() {
-    //     return $instance.get(`user/logout`,)
-    // },
+    getTournaments() {
+        return $instance.get(`getTournaments`,)
+    },
+
+    getTournamentTeams(tour_id: string) {
+        return $instance.get(`getTournamentTeams/${tour_id}`)
+    },
+
+    createTeam(data: object) {
+        return $instance.post(`team`, JSON.stringify(data))
+    },
+
+    deleteTeam(team_id: any) {
+        return $instance.delete(`team/${team_id}`)
+    },
+
 
     // register(data: object) {
     //     return $instance.post(`user/create`, JSON.stringify(data))

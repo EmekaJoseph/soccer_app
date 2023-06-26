@@ -3,8 +3,9 @@
         <div class="card-header fw-bolder">
             GROUP {{ group }}
         </div>
-        <div v-if="teams" class="card-body">
-            <EasyDataTable class="border-0" :headers="headers" :items="teams" show-index>
+        <div v-if="teams" class="card-body p-1 py-3">
+            <EasyDataTable table-class-name="easy-table-cup-league" class="border-0" :headers="headers" :items="teams"
+                show-index>
             </EasyDataTable>
         </div>
     </div>
@@ -39,24 +40,4 @@ const headers: Header[] = [
 }
 </style>
 
-<style>
-.vue3-easy-data-table__footer {
-    display: none !important;
-    margin: 0px !important;
-}
-
-.vue3-easy-data-table__main {
-    min-height: auto !important;
-}
-
-.vue3-easy-data-table__body td {
-    color: #000 !important;
-    font-size: 14px !important;
-    /* font-weight: bolder; */
-}
-
-.vue3-easy-data-table__header th {
-
-    color: #a5a0a0 !important;
-}
-</style>
+<style></style>

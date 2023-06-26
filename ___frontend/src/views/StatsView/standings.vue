@@ -3,12 +3,12 @@
         <img src="@/assets/images/loader.gif" width="40" alt="">
     </div>
     <div v-else>
-        <div v-if="stats.apiError" class="d-flex justify-content-center align-items-center mt-5">
-            Error fetching data, Try reloading the page or come back later.
+        <div v-if="stats.apiError" class="mt-5">
+            <internetErrorComponent />
         </div>
         <div v-else>
             <div v-if="!stats.tourStandings.length" class="d-flex justify-content-center align-items-center mt-5">
-                No Data to show
+                No standings to show
             </div>
             <div v-else class="animate__animated  animate__bounceInUp">
                 <div v-if="stats.tour_type == 'cup'">
@@ -26,13 +26,11 @@
 </template>
 
 <script setup lang="ts">
-import { useStatsStore } from './statsStore';
+import { useStatsStore } from '@/store/statsStore';
 import standings_cupTable from './standings_cupTable.vue';
 import standings_leagueTable from './standings_leagueTable.vue';
 
 const stats = useStatsStore();
-
-
 
 </script>
 

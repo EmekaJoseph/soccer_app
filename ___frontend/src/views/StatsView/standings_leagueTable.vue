@@ -3,8 +3,9 @@
         <div class="card-header fw-bolder">
             STANDINGS
         </div>
-        <div v-if="data" class="card-body">
-            <EasyDataTable class="border-0" :headers="headers" :items="data" show-index>
+        <div v-if="data" class="card-body p-1 py-3">
+            <EasyDataTable table-class-name="easy-table-cup-league" class="border-0" :headers="headers" :items="data"
+                show-index>
             </EasyDataTable>
         </div>
     </div>
@@ -30,5 +31,3 @@ const headers: Header[] = [
 ];
 
 </script>
-
-<style scoped></style>
