@@ -142,7 +142,6 @@ class Results_CupController extends BaseController
             'awayTeam' => 'required',
             'homeTeam_score' => 'required',
             'awayTeam_score' => 'required',
-            'tour_id' => 'required',
             'match_stage' => 'required',
         ];
         $validator = Validator::make($req->all(),  $rules);
@@ -156,9 +155,7 @@ class Results_CupController extends BaseController
         $awayTeam = $req->input('awayTeam');
         $homeTeam_score = $req->input('homeTeam_score');
         $awayTeam_score = $req->input('awayTeam_score');
-        $tour_id = $req->input('tour_id');
         $match_stage = $req->input('match_stage');
-        $group_in = $req->input('group_in');
 
         // if result is in groupstage, update to standings
         if ($match_stage == 'Group_Stage') {
@@ -205,22 +202,13 @@ class Results_CupController extends BaseController
             $team1->goal_diff =  $team1InStanding->goal_diff - $diff1;
             $team2->goal_diff =  $team2InStanding->goal_diff - $diff2;
 
-
-            // update tournament id
-            $team1->tour_id = $team2->tour_id =  $tour_id;
-
-            // update team_group
-            $team1->group_in = $team2->group_in =  $group_in;
-
             // update to standings
             Standings_CupModel::updateOrCreate(['team_id' => $team1->team_id], (array)$team1);
             Standings_CupModel::updateOrCreate(['team_id' => $team2->team_id], (array)$team2);
-
-
-            // delete result from results table
-            ResultModel::find($result_id)->delete();
-
-            return response()->json(['success' => 'updated successfully'], 200);
         }
+        // delete result from results table
+        ResultModel::find($result_id)->delete();
+
+        return response()->json(['success' => 'updated successfully'], 200);
     }
 }

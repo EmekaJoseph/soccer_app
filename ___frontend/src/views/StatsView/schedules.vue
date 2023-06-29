@@ -9,13 +9,13 @@
         <div v-else>
             <div v-if="!stats.tourSchedules.length"
                 class="d-flex justify-content-center align-items-center text-center mt-5">
-                No schedules matches yet, <br> Come back later.
+                No matches yet, <br> Come back later.
             </div>
             <div v-else class="animate__animated  animate__bounceInUp">
                 <div v-for="({ match_stage, kick_off, home_team, away_team, venue }, i) in stats.tourSchedules" :key="i"
                     class="card bg-white rounded-0 mb-4">
                     <div class="card-header fw-bolder text-center">
-                        {{ match_stage ? match_stage : 'Match' }}. <br>
+                        {{ match_stage ? match_stage.replaceAll('_', ' ') : '' }}. <br>
                         {{ dateFormat(kick_off) }},
                         {{ new Date(kick_off).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}
                     </div>

@@ -15,6 +15,10 @@ import 'bootstrap/dist/js/bootstrap.min.js'
 import './assets/custom.css'
 import 'animate.css';
 
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
+app.component('VueDatePicker', VueDatePicker);
+
 // npm install vue-toast-notification@^3.0
 import 'vue-toast-notification/dist/theme-sugar.css';
 

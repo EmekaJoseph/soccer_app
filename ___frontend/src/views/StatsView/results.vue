@@ -8,13 +8,13 @@
         </div>
         <div v-else>
             <div v-if="!stats.tourResults.length" class="d-flex justify-content-center align-items-center mt-5">
-                Results list is empty
+                No Results to show
             </div>
             <div v-else class="animate__animated  animate__bounceInUp">
                 <div v-for="({ match_stage, home_team, away_team, home_name, away_name, away_score, home_score, winner, date_played }, i) in stats.tourResults"
                     :key="i" class="card bg-white rounded-0 mb-4">
                     <div class="card-header fw-bolder text-center">
-                        {{ match_stage ? match_stage : 'Match' }}
+                        {{ match_stage ? match_stage.replaceAll('_', ' ') : '' }}
                         ({{ dateFormat(date_played) }})
                     </div>
                     <div class="card-body">

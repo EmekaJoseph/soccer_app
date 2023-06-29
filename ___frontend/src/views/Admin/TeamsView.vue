@@ -1,75 +1,104 @@
 <template>
-    <div class="container">
+    <div class="container px-3">
         <div v-if="userData.apiError">
             <internetErrorComponent />
         </div>
         <div v-else>
-            <div class="row justify-content-center gy-4">
+            <div class="row gy-4">
+                <div class="col-lg-4 mb-3">
+                    <label>Choose Tournament: </label>
+                    <select v-model="selectedTournament"
+                        class="form-select text-uppercase rounded-0 border-end-0 border-start-0 border-top-0  border-bottom-3 cursor-pointer"
+                        @change="loadTournamentTeams">
+                        <option v-for="i in userData.tournaments" :key="i" :value="i">{{ i.title }}</option>
+                    </select>
+                </div>
                 <div class="col-lg-12">
-                    <fieldset class="border rounded-3 p-3 bg-white">
-                        <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">Teams</legend>
-                        <div class="row">
-                            <div class="col-md-6 col-lg-4">
-                                <label>Show Teams Under: </label>
-                                <select v-model="selectedTournament" class="form-select bg-light-subtle text-uppercase"
-                                    @change="loadTournamentTeams">
-                                    <option v-for="i in userData.tournaments" :key="i" :value="i.id">{{ i.title }}</option>
-                                </select>
-                            </div>
-                            <div class="d-none d-lg-block col-md-4">
-                                <div v-if="userData.tournamentTeams.length > 10">
-                                    <label>&nbsp;</label>
-                                    <input placeholder="search team.." type="text" class="form-control "
-                                        v-model="searchValue">
+                    <div class="row gy-3">
+                        <div class="col-lg-4">
+                            <fieldset class="border rounded-3 p-3 bg-white h-100">
+                                <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">CREATE A TEAM:
+                                </legend>
+                                <div class="row g-3">
+                                    <div v-if="selectedTournament.type == 'cup'" class="col-md-12">
+                                        <label>Group: </label>
+                                        <select v-model="form.group_in" class="form-select  text-uppercase">
+                                            <option value="" selected disabled></option>
+                                            <option v-for="i in userData.valid_groups" :key="i" :value="i">{{ i }}
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label>Team Name:</label>
+                                        <input v-model="form.team_name" type="text" class="form-control">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label>About Team (optional):</label>
+                                        <textarea v-model="form.team_brief" rows="4" class="form-control"></textarea>
+                                    </div>
+
+
+                                    <div v-if="userData.tournaments.length" class="col-md-12 mt-3">
+                                        <button v-if="!form.isSaving" @click.prevent="save"
+                                            class="btn btn-primary btn w-100">Save</button>
+                                        <button v-else class="float-end theme-btn btn w-100" disabled>Saving...</button>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-2 d-none d-lg-block"></div>
-                            <div class="col-md-6 col-lg-2">
-                                <label>&nbsp;</label>
-                                <input data-bs-toggle="modal" data-bs-target="#newTeamModal" type="button"
-                                    value="ADD A TEAM" class="form-control btn btn-primary text-white float-lg-end">
-                            </div>
+                            </fieldset>
                         </div>
 
-                        <div class="content-panel">
-                            <div class="col-md-12 mt-3">
-                                <div class="card">
-                                    <div class="card-body p-1 m-1">
-                                        <div v-if="userData.tournamentTeams">
-                                            <EasyDataTable class="border-0"
-                                                :headers="current_type == 'cup' ? headersCUP : headersLeague"
-                                                :items="userData.tournamentTeams" show-index :sort-by="sortBy"
-                                                :sort-type="sortType" :search-field="searchField"
-                                                :search-value="searchValue" buttons-pagination>
-
-                                                <template #item-edit="item">
-                                                    <div class="operation-wrapper">
-                                                        <span data-bs-toggle="modal" data-bs-target="#editMaterial"
-                                                            @click="" class=" operation-icon cursor-pointer">
-                                                            <i class="bi bi-pencil"></i>
-                                                        </span>
-
-                                                    </div>
-                                                </template>
-                                                <template #item-delete="item">
-                                                    <div class="operation-wrapper">
-
-                                                        <span @click="deleteTeam(item)"
-                                                            class="operation-icon cursor-pointer">
-                                                            <i class="bi bi-trash3 text-danger"></i>
-                                                        </span>
-                                                    </div>
-                                                </template>
-                                            </EasyDataTable>
+                        <div class="col-lg-8">
+                            <fieldset class="border rounded-3 p-3 bg-white">
+                                <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">TEAMS:</legend>
+                                <div class="row">
+                                    <div class="d-none d-lg-block col-md-4 float-end">
+                                        <div v-if="userData.tournamentTeams.length > 10">
+                                            <input placeholder="search team.." type="text" class="form-control "
+                                                v-model="searchValue">
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+
+                                <div class="col-md-12 mt-3">
+                                    <div class="card">
+                                        <div class="card-body p-1 m-1">
+                                            <div v-if="userData.tournamentTeams">
+                                                <EasyDataTable class="border-0"
+                                                    :headers="selectedTournament.type == 'cup' ? headersCUP : headersLeague"
+                                                    :items="userData.tournamentTeams" show-index :sort-by="sortBy"
+                                                    :sort-type="sortType" :search-field="searchField"
+                                                    :search-value="searchValue" buttons-pagination>
+
+                                                    <template #item-edit="item">
+                                                        <div class="operation-wrapper">
+                                                            <span data-bs-toggle="modal" data-bs-target="#editMaterial"
+                                                                @click="" class=" operation-icon cursor-pointer">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </span>
+
+                                                        </div>
+                                                    </template>
+                                                    <template #item-delete="item">
+                                                        <div class="operation-wrapper">
+
+                                                            <span @click="deleteTeam(item)"
+                                                                class="operation-icon cursor-pointer">
+                                                                <i class="bi bi-trash3 text-danger"></i>
+                                                            </span>
+                                                        </div>
+                                                    </template>
+                                                </EasyDataTable>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
                         </div>
-                    </fieldset>
+                    </div>
+
                 </div>
             </div>
-            <newTeamModal @done="reloadTournamentTeams" />
         </div>
     </div>
 </template>
@@ -78,7 +107,6 @@
 import { computed, onMounted, reactive, ref } from 'vue';
 import { useUserDataStore } from '@/store/userDataStore';
 import type { Header, Item, SortType } from "vue3-easy-data-table";
-import newTeamModal from '@/components/modals/newTeamModal.vue'
 import api from '@/store/axiosManager'
 import { useToast } from 'vue-toast-notification';
 
@@ -86,28 +114,23 @@ import { useToast } from 'vue-toast-notification';
 const $toast = useToast();
 
 const userData = useUserDataStore()
-const selectedTournament = ref('')
+const selectedTournament = ref<any>({})
 
-const current_type = computed(() => {
-    let tour = userData.tournaments.find((x: { id: string; }) => x.id == selectedTournament.value);
-    return tour ? tour.type : '';
-})
+// const current_type: any = computed(() => {
+//     let tour = userData.tournaments.find((x: { id: string; }) => x.id == selectedTournament.value);
+//     return tour ? tour.type : '';
+// })
 
 onMounted(async () => {
     await userData.getTournaments()
     if (userData.tournaments.length) {
-        selectedTournament.value = userData.tournaments[0].id
+        selectedTournament.value = userData.tournaments[0]
         loadTournamentTeams()
     }
 })
 
 function loadTournamentTeams() {
-    userData.getTournamentTeams(selectedTournament.value)
-}
-
-function reloadTournamentTeams() {
-    $toast.default('New Team added', { position: 'top-right' });
-    userData.getTournamentTeams(selectedTournament.value)
+    userData.getTournamentTeams(selectedTournament.value.id)
 }
 
 
@@ -131,8 +154,6 @@ const headersLeague: Header[] = [
 ];
 
 async function deleteTeam(team: any) {
-
-
     if (confirm('Delete ' + team.team_name + ' ?')) {
         try {
             let resp = await api.deleteTeam(team.team_id)
@@ -145,6 +166,59 @@ async function deleteTeam(team: any) {
             $toast.error('Could not delete, Internet Error', { position: 'top-right' });
         }
     }
+}
+
+
+// ################################################ FORM
+const form = reactive({
+    team_name: '',
+    team_brief: ' ',
+    group_in: 'A',
+    isSaving: false
+})
+
+async function save() {
+
+    if (!form.team_name) {
+        $toast.default('Enter Team Name', { position: 'top-right' });
+        return;
+    }
+
+    if (selectedTournament.value.type == 'cup') {
+        if (!form.group_in) {
+            $toast.default('Select Group', { position: 'top-right' });
+            return;
+        }
+    }
+
+    let obj: any = {};
+    obj.team_name = form.team_name;
+    obj.team_brief = form.team_brief;
+    obj.tour_id = selectedTournament.value.id;
+    obj.group_in = selectedTournament.value.type == 'cup' ? form.group_in : null
+
+    form.isSaving = true
+
+    try {
+        let resp = await api.createTeam(obj)
+        if (resp.status == 203) {
+            $toast.error('Name already exists', { position: 'top-right' });
+            form.isSaving = false
+            return;
+        }
+        $toast.default('New Team added', { position: 'top-right' });
+        userData.getTournamentTeams(selectedTournament.value.id)
+        // emit('done')
+        form.isSaving = false
+        // btnX.value.click()
+        form.team_name = "";
+        form.team_brief = "";
+        form.group_in = "";
+    } catch (error) {
+        $toast.error('Network Error', { position: 'top-right' });
+        form.isSaving = false
+    }
+
 }
 
 </script>

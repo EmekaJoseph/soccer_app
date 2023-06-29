@@ -81,29 +81,16 @@ class TeamsController extends BaseController
         return response()->json($newTeam->team_id, 200);
     }
 
-
-
     // show all teams in tournament
-    public function getTournamentTeams(Request $req, $tour_id)
+    public function index(Request $req)
     {
+        $tour_id = $req->input('tour_id');
         $thisTournament = TournamentModel::find($tour_id);
         if (!$tour_id) {
             return response()->json('invalid tournament', 203);
         }
         return response()->json($thisTournament->relatedTeams, 200);
     }
-
-
-    // show all teams in tournament
-    // public function index(Request $req)
-    // {
-    //     $tour_id = $req->input('tour_id');
-    //     $thisTournament = TournamentModel::find($tour_id);
-    //     if (!$tour_id) {
-    //         return response()->json('invalid tournament', 203);
-    //     }
-    //     return response()->json($thisTournament->relatedTeams, 200);
-    // }
 
 
     // get team details

@@ -16,7 +16,7 @@
                             </div>
                             <div v-else class="col-md-12 ">
                                 <form class="row g-3">
-                                    <div class="col-md-12">
+                                    <!-- <div class="col-md-12">
                                         <label>Tournament: </label>
                                         <select v-model="form.selectedTournament"
                                             class="form-select bg-light-subtle text-uppercase">
@@ -24,7 +24,7 @@
                                             <option v-for="i in userData.tournaments" :key="i" :value="i.id">{{ i.title }}
                                             </option>
                                         </select>
-                                    </div>
+                                    </div> -->
 
                                     <div v-if="current_type() == 'cup'" class="col-md-12">
                                         <label>Group: </label>
@@ -68,30 +68,32 @@ import { useUserDataStore } from '@/store/userDataStore';
 import api from '@/store/axiosManager'
 
 
+const prop = defineProps({
+    tour_id: {
+        type: String,
+        required: true
+    }
+})
+
 const userData = useUserDataStore()
 const isSaving = ref(false)
 const emit = defineEmits(['done'])
 
 const form = reactive({
-    selectedTournament: '',
     team_name: '',
     team_brief: ' ',
-    group_in: 'A'
+    group_in: 'A',
+    isSaving: false
 })
 
 const current_type = () => {
-    let tour = userData.tournaments.find((x: { id: string; }) => x.id == form.selectedTournament);
+    let tour = userData.tournaments.find((x: { id: string; }) => x.id == prop.tour_id);
     return tour ? tour.type : '';
 }
 
 const valid_groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L']
 
 async function save() {
-    if (!form.selectedTournament) {
-        alert('select tournament')
-        return;
-    }
-
     if (!form.team_name) {
         alert('empty team name')
         return;
@@ -104,10 +106,10 @@ async function save() {
         }
     }
 
-    let obj = {};
+    let obj: any = {};
     obj.team_name = form.team_name;
     obj.team_brief = form.team_brief;
-    obj.tour_id = form.selectedTournament;
+    obj.tour_id = prop.tour_id;
     obj.group_in = current_type() == 'cup' ? form.group_in : null
 
     isSaving.value = true
@@ -125,7 +127,6 @@ async function save() {
         btnX.value.click()
         form.team_name = "";
         form.team_brief = "";
-        form.selectedTournament = "";
         form.group_in = "";
     } catch (error) {
         alert('internet error')

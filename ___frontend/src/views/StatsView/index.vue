@@ -58,13 +58,11 @@ const route = useRoute()
 
 const currentShowing = ref('standings')
 
-onMounted(() => {
+onMounted(async () => {
     stats.tour_id = route.params.tour_id
     stats.apiLoading = true
-    stats.getStandings()
-    stats.getResults()
-    stats.getSchedules()
-    stats.getTourDetails()
+    await stats.getTourDetails()
+    loadAllData()
 })
 
 function showPanel(name: string) {
@@ -72,8 +70,15 @@ function showPanel(name: string) {
     window.scrollTo(0, 0);
 }
 
-let interval = setInterval(() => {
+function loadAllData() {
     stats.getStandings()
+    stats.getResults()
+    stats.getSchedules()
+
+}
+
+let interval = setInterval(() => {
+    loadAllData()
 }, 10000)
 
 onUnmounted(() => {

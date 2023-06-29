@@ -90,6 +90,7 @@ class PublicViewController extends BaseController
     public function results(Request $req, $tour_id)
     {
         $results = ResultModel::select(
+            'result_id',
             'home_team',
             'away_team',
             'home_score',

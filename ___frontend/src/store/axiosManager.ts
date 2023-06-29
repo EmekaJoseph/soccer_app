@@ -43,6 +43,10 @@ export default {
         return $instance.get(`view/tour_data/${tour_id}`,)
     },
 
+
+
+    // USER
+
     login(data: object) {
         return $instance.post(`userLogin`, JSON.stringify(data))
     },
@@ -51,12 +55,19 @@ export default {
         return $instance.get(`userLogout`,)
     },
 
+
+
+    createTournament(data: object) {
+        return $instance.post(`createTournament`, JSON.stringify(data))
+    },
+
+
     getTournaments() {
         return $instance.get(`getTournaments`,)
     },
 
     getTournamentTeams(tour_id: string) {
-        return $instance.get(`getTournamentTeams/${tour_id}`)
+        return $instance.get(`team?tour_id=${tour_id}`)
     },
 
     createTeam(data: object) {
@@ -67,38 +78,33 @@ export default {
         return $instance.delete(`team/${team_id}`)
     },
 
+    getTournamentSchedules(tour_id: string) {
+        return $instance.get(`schedule?tour_id=${tour_id}`)
+    },
 
-    // register(data: object) {
-    //     return $instance.post(`user/create`, JSON.stringify(data))
-    // },
+    createSchedule(data: object) {
+        return $instance.post(`schedule`, JSON.stringify(data))
+    },
 
-    // taskList() {
-    //     return $instance.get(`task/list`)
-    // },
-
-    // addTask(data: object) {
-    //     return $instance.post(`task/create`, JSON.stringify(data))
-    // },
-
-    // deleteTask(task_id: any) {
-    //     return $instance.get(`task/delete/${task_id}`)
-    // },
-
-    // mark_as_complete(task_id: any) {
-    //     return $instance.get(`task/mark_as_complete/${task_id}`)
-    // },
-
-    // completed_list() {
-    //     return $instance.get(`task/completed_list`)
-    // },
-
-    // approve(task_id: any) {
-    //     return $instance.get(`task/approve/${task_id}`)
-    // },
+    deleteSchedule(team_id: any) {
+        return $instance.delete(`schedule/${team_id}`)
+    },
 
 
+    saveCupResult(data: object) {
+        return $instance.post(`cup/save_result`, JSON.stringify(data))
+    },
 
-    // app_reset() {
-    //     return $instance.get(`app_reset`)
-    // }
+    saveLeagueResult(data: object) {
+        return $instance.post(`league/save_result`, JSON.stringify(data))
+    },
+
+    undoSaveCupResult(data: any) {
+        return $instance.post(`cup/undo_save_result/${data.result_id}`, JSON.stringify(data))
+    },
+
+    undoSaveLeagueResult(data: any) {
+        return $instance.post(`league/undo_save_result/${data.result_id}`, JSON.stringify(data))
+    },
+
 }

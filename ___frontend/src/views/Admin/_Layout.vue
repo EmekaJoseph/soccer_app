@@ -1,12 +1,15 @@
 <template>
-    <div class="bg-light-subtle min-vh-100">
-        <nav class="navbar bg-body-tertiary py-4 px-lg-3 shadow-sm">
+    <div class="bg-ligh min-vh-100">
+        <nav class="navbar py-4 px-lg-3 shadow-sm bg-body-tertiary bg-light">
             <div class="container-fluid">
-                <span ref="btnClose" class="navbar-toggler-icon cursor-pointer" data-bs-toggle="offcanvas"
-                    data-bs-target="#offcanvasExample" aria-controls="offcanvasExample"></span>
-                <div class="dropdown">
+                <div>
+                    <span ref="btnClose" class="navbar-toggler-icon cursor-pointer" data-bs-toggle="offcanvas"
+                        data-bs-target="#offcanvasExample" aria-controls="offcanvasExample"></span>
+                    <span class="ms-2 text-capitalize fw-bolder">{{ route.name }}</span>
+                </div>
+                <div class="dropdown d-none d-md-block">
                     <button class=" bg-transparent border-0 dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        {{ account.state.firstame ? account.state.firstname : account.state.email }}
+                        {{ account.state.firstame ?? account.state.email }}
                     </button>
                     <ul class="dropdown-menu">
                         <li @click="logOut"><a class="dropdown-item" href="#">Logout</a></li>
@@ -14,7 +17,6 @@
                 </div>
             </div>
         </nav>
-
 
         <div class="py-5">
             <RouterView />

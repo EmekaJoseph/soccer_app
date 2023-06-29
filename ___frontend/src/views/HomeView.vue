@@ -31,12 +31,12 @@
           <div class="col-10 col-lg-6">
             <div class="row justify-content-center g-3">
               <div class="col-md-6">
-                <RouterLink to="stats/1" class="btn btn-primary w-100 hover-tilt-Y btn-lg">Men's Category <i
-                    class="bi bi-chevron-right"></i></RouterLink>
+                <RouterLink to="stats/01h4299vwq5mkm8nzdpcdkskmv" class="btn btn-primary w-100 hover-tilt-Y btn-lg">Men's
+                  Category <i class="bi bi-chevron-right"></i></RouterLink>
               </div>
               <div class="col-md-6">
-                <RouterLink to="stats/2" class="btn btn-primary w-100 hover-tilt-Y btn-lg">Women's Category <i
-                    class="bi bi-chevron-right"></i></RouterLink>
+                <RouterLink to="stats/01h429avf0ykmdah080bdj5t43" class="btn btn-primary w-100 hover-tilt-Y btn-lg">
+                  Women's Category <i class="bi bi-chevron-right"></i></RouterLink>
               </div>
             </div>
           </div>

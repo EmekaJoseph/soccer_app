@@ -3,17 +3,19 @@ import { defineStore } from 'pinia'
 import api from '@/store/axiosManager'
 
 export const useUserDataStore = defineStore('dataStore', () => {
-
+  const apiError = ref<boolean>(false)
+  const apiLoading = ref<boolean>(true)
   const tournaments = ref<any>([])
   const tournamentTeams = ref<any>([])
+  const tournamentShedules = ref<any>([])
+  const tournamentResults = ref<any>([])
+  const match_stages = ref<any>(['Group_Stage', 'Round_of_32', 'Knock_Out', 'Quarter_Final', 'Semi_Final', 'Final'])
+  const valid_groups = ref<any>(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'])
 
   async function getTournaments() {
     try {
       let resp = await api.getTournaments()
-      if (resp.status == 200) {
-        tournaments.value = resp.data
-      }
-      // console.log(resp);
+      tournaments.value = (resp.status == 200) ? resp.data : [];
     } catch (error) {
       console.log(error);
     }
@@ -22,114 +24,42 @@ export const useUserDataStore = defineStore('dataStore', () => {
   async function getTournamentTeams(id: string) {
     try {
       let resp = await api.getTournamentTeams(id)
-      if (resp.status == 200) {
-        tournamentTeams.value = resp.data
-      }
-      // console.log(resp);
+      tournamentTeams.value = (resp.status == 200) ? resp.data : [];
     } catch (error) {
       console.log(error);
     }
   }
 
-
-
-
-
-
-
-
-
-
-
-  // ###################################################
-
-  const tour_id = ref<any>('')
-  const tour_title = ref<any>('')
-  const tour_type = ref<any>('')
-  const tourStandings = ref<any[]>([])
-  const tourResults = ref<any[]>([])
-  const tourSchedules = ref<any[]>([])
-  const apiError = ref<boolean>(false)
-  const apiLoading = ref<boolean>(true)
-  // const doubleCount = computed(() => count.value * 2)
-
-
-
-
-
-
-  async function getTourDetails() {
-    tour_type.value = ''
-    tour_title.value = ''
+  async function getTournamentSchedules(id: string) {
     try {
-      let resp = await api.tour_data(tour_id.value)
-      if (resp.status == 200) {
-        tour_title.value = resp.data.tour_title
-        tour_type.value = resp.data.tour_type
-      }
-      // console.log(resp);
+      let resp = await api.getTournamentSchedules(id)
+      tournamentShedules.value = (resp.status == 200) ? resp.data : [];
     } catch (error) {
       console.log(error);
-
     }
   }
 
-
-  async function getStandings() {
+  async function getTournamentResults(id: string) {
     try {
-      let resp = await api.standings(tour_id.value)
-      tourStandings.value = resp.data
-      apiLoading.value = false
-      // console.log(resp);
-
+      let resp = await api.results(id)
+      tournamentResults.value = (resp.status == 200) ? resp.data : [];
     } catch (error) {
-      apiLoading.value = false
-      apiError.value = true
-    }
-  }
-
-  async function getResults() {
-    try {
-      let resp = await api.results(tour_id.value)
-      tourResults.value = resp.data
-      apiLoading.value = false
-      console.log(resp);
-    } catch (error) {
-      apiLoading.value = false
-      apiError.value = true
-    }
-  }
-
-  async function getSchedules() {
-    try {
-      let resp = await api.schedules(tour_id.value)
-      tourSchedules.value = resp.data
-      apiLoading.value = false
-      // console.log(resp);
-    } catch (error) {
-      apiLoading.value = false
-      apiError.value = true
+      console.log(error);
     }
   }
 
   return {
+    apiLoading,
     apiError,
     getTournaments,
     getTournamentTeams,
+    getTournamentSchedules,
+    getTournamentResults,
     tournaments,
     tournamentTeams,
-
-
-    apiLoading,
-    tour_title,
-    tour_type,
-    tour_id,
-    tourStandings,
-    tourResults,
-    tourSchedules,
-    getStandings,
-    getResults,
-    getSchedules,
-    getTourDetails
+    tournamentShedules,
+    tournamentResults,
+    match_stages,
+    valid_groups,
   }
 })
