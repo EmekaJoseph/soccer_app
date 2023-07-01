@@ -8,6 +8,7 @@ use Illuminate\Routing\Controller as BaseController;
 
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\TournamentModel;
 use App\Models\Standings_LeagueModel;
@@ -20,8 +21,6 @@ use App\Models\ScheduleModel;
 class PublicViewController extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
-
-
 
     // get tournament details
     public function tourData(Request $req, $tour_id)
@@ -133,5 +132,19 @@ class PublicViewController extends BaseController
             }
         }
         return response()->json($results, 200);
+    }
+
+
+    public function showLiveMatches(Request $req, $tour_id)
+    {
+        $liveUpdates = DB::table('tbl_live')->where('tour_id', $tour_id)->get();
+        if (sizeof($liveUpdates) > 0) {
+            foreach ($liveUpdates as $result) {
+                $result->home_team = (TeamModel::find($result->home_team))->team_name;
+                $result->away_team = (TeamModel::find($result->away_team))->team_name;
+            }
+        }
+
+        return response()->json($liveUpdates, 200);
     }
 }

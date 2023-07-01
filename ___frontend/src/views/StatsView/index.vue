@@ -16,14 +16,17 @@
                                 :class="{ ' shadow-sm menu-active': currentShowing == 'matches' }">MATCHES</div>
                             <div @click="showPanel('results')" class="menu-item"
                                 :class="{ 'shadow-sm menu-active': currentShowing == 'results' }">RESULTS</div>
-                            <!-- <div class="menu-item">LIVE</div> -->
+                            <div @click="showPanel('live')" class="menu-item"
+                                :class="{ 'shadow-sm menu-active': currentShowing == 'live' }">LIVE
+                                <i v-if="stats.tourLives.length" class="bi bi-circle-fill text-success small"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="show-panel min-vh-100">
+        <div class="show-panel min-vh-100" ref="show_panel">
             <div class=" container">
                 <div class="row justify-content-center">
                     <div class="col-md-10 col-lg-8">
@@ -36,6 +39,9 @@
                         <div v-if="currentShowing == 'results'">
                             <ResultsPanel />
                         </div>
+                        <div v-if="currentShowing == 'live'">
+                            <LivePanel />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -46,17 +52,48 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
-import { onMounted, ref, onUnmounted } from 'vue'
+import { onMounted, ref, onUnmounted, watch } from 'vue'
 import { useStatsStore } from '@/store/statsStore'
+
+import { useSwipe } from '@vueuse/core'
 
 import StandingsPanel from './standings.vue'
 import ResultsPanel from './results.vue'
 import SchedulePanel from './schedules.vue'
+import LivePanel from './live.vue'
 
 const stats = useStatsStore()
 const route = useRoute()
 
 const currentShowing = ref('standings')
+
+const show_panel = ref<any>(null)
+const { direction } = useSwipe(show_panel, {
+    onSwipe() {
+        if (direction.value == 'left') {
+            if (currentShowing.value == 'standings') {
+                currentShowing.value = 'matches'
+            }
+            else if (currentShowing.value == 'matches') {
+                currentShowing.value = 'results'
+            }
+            else if (currentShowing.value == 'results') {
+                currentShowing.value = 'live'
+            }
+        }
+        else if (direction.value == 'right') {
+            if (currentShowing.value == 'live') {
+                currentShowing.value = 'results'
+            }
+            else if (currentShowing.value == 'results') {
+                currentShowing.value = 'matches'
+            }
+            else if (currentShowing.value == 'matches') {
+                currentShowing.value = 'standings'
+            }
+        }
+    }
+})
 
 onMounted(async () => {
     stats.tour_id = route.params.tour_id
@@ -65,16 +102,11 @@ onMounted(async () => {
     loadAllData()
 })
 
-function showPanel(name: string) {
-    currentShowing.value = name;
-    window.scrollTo(0, 0);
-}
-
 function loadAllData() {
     stats.getStandings()
     stats.getResults()
     stats.getSchedules()
-
+    stats.getLiveMatches()
 }
 
 let interval = setInterval(() => {
@@ -84,6 +116,11 @@ let interval = setInterval(() => {
 onUnmounted(() => {
     clearInterval(interval)
 })
+
+function showPanel(name: string) {
+    currentShowing.value = name;
+    window.scrollTo(0, 0);
+}
 </script>
 
 <style scoped>
@@ -102,8 +139,6 @@ onUnmounted(() => {
 }
 
 
-
-
 .menu-item:hover {
     background-color: var(--theme-color-3bb);
 }
@@ -116,6 +151,7 @@ onUnmounted(() => {
 @media screen and (max-width: 992px) {
     .menu-item {
         padding: 10px;
+        font-size: 10px;
     }
 }
 

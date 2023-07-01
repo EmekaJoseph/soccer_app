@@ -7,9 +7,9 @@ use App\Http\Controllers\Admin\TeamsController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\Results_CupController;
 use App\Http\Controllers\Admin\Results_LeagueController;
+use App\Http\Controllers\Admin\LiveUpdateController;
 
 use App\Http\Controllers\PublicViewController;
-
 
 
 //  ######################## UNPROTECTED ########################## //
@@ -25,6 +25,7 @@ Route::controller(PublicViewController::class)->prefix('view')->group(function (
     Route::get('standings/{tour_id}',  'standings');
     Route::get('results/{tour_id}',  'results');
     Route::get('schedules/{tour_id}',  'schedules');
+    Route::get('live/{tour_id}',  'showLiveMatches');
 });
 
 //  ############################################################## //
@@ -52,6 +53,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('league/save_result', [Results_LeagueController::class, 'saveResult']);
 
     Route::post('league/undo_save_result/{result_id}', [Results_LeagueController::class, 'undoSaveResult']);
+
+    Route::controller(LiveUpdateController::class)->group(function () {
+        Route::post('startLiveMatch',  'startLiveMatch');
+        Route::post('updateLiveMatch/{live_id}',  'updateLiveMatch');
+        Route::get('endLiveMatch/{live_id}',  'endLiveMatch');
+    });
 });
 
 //  ########################################################################### //

@@ -7,10 +7,13 @@
             <internetErrorComponent />
         </div>
         <div v-else>
-            <div v-if="!stats.tourStandings.length" class="d-flex justify-content-center align-items-center mt-5">
-                No standings to show
+            <div v-if="!stats.tourStandings.length">
+                <emptyDataComponent>
+                    No standings
+                </emptyDataComponent>
             </div>
-            <div v-else class="animate__animated  animate__bounceInUp">
+            <!-- <div v-else class="animate__animated  animate__bounceInUp"> -->
+            <div v-else>
                 <div v-if="stats.tour_type == 'cup'">
                     <standings_cupTable :data="stats.tourStandings" />
                 </div>

@@ -6,7 +6,7 @@
         <div v-else>
             <div class="row gy-4">
                 <div class="col-lg-4 mb-3">
-                    <label>Choose Tournament: </label>
+                    <label>Tournament: </label>
                     <select v-model="selectedTournament"
                         class="form-select text-uppercase rounded-0 border-end-0 border-start-0 border-top-0  border-bottom-3 cursor-pointer"
                         @change="loadResultsData">
@@ -17,7 +17,7 @@
                     <div class="row gy-3">
                         <div class="col-lg-4">
                             <fieldset class="border rounded-3 p-3 bg-white h-100">
-                                <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">NEW SCHEDULE:
+                                <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">NEW RESULT:
                                 </legend>
                                 <div class="row g-3">
                                     <div v-if="selectedTournament.type == 'cup'" class="col-md-12">
@@ -39,35 +39,57 @@
                                         </select>
                                     </div>
 
-                                    <div class="col-sm-9">
-                                        <label>Home Team: </label>
-                                        <select v-model="form.homeTeam" class="form-select  text-uppercase">
-                                            <option value="" selected disabled></option>
-                                            <option v-for="i in homeTeamDrop" :key="i.team_id" :value="i.team_id">{{
-                                                i.team_name }}
-                                            </option>
-                                        </select>
+                                    <div class="col-md-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-sm-9">
+                                                        <label>Home Team: </label>
+                                                        <select v-model="form.homeTeam" class="form-select  text-uppercase">
+                                                            <option value="" selected disabled></option>
+                                                            <option v-for="i in homeTeamDrop" :key="i.team_id"
+                                                                :value="i.team_id">{{
+                                                                    i.team_name }}
+                                                            </option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="col-sm-3">
+                                                        <label class="small">score:</label>
+                                                        <input v-model="form.homeTeam_score" type="number"
+                                                            class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div class="col-sm-3">
-                                        <label>&nbsp; </label>
-                                        <input v-model="form.homeTeam_score" type="number" class="form-control">
+                                    <div class="col-md-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-sm-9">
+                                                        <label>Away Team: </label>
+                                                        <select v-model="form.awayTeam" class="form-select  text-uppercase">
+                                                            <option value="" selected disabled></option>
+                                                            <option v-for="i in awayTeamDrop" :key="i.team_id"
+                                                                :value="i.team_id">{{
+                                                                    i.team_name }}
+                                                            </option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="col-sm-3">
+                                                        <label class="small">score:</label>
+                                                        <input v-model="form.awayTeam_score" type="number"
+                                                            class="form-control ">
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div class="col-sm-9">
-                                        <label>Away Team: </label>
-                                        <select v-model="form.awayTeam" class="form-select  text-uppercase">
-                                            <option value="" selected disabled></option>
-                                            <option v-for="i in awayTeamDrop" :key="i.team_id" :value="i.team_id">{{
-                                                i.team_name }}
-                                            </option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-sm-3">
-                                        <label>&nbsp;</label>
-                                        <input v-model="form.awayTeam_score" type="number" class="form-control ">
-                                    </div>
 
                                     <div class="col-md-12">
                                         <label>Date Played:</label>
@@ -99,21 +121,13 @@
                                                     :items="userData.tournamentResults" show-index>
 
                                                     <template #item-homeTeamAndScore="item">
-                                                        <div>
-                                                            {{ item.home_name }},
-                                                            <span class="fw-bold">{{ item.home_score }}</span>
-                                                        </div>
+                                                        {{ item.home_name }},
+                                                        <span class="fw-bold">{{ item.home_score }}</span>
                                                     </template>
 
-                                                    <!-- <template #item-vs="item">
-                                                        <div class=" fw-bolder"> VS </div>
-                                                    </template> -->
-
                                                     <template #item-awayTeamAndScore="item">
-                                                        <div>
-                                                            {{ item.away_name }},
-                                                            <span class="fw-bold">{{ item.away_score }}</span>
-                                                        </div>
+                                                        {{ item.away_name }},
+                                                        <span class="fw-bold">{{ item.away_score }}</span>
                                                     </template>
 
                                                     <template #item-played="item">
@@ -178,7 +192,6 @@ function loadResultsData() {
 const tableHeaders: Header[] = [
     { text: "", value: "match_stage" },
     { text: "", value: "homeTeamAndScore" },
-    { text: "", value: "vs" },
     { text: "", value: "awayTeamAndScore" },
     { text: "", value: "played" },
     { text: "", value: "delete" },

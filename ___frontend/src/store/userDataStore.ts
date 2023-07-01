@@ -9,6 +9,7 @@ export const useUserDataStore = defineStore('dataStore', () => {
   const tournamentTeams = ref<any>([])
   const tournamentShedules = ref<any>([])
   const tournamentResults = ref<any>([])
+  const tournamentLive = ref<any>([])
   const match_stages = ref<any>(['Group_Stage', 'Round_of_32', 'Knock_Out', 'Quarter_Final', 'Semi_Final', 'Final'])
   const valid_groups = ref<any>(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'])
 
@@ -17,7 +18,7 @@ export const useUserDataStore = defineStore('dataStore', () => {
       let resp = await api.getTournaments()
       tournaments.value = (resp.status == 200) ? resp.data : [];
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
 
@@ -26,7 +27,7 @@ export const useUserDataStore = defineStore('dataStore', () => {
       let resp = await api.getTournamentTeams(id)
       tournamentTeams.value = (resp.status == 200) ? resp.data : [];
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
 
@@ -35,7 +36,7 @@ export const useUserDataStore = defineStore('dataStore', () => {
       let resp = await api.getTournamentSchedules(id)
       tournamentShedules.value = (resp.status == 200) ? resp.data : [];
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
 
@@ -44,7 +45,18 @@ export const useUserDataStore = defineStore('dataStore', () => {
       let resp = await api.results(id)
       tournamentResults.value = (resp.status == 200) ? resp.data : [];
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+    }
+  }
+
+  async function getLiveMatches(id: string) {
+    try {
+      let resp = await api.getLiveMatches(id)
+      tournamentLive.value = (resp.status == 200) ? resp.data : [];
+      console.log(tournamentLive.value);
+
+    } catch (error) {
+      // console.log(error);
     }
   }
 
@@ -55,10 +67,12 @@ export const useUserDataStore = defineStore('dataStore', () => {
     getTournamentTeams,
     getTournamentSchedules,
     getTournamentResults,
+    getLiveMatches,
     tournaments,
     tournamentTeams,
     tournamentShedules,
     tournamentResults,
+    tournamentLive,
     match_stages,
     valid_groups,
   }

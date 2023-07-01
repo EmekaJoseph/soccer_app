@@ -25,10 +25,17 @@ import 'vue-toast-notification/dist/theme-sugar.css';
 import internetErrorComponent from '@/components/InternetError.vue'
 app.component('internetErrorComponent', internetErrorComponent);
 
+import emptyDataComponent from '@/components/emptyData.vue'
+app.component('emptyDataComponent', emptyDataComponent);
+
 
 import Vue3EasyDataTable from 'vue3-easy-data-table';
 import 'vue3-easy-data-table/dist/style.css';
 app.component('EasyDataTable', Vue3EasyDataTable);
+
+// npm install vue3-touch-events
+// import Vue3TouchEvents from "vue3-touch-events";
+// app.use(Vue3TouchEvents);
 
 app.use(createPinia())
 app.use(router)

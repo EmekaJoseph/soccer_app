@@ -42,6 +42,9 @@
                     <li class="list-group-item">
                         <RouterLink to="/user/results"><i class="bi bi-list-check"></i> Results</RouterLink>
                     </li>
+                    <li class="list-group-item">
+                        <RouterLink to="/user/live"><i class="bi bi-list-check"></i> Live Update</RouterLink>
+                    </li>
                 </ul>
             </div>
         </div>

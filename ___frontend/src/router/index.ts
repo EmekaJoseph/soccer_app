@@ -8,12 +8,13 @@ import GeneralLayout from '../views/_layout.vue'
 import PageNotFound from '../views/PageNotFound.vue'
 import StatsView from '../views/StatsView/index.vue'
 
-import UserLogin from '../views/Admin/LoginView.vue'
+import UserLogin from '../views/Admin/UserLogin.vue'
 import userLayout from '../views/Admin/_Layout.vue'
-import userDashboard from '../views/Admin/DashboardView.vue'
-import userTeams from '../views/Admin/TeamsView.vue'
-import userResults from '../views/Admin/ResultsView.vue'
-import userSchedules from '../views/Admin/SchedulesView.vue'
+import userDashboard from '../views/Admin/UserDashboard.vue'
+import userTeams from '../views/Admin/UserTeams.vue'
+import userResults from '../views/Admin/UserResults.vue'
+import userSchedules from '../views/Admin/UserSchedules.vue'
+import userLive from '../views/Admin/UserLive.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -60,6 +61,7 @@ const router = createRouter({
         { path: 'teams', name: 'Teams', component: userTeams },
         { path: 'schedules', name: 'Schedules', component: userSchedules },
         { path: 'results', name: 'Results', component: userResults },
+        { path: 'live', name: 'Live', component: userLive },
 
       ],
     },

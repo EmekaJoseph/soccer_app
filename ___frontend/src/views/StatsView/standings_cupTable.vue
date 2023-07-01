@@ -6,6 +6,15 @@
         <div v-if="teams" class="card-body p-1 py-3">
             <EasyDataTable table-class-name="easy-table-cup-league" class="border-0" :headers="headers" :items="teams"
                 show-index>
+
+                <template #item-team_name="item">
+                    <div class=" fw-bolder"> {{ item.team_name }} </div>
+                </template>
+
+                <template #item-points="item">
+                    <div class=" fw-bolder"> {{ item.points }} </div>
+                </template>
+
             </EasyDataTable>
         </div>
     </div>

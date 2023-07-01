@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 29, 2023 at 02:58 AM
+-- Generation Time: Jul 01, 2023 at 03:22 AM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.2
 
@@ -81,24 +81,9 @@ CREATE TABLE `personal_access_tokens` (
 --
 
 INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `name`, `token`, `abilities`, `last_used_at`, `expires_at`, `created_at`, `updated_at`) VALUES
-(1, 'App\\Models\\UserModel', 2, '_token', '4895d06c32cb42b790a1124895267a6a5b5c5a62d361612521c5a56b4e4bb34b', '[\"*\"]', '2023-06-28 22:41:56', NULL, '2023-06-05 20:19:36', '2023-06-28 22:41:56'),
+(1, 'App\\Models\\UserModel', 2, '_token', '4895d06c32cb42b790a1124895267a6a5b5c5a62d361612521c5a56b4e4bb34b', '[\"*\"]', '2023-06-30 22:09:34', NULL, '2023-06-05 20:19:36', '2023-06-30 22:09:34'),
 (10, 'App\\Models\\UserModel', 2, '_token', '4b2388506d2589045ebc2b5fd21ac33af8b89c84b262468aaaa394189480d0d0', '[\"*\"]', '2023-06-26 21:36:20', NULL, '2023-06-26 09:40:05', '2023-06-26 21:36:20'),
-(11, 'App\\Models\\UserModel', 2, '_token', '258b0afa10638e7912ec8df1bf0220973383675397602e19c4e2062d4e83cc85', '[\"*\"]', '2023-06-28 23:56:29', NULL, '2023-06-28 00:29:55', '2023-06-28 23:56:29');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tbl_groups`
---
-
-CREATE TABLE `tbl_groups` (
-  `goup_id` int(100) NOT NULL,
-  `group_name` varchar(100) NOT NULL,
-  `highest_count` int(10) NOT NULL DEFAULT 4,
-  `current_count` int(10) NOT NULL DEFAULT 0,
-  `created_at` varchar(100) NOT NULL,
-  `updated_at` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+(11, 'App\\Models\\UserModel', 2, '_token', '258b0afa10638e7912ec8df1bf0220973383675397602e19c4e2062d4e83cc85', '[\"*\"]', '2023-07-01 00:22:01', NULL, '2023-06-28 00:29:55', '2023-07-01 00:22:01');
 
 -- --------------------------------------------------------
 
@@ -107,21 +92,15 @@ CREATE TABLE `tbl_groups` (
 --
 
 CREATE TABLE `tbl_live` (
-  `shedule_id` int(100) NOT NULL,
-  `vs_1` int(10) NOT NULL,
-  `vs_2` int(10) NOT NULL,
-  `vs_1_score` int(10) NOT NULL DEFAULT 0,
-  `vs_2_score` int(10) NOT NULL DEFAULT 0,
-  `venue` varchar(100) NOT NULL,
-  `date` varchar(100) NOT NULL,
-  `time` varchar(100) NOT NULL,
-  `isStarted` int(10) NOT NULL DEFAULT 0,
+  `live_id` int(100) NOT NULL,
+  `home_team` varchar(100) NOT NULL,
+  `away_team` varchar(100) NOT NULL,
+  `home_team_score` int(10) NOT NULL DEFAULT 0,
+  `away_team_score` int(10) NOT NULL DEFAULT 0,
+  `tour_id` varchar(100) NOT NULL,
   `isPaused` int(10) NOT NULL DEFAULT 0,
-  `isEnded` int(10) NOT NULL DEFAULT 0,
-  `curr_time` int(100) NOT NULL DEFAULT 0,
-  `extra_col` varchar(100) DEFAULT NULL,
-  `created_at` varchar(100) NOT NULL,
-  `updated_at` varchar(100) NOT NULL
+  `match_stage` varchar(100) DEFAULT NULL,
+  `curr_time` int(100) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -143,13 +122,6 @@ CREATE TABLE `tbl_results` (
   `date_played` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `tbl_results`
---
-
-INSERT INTO `tbl_results` (`result_id`, `away_team`, `home_team`, `home_score`, `away_score`, `match_stage`, `created_at`, `updated_at`, `tour_id`, `date_played`) VALUES
-('01h42abd7xnk2dg90dtr99019n', '01h429ez0j1h6213feb3xc4cbz', '01h429ee5sxt2hehm5vfck58ar', '3', '5', 'Group_Stage', '2023-06-29 00:55:15', '2023-06-29 00:55:15', '01h4299vwq5mkm8nzdpcdkskmv', '2023-06-29');
-
 -- --------------------------------------------------------
 
 --
@@ -166,14 +138,6 @@ CREATE TABLE `tbl_schedules` (
   `match_stage` varchar(100) DEFAULT NULL,
   `created` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `tbl_schedules`
---
-
-INSERT INTO `tbl_schedules` (`schedule_id`, `tour_id`, `venue`, `kick_off`, `home_team`, `away_team`, `match_stage`, `created`) VALUES
-('01h429naq0w4f0bmg9tk6tpk14', '01h4299vwq5mkm8nzdpcdkskmv', 'the stadium, olumpic, Surulere', '2023-07-21 00:42:00', '01h429ee5sxt2hehm5vfck58ar', '01h429ez0j1h6213feb3xc4cbz', 'Group_Stage', '2023-06-29 00:43:12'),
-('01h429q5c1kdbj0zn68qw6svab', '01h4299vwq5mkm8nzdpcdkskmv', 'the same venue of yesterday', '2023-07-29 00:42:00', '01h429hyjctzazk5hs70kymc9w', '01h429jeeb0j7aspynfevzf40d', 'Group_Stage', '2023-06-29 00:44:12');
 
 -- --------------------------------------------------------
 
@@ -196,20 +160,6 @@ CREATE TABLE `tbl_standings_cup` (
   `updated_at` varchar(100) NOT NULL,
   `extra_col` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `tbl_standings_cup`
---
-
-INSERT INTO `tbl_standings_cup` (`standing_id`, `team_id`, `tour_id`, `group_in`, `played`, `won`, `draw`, `lose`, `goal_diff`, `points`, `created_at`, `updated_at`, `extra_col`) VALUES
-('01h429ee6qjbq99z3zk6gspmnr', '01h429ee5sxt2hehm5vfck58ar', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 1, 0, 0, 1, -2, 0, '2023-06-29 00:39:26', '2023-06-29 00:56:29', NULL),
-('01h429ez215wwhcprxagk3xjff', '01h429ez0j1h6213feb3xc4cbz', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 1, 1, 0, 0, 2, 3, '2023-06-29 00:39:43', '2023-06-29 00:56:29', NULL),
-('01h429fvzfkc86ycvme47002de', '01h429fvy9hk89kw15jfc4eh39', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 0, 0, 0, 0, 0, 0, '2023-06-29 00:40:13', '2023-06-29 00:40:13', NULL),
-('01h429ge8k8z0m0hev31qaymyx', '01h429ge72hz5hb8bd8ckrs1hq', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 0, 0, 0, 0, 0, 0, '2023-06-29 00:40:32', '2023-06-29 00:40:32', NULL),
-('01h429hknzey225m2epmpa2esq', '01h429hkm5dzwt8h5br47tr9jc', '01h4299vwq5mkm8nzdpcdkskmv', 'B', 0, 0, 0, 0, 0, 0, '2023-06-29 00:41:10', '2023-06-29 00:41:10', NULL),
-('01h429hykmt6mfhb6c61qnxwn2', '01h429hyjctzazk5hs70kymc9w', '01h4299vwq5mkm8nzdpcdkskmv', 'B', 0, 0, 0, 0, 0, 0, '2023-06-29 00:41:21', '2023-06-29 00:41:21', NULL),
-('01h429jeezk8g86v3rjc46a9ke', '01h429jeeb0j7aspynfevzf40d', '01h4299vwq5mkm8nzdpcdkskmv', 'B', 0, 0, 0, 0, 0, 0, '2023-06-29 00:41:38', '2023-06-29 00:41:38', NULL),
-('01h429k8fptr0z4rvgt1vkkxj4', '01h429k8e0awmke1bwz816c49v', '01h4299vwq5mkm8nzdpcdkskmv', 'B', 0, 0, 0, 0, 0, 0, '2023-06-29 00:42:04', '2023-06-29 00:42:04', NULL);
 
 -- --------------------------------------------------------
 
@@ -251,20 +201,6 @@ CREATE TABLE `tbl_teams` (
   `updated_at` varchar(100) NOT NULL,
   `team_brief` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `tbl_teams`
---
-
-INSERT INTO `tbl_teams` (`team_id`, `team_name`, `tour_id`, `match_played`, `group_in`, `address`, `manager`, `created_at`, `updated_at`, `team_brief`) VALUES
-('01h429ee5sxt2hehm5vfck58ar', 'Aguda Arch.', '01h4299vwq5mkm8nzdpcdkskmv', 1, 'A', NULL, NULL, '2023-06-29 00:39:26', '2023-06-29 00:56:29', NULL),
-('01h429ez0j1h6213feb3xc4cbz', 'Ikate Arch', '01h4299vwq5mkm8nzdpcdkskmv', 1, 'A', NULL, NULL, '2023-06-29 00:39:43', '2023-06-29 00:56:29', NULL),
-('01h429fvy9hk89kw15jfc4eh39', 'Munshin Arch.', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'A', NULL, NULL, '2023-06-29 00:40:13', '2023-06-29 00:40:13', NULL),
-('01h429ge72hz5hb8bd8ckrs1hq', 'Idioro Arch.', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'A', NULL, NULL, '2023-06-29 00:40:32', '2023-06-29 00:40:32', NULL),
-('01h429hkm5dzwt8h5br47tr9jc', 'Itire Arch.', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'B', NULL, NULL, '2023-06-29 00:41:10', '2023-06-29 00:41:10', NULL),
-('01h429hyjctzazk5hs70kymc9w', 'AYF', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'B', NULL, NULL, '2023-06-29 00:41:21', '2023-06-29 00:41:21', NULL),
-('01h429jeeb0j7aspynfevzf40d', 'Isolo Arch.', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'B', NULL, NULL, '2023-06-29 00:41:37', '2023-06-29 00:41:37', NULL),
-('01h429k8e0awmke1bwz816c49v', 'Ebutemeta Arch.', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'B', NULL, NULL, '2023-06-29 00:42:04', '2023-06-29 00:42:04', NULL);
 
 -- --------------------------------------------------------
 
@@ -339,16 +275,10 @@ ALTER TABLE `personal_access_tokens`
   ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`);
 
 --
--- Indexes for table `tbl_groups`
---
-ALTER TABLE `tbl_groups`
-  ADD PRIMARY KEY (`goup_id`);
-
---
 -- Indexes for table `tbl_live`
 --
 ALTER TABLE `tbl_live`
-  ADD PRIMARY KEY (`shedule_id`);
+  ADD PRIMARY KEY (`live_id`);
 
 --
 -- Indexes for table `tbl_results`
@@ -415,16 +345,10 @@ ALTER TABLE `personal_access_tokens`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT for table `tbl_groups`
---
-ALTER TABLE `tbl_groups`
-  MODIFY `goup_id` int(100) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `tbl_live`
 --
 ALTER TABLE `tbl_live`
-  MODIFY `shedule_id` int(100) NOT NULL AUTO_INCREMENT;
+  MODIFY `live_id` int(100) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `tbl_users`

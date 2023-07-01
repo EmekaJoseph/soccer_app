@@ -43,6 +43,10 @@ export default {
         return $instance.get(`view/tour_data/${tour_id}`,)
     },
 
+    getLiveMatches(tour_id: string) {
+        return $instance.get(`view/live/${tour_id}`,)
+    },
+
 
 
     // USER
@@ -107,4 +111,16 @@ export default {
         return $instance.post(`league/undo_save_result/${data.result_id}`, JSON.stringify(data))
     },
 
+
+    startLiveMatch(data: any) {
+        return $instance.post(`startLiveMatch`, JSON.stringify(data))
+    },
+
+    updateLiveMatch(data: any) {
+        return $instance.post(`updateLiveMatch/${data.live_id}`, JSON.stringify(data))
+    },
+
+    endLiveMatch(live_id: string) {
+        return $instance.get(`endLiveMatch/${live_id}`)
+    }
 }

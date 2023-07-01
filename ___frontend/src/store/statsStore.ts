@@ -9,6 +9,7 @@ export const useStatsStore = defineStore('stats', () => {
   const tourStandings = ref<any[]>([])
   const tourResults = ref<any[]>([])
   const tourSchedules = ref<any[]>([])
+  const tourLives = ref<any[]>([])
   const apiError = ref<boolean>(false)
   const apiLoading = ref<boolean>(true)
   // const doubleCount = computed(() => count.value * 2)
@@ -26,7 +27,6 @@ export const useStatsStore = defineStore('stats', () => {
       // console.log(resp);
     } catch (error) {
       console.log(error);
-
     }
   }
 
@@ -40,6 +40,8 @@ export const useStatsStore = defineStore('stats', () => {
     } catch (error) {
       apiLoading.value = false
       apiError.value = true
+      console.log(error);
+
     }
   }
 
@@ -69,6 +71,19 @@ export const useStatsStore = defineStore('stats', () => {
     }
   }
 
+
+  async function getLiveMatches() {
+    try {
+      let resp = await api.getLiveMatches(tour_id.value)
+      tourLives.value = resp.data
+      apiLoading.value = false
+      // console.log(resp);
+    } catch (error) {
+      apiLoading.value = false
+      apiError.value = true
+    }
+  }
+
   return {
     apiError,
     apiLoading,
@@ -78,9 +93,11 @@ export const useStatsStore = defineStore('stats', () => {
     tourStandings,
     tourResults,
     tourSchedules,
+    tourLives,
     getStandings,
     getResults,
     getSchedules,
-    getTourDetails
+    getTourDetails,
+    getLiveMatches
   }
 })

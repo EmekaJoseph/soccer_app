@@ -1,0 +1,62 @@
+<template>
+    <div class="container px-3">
+        <div v-if="userData.apiError">
+            <internetErrorComponent />
+        </div>
+        <div v-else>
+            <div class="row gy-4">
+                <div class="col-lg-4 mb-3">
+                    <label>Tournament: </label>
+                    <select v-model="selectedTournament"
+                        class="form-select text-uppercase rounded-0 border-end-0 border-start-0 border-top-0  border-bottom-3 cursor-pointer"
+                        @change="loadLiveMatches">
+                        <option v-for="i in userData.tournaments" :key="i" :value="i">{{ i.title }}</option>
+                    </select>
+                </div>
+                <div class="col-12 mb-3">
+                    <div class="float-end">
+                        <button data-bs-toggle="modal" data-bs-target="#addLiveMatchModal" class="btn btn-primary btn-sm">
+                            START MATCH <i class="bi bi-plus-lg"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div v-if="!userData.tournamentLive.length">
+                        <emptyDataComponent>
+                            No Live Matches Start a live match!
+                        </emptyDataComponent>
+                    </div>
+                    <div class="row gy-3">
+                        <ComponentLive v-for="(liveData, i) in userData.tournamentLive" :key="i" :team-data="liveData" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <addLiveMatchModal :tour="selectedTournament" />
+    </div>
+</template>
+
+<script setup lang="ts">
+import { onMounted, ref } from 'vue';
+import { useUserDataStore } from '@/store/userDataStore';
+import ComponentLive from './_ComponentLive.vue'
+import addLiveMatchModal from '@/components/modals/addLiveMatchModal.vue';
+
+const userData = useUserDataStore()
+const selectedTournament = ref<any>({})
+
+onMounted(async () => {
+    await userData.getTournaments()
+    if (userData.tournaments.length) {
+        selectedTournament.value = userData.tournaments[0]
+        console.log(selectedTournament.value);
+        loadLiveMatches()
+    }
+})
+
+function loadLiveMatches() {
+    userData.getTournamentTeams(selectedTournament.value.id)
+    userData.getLiveMatches(selectedTournament.value.id)
+}
+
+</script>

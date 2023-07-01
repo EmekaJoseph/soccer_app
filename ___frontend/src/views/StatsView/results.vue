@@ -7,33 +7,45 @@
             <internetErrorComponent />
         </div>
         <div v-else>
-            <div v-if="!stats.tourResults.length" class="d-flex justify-content-center align-items-center mt-5">
-                No Results to show
+            <div v-if="!stats.tourResults.length">
+                <emptyDataComponent>
+                    No Results Yet.
+                </emptyDataComponent>
             </div>
-            <div v-else class="animate__animated  animate__bounceInUp">
-                <div v-for="({ match_stage, home_team, away_team, home_name, away_name, away_score, home_score, winner, date_played }, i) in stats.tourResults"
-                    :key="i" class="card bg-white rounded-0 mb-4">
-                    <div class="card-header fw-bolder text-center">
-                        {{ match_stage ? match_stage.replaceAll('_', ' ') : '' }}
-                        ({{ dateFormat(date_played) }})
-                    </div>
-                    <div class="card-body">
-                        <div class="row gy-3">
-                            <div class="col-12 fw-bolder text-uppercase" :class="{ 'winner': winner == home_team }">
-                                {{ home_name }}
-                                <span class="float-end  " :class="{ 'text-success fw-bolder': winner == home_team }">{{
-                                    home_score }}</span>
+            <!-- <div v-else class="animate__animated  animate__bounceInUp"> -->
+            <div v-else>
+                <div class="row justify-content-center">
+                    <div v-for="({ match_stage, home_team, away_team, home_name, away_name, away_score, home_score, winner, date_played }, i) in stats.tourResults"
+                        :key="i" class="col-sm-6">
+                        <div class="card bg-white rounded-0 mb-4">
+                            <div class="card-header fw-bolder bg-white shadow-sm border-0 text-center">
+                                {{ match_stage ? match_stage.replaceAll('_', ' ') : '' }}
+                                ({{ dateFormat(date_played) }})
                             </div>
+                            <div class="card-body">
+                                <div class="row gy-3">
+                                    <div class="col-12 fw-bolder text-uppercase" :class="{ 'winner': winner == home_team }">
+                                        {{ home_name }}
+                                        <span class="float-end  "
+                                            :class="{ 'text-success fw-bolder': winner == home_team }">{{
+                                                home_score }}</span>
+                                    </div>
 
-                            <div class="col-12 fw-bolder text-uppercase" :class="{ 'winner': winner == away_team }">
-                                {{ away_name }}
-                                <span class="float-end " :class="{ 'text-success fw-bolder': winner == away_team }">{{
-                                    away_score }}</span>
+                                    <div class="col-12 fw-bolder text-uppercase" :class="{ 'winner': winner == away_team }">
+                                        {{ away_name }}
+                                        <span class="float-end "
+                                            :class="{ 'text-success fw-bolder': winner == away_team }">{{
+                                                away_score }}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
+
+
         </div>
     </div>
 </template>
