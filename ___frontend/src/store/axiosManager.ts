@@ -14,7 +14,6 @@ const $instance = axios.create({
     },
 })
 
-
 // create interceptor for renewing token
 $instance.interceptors.request.use(
     (config: any) => {
@@ -23,7 +22,6 @@ $instance.interceptors.request.use(
         return config;
     }
 );
-
 
 export default {
 

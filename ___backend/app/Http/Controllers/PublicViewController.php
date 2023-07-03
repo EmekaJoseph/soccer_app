@@ -62,6 +62,7 @@ class PublicViewController extends BaseController
                 $sorted = $collection->sortBy([
                     ['points', 'desc'],
                     ['goal_diff', 'desc'],
+                    ['team_name', 'asc'],
                 ]);
                 array_push($newObj, (object)[
                     'group' => $key,
@@ -69,6 +70,7 @@ class PublicViewController extends BaseController
                 ]);
             }
 
+            // sort by their groups
             $sortedByGroup = (collect($newObj))->sortBy('group');
 
             return response()->json($sortedByGroup->values()->all(), 200);
@@ -78,6 +80,7 @@ class PublicViewController extends BaseController
             $sorted = $collection->sortBy([
                 ['points', 'desc'],
                 ['goal_diff', 'desc'],
+                ['team_name', 'asc'],
             ]);
             return response()->json($sorted->values()->all(), 200);
         }

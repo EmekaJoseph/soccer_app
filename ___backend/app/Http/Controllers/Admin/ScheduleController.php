@@ -37,7 +37,7 @@ class ScheduleController extends BaseController
 
         $homeTeam = $req->input('homeTeam');
         $awayTeam = $req->input('awayTeam');
-        $kick_off = Carbon::parse($req->input('kick_off'));
+        $kick_off = $req->input('kick_off');
 
         // check teams are valid
         if (sizeof(TeamModel::find([$homeTeam, $awayTeam])) < 2) {
@@ -91,7 +91,6 @@ class ScheduleController extends BaseController
 
         return response()->json('updated', 200);
     }
-
 
     public function index(Request $req)
     {

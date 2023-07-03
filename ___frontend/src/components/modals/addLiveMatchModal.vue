@@ -85,7 +85,6 @@ const $toast = useToast();
 const userData = useUserDataStore()
 const isSaving = ref(false)
 
-
 const form = reactive({
     home_team: '',
     away_team: '',
@@ -132,12 +131,8 @@ async function start() {
 
 }
 
-
 const btnX: any = ref(null)
 onBeforeRouteLeave(() => {
     btnX.value.click()
 })
 </script>
-
-<style scoped></style>
-

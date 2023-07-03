@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 01, 2023 at 03:22 AM
+-- Generation Time: Jul 01, 2023 at 02:06 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.2
 
@@ -83,7 +83,7 @@ CREATE TABLE `personal_access_tokens` (
 INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `name`, `token`, `abilities`, `last_used_at`, `expires_at`, `created_at`, `updated_at`) VALUES
 (1, 'App\\Models\\UserModel', 2, '_token', '4895d06c32cb42b790a1124895267a6a5b5c5a62d361612521c5a56b4e4bb34b', '[\"*\"]', '2023-06-30 22:09:34', NULL, '2023-06-05 20:19:36', '2023-06-30 22:09:34'),
 (10, 'App\\Models\\UserModel', 2, '_token', '4b2388506d2589045ebc2b5fd21ac33af8b89c84b262468aaaa394189480d0d0', '[\"*\"]', '2023-06-26 21:36:20', NULL, '2023-06-26 09:40:05', '2023-06-26 21:36:20'),
-(11, 'App\\Models\\UserModel', 2, '_token', '258b0afa10638e7912ec8df1bf0220973383675397602e19c4e2062d4e83cc85', '[\"*\"]', '2023-07-01 00:22:01', NULL, '2023-06-28 00:29:55', '2023-07-01 00:22:01');
+(11, 'App\\Models\\UserModel', 2, '_token', '258b0afa10638e7912ec8df1bf0220973383675397602e19c4e2062d4e83cc85', '[\"*\"]', '2023-07-01 10:57:03', NULL, '2023-06-28 00:29:55', '2023-07-01 10:57:03');
 
 -- --------------------------------------------------------
 
@@ -161,6 +161,24 @@ CREATE TABLE `tbl_standings_cup` (
   `extra_col` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `tbl_standings_cup`
+--
+
+INSERT INTO `tbl_standings_cup` (`standing_id`, `team_id`, `tour_id`, `group_in`, `played`, `won`, `draw`, `lose`, `goal_diff`, `points`, `created_at`, `updated_at`, `extra_col`) VALUES
+('01h48mv7tz2fcm46f8v49j86bt', '01h48mv7svfz0pz5yaq581d4yp', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 0, 0, 0, 0, 0, 0, '2023-07-01 11:54:07', '2023-07-01 11:54:07', NULL),
+('01h48mvqkgfqfc7yf8y91hf1we', '01h48mvqhmsa2z85kx4kc2tjqh', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 0, 0, 0, 0, 0, 0, '2023-07-01 11:54:23', '2023-07-01 11:54:23', NULL),
+('01h48mw1a9rbax9b6v42bytza6', '01h48mw192jzjwavagtbwagfcf', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 0, 0, 0, 0, 0, 0, '2023-07-01 11:54:33', '2023-07-01 11:54:33', NULL),
+('01h48mwk8n731ehrh1rjbwxtxd', '01h48mwk7p34x3p7e2tsw5r7gv', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 0, 0, 0, 0, 0, 0, '2023-07-01 11:54:51', '2023-07-01 11:54:51', NULL),
+('01h48mxk6kk7mnw34787tx1qe1', '01h48mxk59mjzftgtvq84nb15f', '01h4299vwq5mkm8nzdpcdkskmv', 'B', 0, 0, 0, 0, 0, 0, '2023-07-01 11:55:24', '2023-07-01 11:55:24', NULL),
+('01h48my1zx93rj740y4j1dsyhh', '01h48my1z159zk60edw51q5vtb', '01h4299vwq5mkm8nzdpcdkskmv', 'B', 0, 0, 0, 0, 0, 0, '2023-07-01 11:55:39', '2023-07-01 11:55:39', NULL),
+('01h48myetp201stj1hxqwpg5ya', '01h48myesasrqk850y16k7z0et', '01h4299vwq5mkm8nzdpcdkskmv', 'B', 0, 0, 0, 0, 0, 0, '2023-07-01 11:55:52', '2023-07-01 11:55:52', NULL),
+('01h48myvw3r6drw80z3bz4w7ge', '01h48myvsg0vh5yewwsm12gqpx', '01h4299vwq5mkm8nzdpcdkskmv', 'B', 0, 0, 0, 0, 0, 0, '2023-07-01 11:56:05', '2023-07-01 11:56:05', NULL),
+('01h48mz6rry4vmgb3b1qf5drqw', '01h48mz6qmphh4rfm7801ecqsa', '01h4299vwq5mkm8nzdpcdkskmv', 'C', 0, 0, 0, 0, 0, 0, '2023-07-01 11:56:17', '2023-07-01 11:56:17', NULL),
+('01h48mzghmjy4687tgrxkt8se8', '01h48mzggttf56twkyqr3hvvy1', '01h4299vwq5mkm8nzdpcdkskmv', 'C', 0, 0, 0, 0, 0, 0, '2023-07-01 11:56:27', '2023-07-01 11:56:27', NULL),
+('01h48n01zztfhse1y9jwaf73xc', '01h48n01xehxage2aezkmbn63b', '01h4299vwq5mkm8nzdpcdkskmv', 'C', 0, 0, 0, 0, 0, 0, '2023-07-01 11:56:44', '2023-07-01 11:56:44', NULL),
+('01h48n0kxzdwq6br8s528p4dhd', '01h48n0kwfdv6zt0axctb5g9qz', '01h4299vwq5mkm8nzdpcdkskmv', 'C', 0, 0, 0, 0, 0, 0, '2023-07-01 11:57:03', '2023-07-01 11:57:03', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -202,6 +220,24 @@ CREATE TABLE `tbl_teams` (
   `team_brief` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `tbl_teams`
+--
+
+INSERT INTO `tbl_teams` (`team_id`, `team_name`, `tour_id`, `match_played`, `group_in`, `address`, `manager`, `created_at`, `updated_at`, `team_brief`) VALUES
+('01h48mv7svfz0pz5yaq581d4yp', 'Odiolowo', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'A', NULL, NULL, '2023-07-01 11:54:07', '2023-07-01 11:54:07', NULL),
+('01h48mvqhmsa2z85kx4kc2tjqh', 'Ijeshatedo', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'A', NULL, NULL, '2023-07-01 11:54:23', '2023-07-01 11:54:23', NULL),
+('01h48mw192jzjwavagtbwagfcf', 'Munshin', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'A', NULL, NULL, '2023-07-01 11:54:33', '2023-07-01 11:54:33', NULL),
+('01h48mwk7p34x3p7e2tsw5r7gv', 'Cathedral', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'A', NULL, NULL, '2023-07-01 11:54:51', '2023-07-01 11:54:51', NULL),
+('01h48mxk59mjzftgtvq84nb15f', 'Orile Coker', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'B', NULL, NULL, '2023-07-01 11:55:24', '2023-07-01 11:55:24', NULL),
+('01h48my1z159zk60edw51q5vtb', 'Idioro', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'B', NULL, NULL, '2023-07-01 11:55:39', '2023-07-01 11:55:39', NULL),
+('01h48myesasrqk850y16k7z0et', 'Aguda', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'B', NULL, NULL, '2023-07-01 11:55:52', '2023-07-01 11:55:52', NULL),
+('01h48myvsg0vh5yewwsm12gqpx', 'Ikate', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'B', NULL, NULL, '2023-07-01 11:56:05', '2023-07-01 11:56:05', NULL),
+('01h48mz6qmphh4rfm7801ecqsa', 'Yaba', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'C', NULL, NULL, '2023-07-01 11:56:17', '2023-07-01 11:56:17', NULL),
+('01h48mzggttf56twkyqr3hvvy1', 'Surulere', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'C', NULL, NULL, '2023-07-01 11:56:27', '2023-07-01 11:56:27', NULL),
+('01h48n01xehxage2aezkmbn63b', 'Okota', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'C', NULL, NULL, '2023-07-01 11:56:44', '2023-07-01 11:56:44', NULL),
+('01h48n0kwfdv6zt0axctb5g9qz', 'ASF', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'C', NULL, NULL, '2023-07-01 11:57:03', '2023-07-01 11:57:03', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -222,8 +258,7 @@ CREATE TABLE `tbl_tournament` (
 --
 
 INSERT INTO `tbl_tournament` (`tour_id`, `tour_title`, `user_id`, `tour_type`, `created_at`, `updated_at`) VALUES
-('01h4299vwq5mkm8nzdpcdkskmv', 'Bishop\'s cup (Male Category)', 2, 'cup', '2023-06-29 00:36:56', '2023-06-29 00:36:56'),
-('01h429avf0ykmdah080bdj5t43', 'Bishop\'s Cup (Female Category)', 2, 'cup', '2023-06-29 00:37:29', '2023-06-29 00:37:29');
+('01h4299vwq5mkm8nzdpcdkskmv', 'DLAM FOOTBALL ACADEMY', 2, 'cup', '2023-06-29 00:36:56', '2023-06-29 00:36:56');
 
 -- --------------------------------------------------------
 

@@ -78,7 +78,7 @@ const router = createRouter({
 })
 
 router.afterEach((to, from) => {
-  document.title = "DLAM BISHOP'S CUP | " + to.name?.toString()
+  document.title = "DLAM FA | " + to.name?.toString()
 })
 
 export default router

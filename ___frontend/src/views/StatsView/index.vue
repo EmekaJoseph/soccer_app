@@ -4,6 +4,7 @@
             <div class="m-3 fw-bolder text-uppercase">
                 <RouterLink class="text-white me-1 me-lg-3" to="/"> <i class="bi bi-arrow-left"></i></RouterLink>
                 {{ stats.tour_title }}
+                <span class="float-end"><img class="sm-logo" src="@/assets/images/dlam_academy.png" alt=""></span>
             </div>
             <div class="mt-5 container">
                 <div class="row justify-content-center ">
@@ -100,21 +101,28 @@ onMounted(async () => {
     stats.apiLoading = true
     await stats.getTourDetails()
     loadAllData()
+    stats.getLiveMatches()
 })
 
-function loadAllData() {
-    stats.getStandings()
+async function loadAllData() {
+    await stats.getStandings()
+    await stats.getSchedules()
     stats.getResults()
-    stats.getSchedules()
-    stats.getLiveMatches()
 }
 
-let interval = setInterval(() => {
+// load all data every 3min(180secs)
+let allDataInterval = setInterval(() => {
     loadAllData()
-}, 10000)
+}, 180000)
+
+// load live results every 1min(60secs)
+let liveMatchInterval = setInterval(() => {
+    stats.getLiveMatches()
+}, 60000)
 
 onUnmounted(() => {
-    clearInterval(interval)
+    clearInterval(allDataInterval)
+    clearInterval(liveMatchInterval)
 })
 
 function showPanel(name: string) {
@@ -148,10 +156,18 @@ function showPanel(name: string) {
     border-bottom: 3px solid #fff;
 }
 
+.sm-logo {
+    width: 50px;
+}
+
 @media screen and (max-width: 992px) {
     .menu-item {
         padding: 10px;
         font-size: 10px;
+    }
+
+    .sm-logo {
+        width: 30px;
     }
 }
 

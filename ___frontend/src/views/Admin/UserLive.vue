@@ -16,7 +16,7 @@
                 <div class="col-12 mb-3">
                     <div class="float-end">
                         <button data-bs-toggle="modal" data-bs-target="#addLiveMatchModal" class="btn btn-primary btn-sm">
-                            START MATCH <i class="bi bi-plus-lg"></i>
+                            NEW LIVE MATCH <i class="bi bi-plus-lg"></i>
                         </button>
                     </div>
                 </div>
@@ -26,7 +26,7 @@
                             No Live Matches Start a live match!
                         </emptyDataComponent>
                     </div>
-                    <div class="row gy-3">
+                    <div class="row justify-content-center gy-3">
                         <ComponentLive v-for="(liveData, i) in userData.tournamentLive" :key="i" :team-data="liveData" />
                     </div>
                 </div>
@@ -49,7 +49,7 @@ onMounted(async () => {
     await userData.getTournaments()
     if (userData.tournaments.length) {
         selectedTournament.value = userData.tournaments[0]
-        console.log(selectedTournament.value);
+        // console.log(selectedTournament.value);
         loadLiveMatches()
     }
 })

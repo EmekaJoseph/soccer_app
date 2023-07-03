@@ -14,29 +14,25 @@
             </div>
             <!-- <div v-else class="animate__animated  animate__bounceInUp"> -->
             <div v-else>
-                <div class="row justify-content-center">
+                <div class="row justify-content-center gy-3">
                     <div v-for="({ match_stage, home_team, away_team, home_name, away_name, away_score, home_score, winner, date_played }, i) in stats.tourResults"
                         :key="i" class="col-sm-6">
-                        <div class="card bg-white rounded-0 mb-4">
+                        <div class="card bg-white rounded-0 mb-4 h-100">
                             <div class="card-header fw-bolder bg-white shadow-sm border-0 text-center">
                                 {{ match_stage ? match_stage.replaceAll('_', ' ') : '' }}
                                 ({{ dateFormat(date_played) }})
                             </div>
                             <div class="card-body">
-                                <div class="row gy-3">
-                                    <div class="col-12 fw-bolder text-uppercase" :class="{ 'winner': winner == home_team }">
-                                        {{ home_name }}
-                                        <span class="float-end  "
-                                            :class="{ 'text-success fw-bolder': winner == home_team }">{{
-                                                home_score }}</span>
+                                <div class="row justify-content-center text-center g-1">
+                                    <div class="col-4"> {{ home_name }}</div>
+                                    <div class="col-1 fs-6 fw-bold" :class="{ 'text-success ': winner == home_team }"> {{
+                                        home_score }}
                                     </div>
-
-                                    <div class="col-12 fw-bolder text-uppercase" :class="{ 'winner': winner == away_team }">
-                                        {{ away_name }}
-                                        <span class="float-end "
-                                            :class="{ 'text-success fw-bolder': winner == away_team }">{{
-                                                away_score }}</span>
+                                    <div class="col-2">:</div>
+                                    <div class="col-1 fs-6 fw-bold" :class="{ 'text-success ': winner == away_team }">{{
+                                        away_score }}
                                     </div>
+                                    <div class="col-4">{{ away_name }}</div>
                                 </div>
                             </div>
                         </div>
@@ -65,9 +61,5 @@ const dateFormat = (date: any) => useDateFormat(new Date(date), 'DD/MM/YYYY').va
     .card {
         font-size: 12px;
     }
-}
-
-.winner {
-    border-right: 2px solid green;
 }
 </style>

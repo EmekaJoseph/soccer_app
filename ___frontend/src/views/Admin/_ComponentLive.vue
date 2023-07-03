@@ -11,8 +11,19 @@
 
                             <div class="row g-2">
                                 <div class="col-12">
-                                    <div class="border-1 card p-2 text-center" style="font-size: 3rem;">
-                                        <div class=" fw-bolder">{{ liveData.curr_time }}<span class="text-success">'</span>
+                                    <div class="border-1 card p-2 text-center "
+                                        :class="{ 'bg-body-secondary': liveData.timeIsPaused }">
+                                        <div class="card-header bg-transparent border-0 m-0 p-0 d-flex justify-content-end">
+                                            <button @click="liveData.timeIsPaused = !liveData.timeIsPaused"
+                                                class="btn  m-0 p-0 btn-sm px-2"
+                                                :class="!liveData.timeIsPaused ? 'btn-dark' : 'btn-success'">
+                                                <i v-if="liveData.timeIsPaused" class="bi bi-play"></i>
+                                                <i v-else class="bi bi-pause"></i>
+                                            </button>
+                                        </div>
+                                        <div class="fw-bolder" style="font-size: 3rem;">
+                                            {{ liveData.curr_time }}
+                                            <span v-if="!liveData.timeIsPaused" class="text-success">'</span>
                                         </div>
                                     </div>
                                 </div>
@@ -72,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { reactive, onUnmounted } from 'vue';
 import { useUserDataStore } from '@/store/userDataStore';
 import api from '@/store/axiosManager'
 import { useToast } from 'vue-toast-notification';
@@ -90,6 +101,7 @@ const liveData = reactive({
     home_team_score: prop.teamData.home_team_score,
     live_id: prop.teamData.live_id,
     curr_time: prop.teamData.curr_time,
+    timeIsPaused: false
 })
 
 
@@ -134,9 +146,16 @@ async function endLive() {
 
 // ################################################ FORM
 
+// load live results every 1min(60secs)
+let liveMatchInterval = setInterval(() => {
+    if (!liveData.timeIsPaused) {
+        liveData.curr_time += 1
+    }
+}, 60000)
 
+onUnmounted(() => {
+    clearInterval(liveMatchInterval)
+})
 
 
 </script>
-
-<style scoped></style>

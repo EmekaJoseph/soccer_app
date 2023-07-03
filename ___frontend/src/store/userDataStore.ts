@@ -53,8 +53,6 @@ export const useUserDataStore = defineStore('dataStore', () => {
     try {
       let resp = await api.getLiveMatches(id)
       tournamentLive.value = (resp.status == 200) ? resp.data : [];
-      console.log(tournamentLive.value);
-
     } catch (error) {
       // console.log(error);
     }

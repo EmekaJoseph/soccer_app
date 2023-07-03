@@ -41,7 +41,6 @@ export const useStatsStore = defineStore('stats', () => {
       apiLoading.value = false
       apiError.value = true
       console.log(error);
-
     }
   }
 
