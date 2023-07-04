@@ -40,7 +40,7 @@
             <div class="row justify-content-center g-3">
               <div class="col-md-6">
                 <RouterLink to="stats/01h4299vwq5mkm8nzdpcdkskmv" class="btn btn-primary w-100 hover-tilt-Y btn-lg">
-                  VIEW STATS
+                  SEE STATS
                   <i class="bi bi-chevron-right"></i>
                 </RouterLink>
               </div>

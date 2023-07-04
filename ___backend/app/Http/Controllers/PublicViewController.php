@@ -45,6 +45,8 @@ class PublicViewController extends BaseController
         if (sizeof($standings) > 0) {
             foreach ($standings as $result) {
                 $result->team_name = (TeamModel::find($result->team_id))->team_name;
+                $result->team_color = (TeamModel::find($result->team_id))->team_color;
+                $result->team_badge = (TeamModel::find($result->team_id))->team_badge;
             }
         }
 

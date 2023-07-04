@@ -27,7 +27,8 @@
             </div>
         </div>
 
-        <div class="show-panel min-vh-100" ref="show_panel">
+        <div class="show-panel min-vh-100">
+            <!-- <div class="show-panel min-vh-100" ref="show_panel"> -->
             <div class=" container">
                 <div class="row justify-content-center">
                     <div class="col-md-10 col-lg-8">

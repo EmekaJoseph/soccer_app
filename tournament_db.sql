@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 01, 2023 at 02:06 PM
+-- Generation Time: Jul 04, 2023 at 05:09 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.2
 
@@ -81,9 +81,8 @@ CREATE TABLE `personal_access_tokens` (
 --
 
 INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `name`, `token`, `abilities`, `last_used_at`, `expires_at`, `created_at`, `updated_at`) VALUES
-(1, 'App\\Models\\UserModel', 2, '_token', '4895d06c32cb42b790a1124895267a6a5b5c5a62d361612521c5a56b4e4bb34b', '[\"*\"]', '2023-06-30 22:09:34', NULL, '2023-06-05 20:19:36', '2023-06-30 22:09:34'),
-(10, 'App\\Models\\UserModel', 2, '_token', '4b2388506d2589045ebc2b5fd21ac33af8b89c84b262468aaaa394189480d0d0', '[\"*\"]', '2023-06-26 21:36:20', NULL, '2023-06-26 09:40:05', '2023-06-26 21:36:20'),
-(11, 'App\\Models\\UserModel', 2, '_token', '258b0afa10638e7912ec8df1bf0220973383675397602e19c4e2062d4e83cc85', '[\"*\"]', '2023-07-01 10:57:03', NULL, '2023-06-28 00:29:55', '2023-07-01 10:57:03');
+(1, 'App\\Models\\UserModel', 2, '_token', '4895d06c32cb42b790a1124895267a6a5b5c5a62d361612521c5a56b4e4bb34b', '[\"*\"]', '2023-07-02 08:59:36', NULL, '2023-06-05 20:19:36', '2023-07-02 08:59:36'),
+(10, 'App\\Models\\UserModel', 2, '_token', '4b2388506d2589045ebc2b5fd21ac33af8b89c84b262468aaaa394189480d0d0', '[\"*\"]', '2023-06-26 21:36:20', NULL, '2023-06-26 09:40:05', '2023-06-26 21:36:20');
 
 -- --------------------------------------------------------
 
@@ -121,6 +120,14 @@ CREATE TABLE `tbl_results` (
   `tour_id` varchar(100) NOT NULL,
   `date_played` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `tbl_results`
+--
+
+INSERT INTO `tbl_results` (`result_id`, `away_team`, `home_team`, `home_score`, `away_score`, `match_stage`, `created_at`, `updated_at`, `tour_id`, `date_played`) VALUES
+('01h4cf9tjb0z9ktwes6z8sqz7f', '01h4as5gqqgbjn4av7bgak2tad', '01h4arehbevb541jqqdn7y5y7d', '0', '0', 'Round_of_32', '2023-07-02 23:34:11', '2023-07-02 23:34:11', '01h4299vwq5mkm8nzdpcdkskmv', '2023-07-02'),
+('01h4cgc32vkya0ztxqzbcjbggc', '01h4as5gqqgbjn4av7bgak2tad', '01h4arfsbeenqgdfvpk4qxbxts', '4', '0', 'Round_of_32', '2023-07-02 23:52:54', '2023-07-02 23:52:54', '01h4299vwq5mkm8nzdpcdkskmv', '2023-07-02');
 
 -- --------------------------------------------------------
 
@@ -166,18 +173,18 @@ CREATE TABLE `tbl_standings_cup` (
 --
 
 INSERT INTO `tbl_standings_cup` (`standing_id`, `team_id`, `tour_id`, `group_in`, `played`, `won`, `draw`, `lose`, `goal_diff`, `points`, `created_at`, `updated_at`, `extra_col`) VALUES
-('01h48mv7tz2fcm46f8v49j86bt', '01h48mv7svfz0pz5yaq581d4yp', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 0, 0, 0, 0, 0, 0, '2023-07-01 11:54:07', '2023-07-01 11:54:07', NULL),
-('01h48mvqkgfqfc7yf8y91hf1we', '01h48mvqhmsa2z85kx4kc2tjqh', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 0, 0, 0, 0, 0, 0, '2023-07-01 11:54:23', '2023-07-01 11:54:23', NULL),
-('01h48mw1a9rbax9b6v42bytza6', '01h48mw192jzjwavagtbwagfcf', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 0, 0, 0, 0, 0, 0, '2023-07-01 11:54:33', '2023-07-01 11:54:33', NULL),
-('01h48mwk8n731ehrh1rjbwxtxd', '01h48mwk7p34x3p7e2tsw5r7gv', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 0, 0, 0, 0, 0, 0, '2023-07-01 11:54:51', '2023-07-01 11:54:51', NULL),
-('01h48mxk6kk7mnw34787tx1qe1', '01h48mxk59mjzftgtvq84nb15f', '01h4299vwq5mkm8nzdpcdkskmv', 'B', 0, 0, 0, 0, 0, 0, '2023-07-01 11:55:24', '2023-07-01 11:55:24', NULL),
-('01h48my1zx93rj740y4j1dsyhh', '01h48my1z159zk60edw51q5vtb', '01h4299vwq5mkm8nzdpcdkskmv', 'B', 0, 0, 0, 0, 0, 0, '2023-07-01 11:55:39', '2023-07-01 11:55:39', NULL),
-('01h48myetp201stj1hxqwpg5ya', '01h48myesasrqk850y16k7z0et', '01h4299vwq5mkm8nzdpcdkskmv', 'B', 0, 0, 0, 0, 0, 0, '2023-07-01 11:55:52', '2023-07-01 11:55:52', NULL),
-('01h48myvw3r6drw80z3bz4w7ge', '01h48myvsg0vh5yewwsm12gqpx', '01h4299vwq5mkm8nzdpcdkskmv', 'B', 0, 0, 0, 0, 0, 0, '2023-07-01 11:56:05', '2023-07-01 11:56:05', NULL),
-('01h48mz6rry4vmgb3b1qf5drqw', '01h48mz6qmphh4rfm7801ecqsa', '01h4299vwq5mkm8nzdpcdkskmv', 'C', 0, 0, 0, 0, 0, 0, '2023-07-01 11:56:17', '2023-07-01 11:56:17', NULL),
-('01h48mzghmjy4687tgrxkt8se8', '01h48mzggttf56twkyqr3hvvy1', '01h4299vwq5mkm8nzdpcdkskmv', 'C', 0, 0, 0, 0, 0, 0, '2023-07-01 11:56:27', '2023-07-01 11:56:27', NULL),
-('01h48n01zztfhse1y9jwaf73xc', '01h48n01xehxage2aezkmbn63b', '01h4299vwq5mkm8nzdpcdkskmv', 'C', 0, 0, 0, 0, 0, 0, '2023-07-01 11:56:44', '2023-07-01 11:56:44', NULL),
-('01h48n0kxzdwq6br8s528p4dhd', '01h48n0kwfdv6zt0axctb5g9qz', '01h4299vwq5mkm8nzdpcdkskmv', 'C', 0, 0, 0, 0, 0, 0, '2023-07-01 11:57:03', '2023-07-01 11:57:03', NULL);
+('01h4arehczjgp3kwjsrvtzep4p', '01h4arehbevb541jqqdn7y5y7d', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 0, 0, 0, 0, 0, 0, '2023-07-02 07:35:34', '2023-07-02 11:44:15', NULL),
+('01h4arfse0zxvxg2dcw4kjhj5z', '01h4arfsbeenqgdfvpk4qxbxts', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 0, 0, 0, 0, 0, 0, '2023-07-02 07:36:15', '2023-07-02 07:36:15', NULL),
+('01h4argvykma6fq042sfdn4cgc', '01h4argvsmaxzw4nkerdpp4vq1', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 0, 0, 0, 0, 0, 0, '2023-07-02 07:36:50', '2023-07-02 07:36:50', NULL),
+('01h4arp4cvtm2rkcpbprpzbc5k', '01h4arp4asbfv9yjvsqk68r0tg', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 0, 0, 0, 0, 0, 0, '2023-07-02 07:39:42', '2023-07-02 11:44:15', NULL),
+('01h4arz4rz4a21zh8fr1qpnj3m', '01h4arz4qdwpcpvqy0kafxp8xq', '01h4299vwq5mkm8nzdpcdkskmv', 'B', 0, 0, 0, 0, 0, 0, '2023-07-02 07:44:38', '2023-07-02 07:44:38', NULL),
+('01h4as00ge560kk2k6byme0v6j', '01h4as00btdt98nnt8v3r9kzmk', '01h4299vwq5mkm8nzdpcdkskmv', 'B', 0, 0, 0, 0, 0, 0, '2023-07-02 07:45:06', '2023-07-02 07:45:06', NULL),
+('01h4as240svm1zfsyag7tp4t91', '01h4as23yzsp0htg2pbqh9384d', '01h4299vwq5mkm8nzdpcdkskmv', 'B', 0, 0, 0, 0, 0, 0, '2023-07-02 07:46:15', '2023-07-02 07:46:15', NULL),
+('01h4as2w9t3khef8yktxqjf1kn', '01h4as2w4xzfhrf4dydnj5b596', '01h4299vwq5mkm8nzdpcdkskmv', 'B', 0, 0, 0, 0, 0, 0, '2023-07-02 07:46:40', '2023-07-02 07:46:40', NULL),
+('01h4as4eyh6ntrr9nr8pwccd1t', '01h4as4ex4y3k8gnfes6gtbkna', '01h4299vwq5mkm8nzdpcdkskmv', 'C', 0, 0, 0, 0, 0, 0, '2023-07-02 07:47:32', '2023-07-02 07:47:32', NULL),
+('01h4as4w65yax6dx6p30scmv4z', '01h4as4w5160f91sjkx2n4jyg5', '01h4299vwq5mkm8nzdpcdkskmv', 'C', 0, 0, 0, 0, 0, 0, '2023-07-02 07:47:45', '2023-07-02 07:47:45', NULL),
+('01h4as5gskm34a2kgnyvxsf978', '01h4as5gqqgbjn4av7bgak2tad', '01h4299vwq5mkm8nzdpcdkskmv', 'C', 0, 0, 0, 0, 0, 0, '2023-07-02 07:48:07', '2023-07-02 07:48:07', NULL),
+('01h4as5tp940hxh80rfdhtgv7p', '01h4as5tmte5xry4xeta54wb1t', '01h4299vwq5mkm8nzdpcdkskmv', 'C', 0, 0, 0, 0, 0, 0, '2023-07-02 07:48:17', '2023-07-02 07:48:17', NULL);
 
 -- --------------------------------------------------------
 
@@ -217,26 +224,28 @@ CREATE TABLE `tbl_teams` (
   `manager` varchar(100) DEFAULT NULL,
   `created_at` varchar(100) NOT NULL,
   `updated_at` varchar(100) NOT NULL,
-  `team_brief` text DEFAULT NULL
+  `team_brief` text DEFAULT NULL,
+  `team_badge` varchar(100) DEFAULT NULL,
+  `team_color` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_teams`
 --
 
-INSERT INTO `tbl_teams` (`team_id`, `team_name`, `tour_id`, `match_played`, `group_in`, `address`, `manager`, `created_at`, `updated_at`, `team_brief`) VALUES
-('01h48mv7svfz0pz5yaq581d4yp', 'Odiolowo', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'A', NULL, NULL, '2023-07-01 11:54:07', '2023-07-01 11:54:07', NULL),
-('01h48mvqhmsa2z85kx4kc2tjqh', 'Ijeshatedo', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'A', NULL, NULL, '2023-07-01 11:54:23', '2023-07-01 11:54:23', NULL),
-('01h48mw192jzjwavagtbwagfcf', 'Munshin', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'A', NULL, NULL, '2023-07-01 11:54:33', '2023-07-01 11:54:33', NULL),
-('01h48mwk7p34x3p7e2tsw5r7gv', 'Cathedral', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'A', NULL, NULL, '2023-07-01 11:54:51', '2023-07-01 11:54:51', NULL),
-('01h48mxk59mjzftgtvq84nb15f', 'Orile Coker', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'B', NULL, NULL, '2023-07-01 11:55:24', '2023-07-01 11:55:24', NULL),
-('01h48my1z159zk60edw51q5vtb', 'Idioro', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'B', NULL, NULL, '2023-07-01 11:55:39', '2023-07-01 11:55:39', NULL),
-('01h48myesasrqk850y16k7z0et', 'Aguda', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'B', NULL, NULL, '2023-07-01 11:55:52', '2023-07-01 11:55:52', NULL),
-('01h48myvsg0vh5yewwsm12gqpx', 'Ikate', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'B', NULL, NULL, '2023-07-01 11:56:05', '2023-07-01 11:56:05', NULL),
-('01h48mz6qmphh4rfm7801ecqsa', 'Yaba', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'C', NULL, NULL, '2023-07-01 11:56:17', '2023-07-01 11:56:17', NULL),
-('01h48mzggttf56twkyqr3hvvy1', 'Surulere', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'C', NULL, NULL, '2023-07-01 11:56:27', '2023-07-01 11:56:27', NULL),
-('01h48n01xehxage2aezkmbn63b', 'Okota', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'C', NULL, NULL, '2023-07-01 11:56:44', '2023-07-01 11:56:44', NULL),
-('01h48n0kwfdv6zt0axctb5g9qz', 'ASF', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'C', NULL, NULL, '2023-07-01 11:57:03', '2023-07-01 11:57:03', NULL);
+INSERT INTO `tbl_teams` (`team_id`, `team_name`, `tour_id`, `match_played`, `group_in`, `address`, `manager`, `created_at`, `updated_at`, `team_brief`, `team_badge`, `team_color`) VALUES
+('01h4arehbevb541jqqdn7y5y7d', 'Cathedral group', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'A', NULL, NULL, '2023-07-02 07:35:33', '2023-07-02 11:44:15', NULL, NULL, '#FFD700'),
+('01h4arfsbeenqgdfvpk4qxbxts', 'Ijeshatedo', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'A', NULL, NULL, '2023-07-02 07:36:14', '2023-07-02 07:36:14', NULL, NULL, '#B6D0E2'),
+('01h4argvsmaxzw4nkerdpp4vq1', 'Mushin', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'A', NULL, NULL, '2023-07-02 07:36:50', '2023-07-02 07:36:50', NULL, NULL, '#A020F0'),
+('01h4arp4asbfv9yjvsqk68r0tg', 'Odi-olowo', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'A', NULL, NULL, '2023-07-02 07:39:42', '2023-07-02 11:44:15', NULL, NULL, '#FFA500'),
+('01h4arz4qdwpcpvqy0kafxp8xq', 'Aguda', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'B', NULL, NULL, '2023-07-02 07:44:38', '2023-07-02 07:44:38', NULL, NULL, '#FFC0CB'),
+('01h4as00btdt98nnt8v3r9kzmk', 'Idi-oro', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'B', NULL, NULL, '2023-07-02 07:45:06', '2023-07-02 07:45:06', NULL, NULL, '#4169e1'),
+('01h4as23yzsp0htg2pbqh9384d', 'Ikate', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'B', NULL, NULL, '2023-07-02 07:46:15', '2023-07-02 07:46:15', NULL, NULL, '#722F37'),
+('01h4as2w4xzfhrf4dydnj5b596', 'Orile-Coker', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'B', NULL, NULL, '2023-07-02 07:46:40', '2023-07-02 07:46:40', NULL, NULL, '#FAFA33'),
+('01h4as4ex4y3k8gnfes6gtbkna', 'ASF', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'C', NULL, NULL, '2023-07-02 07:47:32', '2023-07-02 07:47:32', NULL, NULL, NULL),
+('01h4as4w5160f91sjkx2n4jyg5', 'Okota', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'C', NULL, NULL, '2023-07-02 07:47:45', '2023-07-02 07:47:45', NULL, NULL, '#FF0000'),
+('01h4as5gqqgbjn4av7bgak2tad', 'Surulere', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'C', NULL, NULL, '2023-07-02 07:48:07', '2023-07-02 07:48:07', NULL, NULL, '#00FF00'),
+('01h4as5tmte5xry4xeta54wb1t', 'Yaba', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'C', NULL, NULL, '2023-07-02 07:48:17', '2023-07-02 07:48:17', NULL, NULL, '#FFFF00');
 
 -- --------------------------------------------------------
 
@@ -377,13 +386,13 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `tbl_live`
 --
 ALTER TABLE `tbl_live`
-  MODIFY `live_id` int(100) NOT NULL AUTO_INCREMENT;
+  MODIFY `live_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tbl_users`

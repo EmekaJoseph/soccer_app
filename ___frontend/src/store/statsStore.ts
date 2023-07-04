@@ -19,6 +19,7 @@ export const useStatsStore = defineStore('stats', () => {
     tour_type.value = ''
     tour_title.value = ''
     try {
+      apiError.value = false
       let resp = await api.tour_data(tour_id.value)
       if (resp.status == 200) {
         tour_title.value = resp.data.tour_title
@@ -32,6 +33,7 @@ export const useStatsStore = defineStore('stats', () => {
 
   async function getStandings() {
     try {
+      apiError.value = false
       let resp = await api.standings(tour_id.value)
       tourStandings.value = resp.data
       apiLoading.value = false
@@ -46,6 +48,7 @@ export const useStatsStore = defineStore('stats', () => {
 
   async function getResults() {
     try {
+      apiError.value = false
       let resp = await api.results(tour_id.value)
       tourResults.value = resp.data
       apiLoading.value = false
@@ -60,6 +63,7 @@ export const useStatsStore = defineStore('stats', () => {
 
   async function getSchedules() {
     try {
+      apiError.value = false
       let resp = await api.schedules(tour_id.value)
       tourSchedules.value = resp.data
       apiLoading.value = false

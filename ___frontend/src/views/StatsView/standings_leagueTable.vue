@@ -7,6 +7,14 @@
             <EasyDataTable table-class-name="easy-table-cup-league" class="border-0" :headers="headers" :items="data"
                 show-index>
 
+                <template #item-team_badge="item">
+                    <div v-if="item.badge"> {{ item.badge }} </div>
+                    <div v-else>
+                        <i :style="{ color: `${!item.team_color ? '#ccc' : item.team_color}` }"
+                            class="bi bi-shield-shaded"></i>
+                    </div>
+                </template>
+
                 <template #item-team_name="item">
                     <div class=" fw-bolder"> {{ item.team_name }} </div>
                 </template>
@@ -30,6 +38,7 @@ const prop = defineProps({
 })
 
 const headers: Header[] = [
+    { text: "", value: "team_badge" },
     { text: "", value: "team_name" },
     { text: "P", value: "played" },
     { text: "W", value: "won" },
