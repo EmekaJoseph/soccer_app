@@ -16,14 +16,30 @@
             <img class="dlam_academy" src="@/assets/images/dlam_academy.png" alt="anglican logo">
             <img class="stationery_logo" src="@/assets/images/stationery_logo.png" alt="stationeryfc logo">
 
-            <div class="d-none d-md-block">CHURCH OF NIGERIA ANGLICAN COMMUNION</div>
-            <div class="d-md-none">CHURCH OF NIGERIA <br> ANGLICAN COMMUNION</div>
+            <div class="d-none d-md-block">
+              CHURCH OF NIGERIA ANGLICAN COMMUNION
+            </div>
+            <div class="d-md-none">
+              CHURCH OF NIGERIA
 
-            <div class="fw-bolder fs-5">DIOCESE OF LAGOS MAINLAND</div>
+            </div>
+            <div class="d-md-none">
+              ANGLICAN COMMUNION
 
-            <small><i>in conjuction with</i></small>
+            </div>
 
-            <div class="fw-bolder fs-5">STATIONERY STORES FC</div>
+            <div class="fw-bolder fs-5">
+              <vue-writer :array="['DIOCESE OF LAGOS MAINLAND']" :iterations='1' :typeSpeed="100" :start="1000" />
+            </div>
+
+
+            <small class=" fst-italic">
+              <vue-writer :array="['in conjuction with']" :iterations='1' :typeSpeed="100" :start="2000" />
+            </small>
+
+            <div class="fw-bolder fs-5">
+              <vue-writer :array="['STATIONERY STORES FC']" :iterations='1' :typeSpeed="100" :start="3000" />
+            </div>
 
             <div class="large-text animate__animated animate__pulse animate__delay-1s">
               DLAM Football Competition 2023
@@ -55,8 +71,36 @@
 
       <!-- </div> -->
     </div>
+
+    <!-- <shareSite /> -->
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useToast } from 'vue-toast-notification';
+
+
+onMounted(() => {
+  // const $toast = useToast();
+
+  // var today = new Date()
+  // var curHr = today.getHours()
+  // let text = ''
+
+  // if (curHr < 12) {
+  //   text = '<i class="bi bi-sunrise"></i> Good Morning'
+  // } else if (curHr < 18) {
+  //   text = '<i class="bi bi-brightness-alt-high"></i> Good Afternoon'
+  // } else {
+  //   text = '<i class="bi bi-moon"></i> Good Evening'
+  // }
+
+  // $toast.default(text, { position: 'top-left' });
+})
+</script>
+
+
 
 <style scoped>
 .main {
@@ -92,8 +136,6 @@
     margin-top: 3rem;
     line-height: 55px;
   }
-
-
 }
 
 /* .tint {

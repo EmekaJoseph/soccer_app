@@ -28,10 +28,16 @@ app.component('internetErrorComponent', internetErrorComponent);
 import emptyDataComponent from '@/components/emptyData.vue'
 app.component('emptyDataComponent', emptyDataComponent);
 
+import shareSite from '@/components/share.vue'
+app.component('shareSite', shareSite);
+
 
 import Vue3EasyDataTable from 'vue3-easy-data-table';
 import 'vue3-easy-data-table/dist/style.css';
 app.component('EasyDataTable', Vue3EasyDataTable);
+
+// @ts-ignore
+import VueWriter from "vue-writer";
 
 // npm install vue3-touch-events
 // import Vue3TouchEvents from "vue3-touch-events";
@@ -39,5 +45,6 @@ app.component('EasyDataTable', Vue3EasyDataTable);
 
 app.use(createPinia())
 app.use(router)
+app.use(VueWriter)
 
 app.mount('#app')
