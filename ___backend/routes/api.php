@@ -28,6 +28,10 @@ Route::controller(PublicViewController::class)->prefix('view')->group(function (
     Route::get('live/{tour_id}',  'showLiveMatches');
 });
 
+Route::post('save_prediction', [PublicViewController::class, 'save_prediction']);
+
+Route::resource('team', TeamsController::class)->only(['index']);;
+
 //  ############################################################## //
 
 
@@ -42,7 +46,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('userLogout',  'userLogout');
     });
 
-    Route::resource('team', TeamsController::class);
+    Route::resource('team', TeamsController::class)->except(['index']);;
 
     Route::resource('schedule', ScheduleController::class);
 

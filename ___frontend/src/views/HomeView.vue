@@ -55,10 +55,17 @@
           <div class="col-10 col-lg-6">
             <div class="row justify-content-center g-3">
               <div class="col-md-6">
-                <RouterLink to="stats/01h4299vwq5mkm8nzdpcdkskmv" class="btn btn-primary w-100 hover-tilt-Y btn-lg">
+                <RouterLink :to="'stats/' + tour_id" class="btn btn-primary w-100 hover-tilt-Y btn-lg">
                   SEE STATS
                   <i class="bi bi-chevron-right"></i>
                 </RouterLink>
+                <div @click="openPredictionModal" v-if="hasPredicted == 0"
+                  class="mt-4 text-center cursor-pointer text-primary">
+                  Make your prediction <i class="bi bi-trophy"></i>
+                </div>
+
+                <button data-bs-toggle="modal" data-bs-target="#predictionModal" class="d-none" ref="modalBtn"></button>
+
               </div>
               <!-- <div class="col-md-6">
                 <RouterLink to="stats/01h429avf0ykmdah080bdj5t43" class="btn btn-primary w-100 hover-tilt-Y btn-lg">
@@ -72,16 +79,43 @@
       <!-- </div> -->
     </div>
 
+    <predictionModal :teams="teams" :tour_id="tour_id" @done="atPredictDone" />
     <!-- <shareSite /> -->
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useStorage } from '@vueuse/core'
+import predictionModal from '@/components/modals/predictionModal.vue'
+import api from '@/store/axiosManager'
 import { useToast } from 'vue-toast-notification';
 
+const hasPredicted: any = useStorage('DLAM_FA_predict', '0', localStorage)
+const DLAM_visitor: any = useStorage('DLAM_FA_visitor', '', localStorage)
+
+const teams = ref([]);
+const modalBtn = ref<any>(null);
+const $toast = useToast();
+
+const tour_id = '01h4299vwq5mkm8nzdpcdkskmv';
+
+async function openPredictionModal() {
+  let resp = await api.getTournamentTeams(tour_id);
+  teams.value = resp.data
+  modalBtn.value.click()
+}
+
+
+function atPredictDone(name: string) {
+  console.log('done');
+  $toast.success('Thank you ' + name + ', Prediction saved.', { position: 'top-right' });
+  hasPredicted.value = 1
+  DLAM_visitor.value = name
+}
 
 onMounted(() => {
+
   // const $toast = useToast();
 
   // var today = new Date()

@@ -45,6 +45,10 @@ export default {
         return $instance.get(`view/live/${tour_id}`,)
     },
 
+    savePrediction(data: any) {
+        return $instance.post(`save_prediction`, JSON.stringify(data))
+    },
+
 
 
     // USER

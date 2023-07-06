@@ -16,6 +16,7 @@ use App\Models\Standings_CupModel;
 use App\Models\ResultModel;
 use App\Models\TeamModel;
 use App\Models\ScheduleModel;
+use App\Models\PredictionModel;
 
 
 class PublicViewController extends BaseController
@@ -139,7 +140,6 @@ class PublicViewController extends BaseController
         return response()->json($results, 200);
     }
 
-
     public function showLiveMatches(Request $req, $tour_id)
     {
         $liveUpdates = DB::table('tbl_live')->where('tour_id', $tour_id)->get();
@@ -151,5 +151,32 @@ class PublicViewController extends BaseController
         }
 
         return response()->json($liveUpdates, 200);
+    }
+
+    public function save_prediction(Request $req)
+    {
+        // check if tournament exists
+        $thisTournament = TournamentModel::find($req->input('tour_id'));
+        if (!$thisTournament) {
+            return response()->json('invalid tournament', 203);
+        }
+
+        try {
+            PredictionModel::create([
+                'tour_id' => $req->input('tour_id'),
+                'first_place' => $req->input('first_place'),
+                'second_place' => $req->input('second_place'),
+                'third_place' => $req->input('third_place'),
+                'full_name' => $req->input('full_name'),
+                'phone_number' => $req->input('phone_number'),
+                'email' => $req->input('email'),
+                'created_at' => Carbon::now(),
+                'device_ip' => $req->ip(),
+            ]);
+            return response()->json('saved', 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json('error', 401);
+        }
     }
 }
