@@ -28,7 +28,7 @@
                                         <label>Away Team: </label>
                                         <select class="form-select  " v-model="form.away_team">
                                             <option value="" selected disabled></option>
-                                            <option v-for="i in userData.tournamentTeams" :key="i" :value="i.team_id">{{
+                                            <option v-for="i in awayDropdown" :key="i" :value="i.team_id">{{
                                                 i.team_name
                                             }}
                                             </option>
@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue';
+import { reactive, ref, watch, computed } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 import { useUserDataStore } from '@/store/userDataStore';
 import api from '@/store/axiosManager'
@@ -90,6 +90,10 @@ const form = reactive({
     away_team: '',
     match_stage: '',
     tour_id: prop.tour.id,
+})
+
+const awayDropdown = computed(() => {
+    return userData.tournamentTeams.filter((x: any) => x.team_id !== form.home_team)
 })
 
 

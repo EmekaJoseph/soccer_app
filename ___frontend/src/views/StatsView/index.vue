@@ -119,7 +119,7 @@ let allDataInterval = setInterval(() => {
 // load live results every 1min(60secs)
 let liveMatchInterval = setInterval(() => {
     stats.getLiveMatches()
-}, 60000)
+}, 10000)
 
 onUnmounted(() => {
     clearInterval(allDataInterval)

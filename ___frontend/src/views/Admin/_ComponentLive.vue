@@ -1,6 +1,6 @@
 <template>
-    <div class="col-md-6 col-lg-4">
-        <fieldset class="border rounded-3 p-3 bg-white h-100">
+    <div class="col-12 col-md-6">
+        <fieldset class="border rounded-3 p-3 bg-white h-100 shadow">
             <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">LIVE MATCH:
             </legend>
             <div class="row g-3">
@@ -11,12 +11,12 @@
 
                             <div class="row g-2">
                                 <div class="col-12">
-                                    <div class="border-1 card p-2 text-center "
+                                    <div class="card p-2 text-center "
                                         :class="{ 'bg-body-secondary': liveData.timeIsPaused }">
                                         <div class="card-header bg-transparent border-0 m-0 p-0 d-flex justify-content-end">
                                             <button @click="liveData.timeIsPaused = !liveData.timeIsPaused"
                                                 class="btn  m-0 p-0 btn-sm px-2"
-                                                :class="!liveData.timeIsPaused ? 'btn-dark' : 'btn-success'">
+                                                :class="!liveData.timeIsPaused ? 'btn-warning' : 'btn-success'">
                                                 <i v-if="liveData.timeIsPaused" class="bi bi-play"></i>
                                                 <i v-else class="bi bi-pause"></i>
                                             </button>
@@ -26,9 +26,27 @@
                                             <span v-if="!liveData.timeIsPaused" class="text-success">'</span>
                                         </div>
                                     </div>
+                                    <div class=" mt-1 mb-3">
+                                        <!-- <div class="text-center mb-2"> Update Time:</div> -->
+                                        <div class="row justify-content-center g-2">
+                                            <div class="col-6">
+                                                <button
+                                                    @click="liveData.curr_time = (liveData.curr_time >= 1) ? liveData.curr_time -= 1 : 0"
+                                                    class="w-100 btn bg-secondary-subtle   btn-sm">
+                                                    <i class="bi bi-dash-lg"></i>
+                                                </button>
+                                            </div>
+                                            <div class="col-6">
+                                                <button @click="liveData.curr_time++"
+                                                    class="w-100 btn bg-success-subtle  btn-sm">
+                                                    <i class="bi bi-plus-lg"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-8">
-                                    <input type="text" class="form-control form-control-sm" readonly
+                                    <input type="text" class="form-control form-control-sm text-uppercase" readonly
                                         :value="teamData.home_team">
                                 </div>
                                 <div class="col-4">
@@ -37,7 +55,7 @@
                                 </div>
 
                                 <div class="col-8">
-                                    <input type="text" class="form-control form-control-sm" readonly
+                                    <input type="text" class="form-control form-control-sm text-uppercase" readonly
                                         :value="teamData.away_team">
                                 </div>
                                 <div class="col-4">
@@ -46,26 +64,7 @@
                                 </div>
                             </div>
 
-                            <div class=" mt-3 shadow-sm border-0">
-                                <div class="text-center mb-2"> Update Time:</div>
-                                <div class="row justify-content-center g-2">
-                                    <!-- <div class="col-6">
-                                            <input type="number" class="form-control form-control-sm" :value="curr_time">
-                                        </div> -->
-                                    <div class="col-6">
-                                        <button @click="liveData.curr_time--"
-                                            class="w-100 btn btn-outline-secondary bg-light-subtle btn-sm">
-                                            <i class="bi bi-dash"></i>
-                                        </button>
-                                    </div>
-                                    <div class="col-6">
-                                        <button @click="liveData.curr_time++"
-                                            class="w-100 btn btn-outline-success bg-light-subtle btn-sm">
-                                            <i class="bi bi-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                            <!--  -->
 
                         </div>
                     </div>
