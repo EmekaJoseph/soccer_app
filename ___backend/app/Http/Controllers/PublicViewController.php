@@ -179,4 +179,19 @@ class PublicViewController extends BaseController
             return response()->json('error', 401);
         }
     }
+
+    public function get_predictions(Request $req)
+    {
+        $predictions = PredictionModel::where('tour_id', $req->input('tour_id'))->get();
+
+        if (sizeof($predictions) > 0) {
+            foreach ($predictions as $prediction) {
+                $prediction->first_place = (TeamModel::find($prediction->first_place))->team_name;
+                $prediction->second_place = (TeamModel::find($prediction->second_place))->team_name;
+                $prediction->third_place = (TeamModel::find($prediction->third_place))->team_name;
+                $prediction->predicted = Carbon::parse($prediction->created_at)->diffForHumans();
+            }
+        }
+        return response()->json($predictions, 200);
+    }
 }

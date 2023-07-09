@@ -29,6 +29,7 @@ Route::controller(PublicViewController::class)->prefix('view')->group(function (
 });
 
 Route::post('save_prediction', [PublicViewController::class, 'save_prediction']);
+Route::get('get_predictions', [PublicViewController::class, 'get_predictions']);
 
 Route::resource('team', TeamsController::class)->only(['index']);;
 

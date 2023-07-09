@@ -15,6 +15,7 @@ import userTeams from '../views/Admin/UserTeams.vue'
 import userResults from '../views/Admin/UserResults.vue'
 import userSchedules from '../views/Admin/UserSchedules.vue'
 import userLive from '../views/Admin/UserLive.vue'
+import userPredictions from '../views/Admin/UserPredictions.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -62,6 +63,7 @@ const router = createRouter({
         { path: 'schedules', name: 'Schedules', component: userSchedules },
         { path: 'results', name: 'Results', component: userResults },
         { path: 'live', name: 'Live', component: userLive },
+        { path: 'predictions', name: 'Predictions', component: userPredictions },
 
       ],
     },

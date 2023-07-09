@@ -37,13 +37,21 @@
                         <RouterLink to="/user/teams"><i class="bi bi-people"></i> Teams</RouterLink>
                     </li>
                     <li class="list-group-item">
-                        <RouterLink to="/user/schedules"><i class="bi bi-card-text"></i> Schedules</RouterLink>
+                        <RouterLink to="/user/schedules"><i class="bi bi-calendar2-event"></i> Schedules</RouterLink>
                     </li>
                     <li class="list-group-item">
                         <RouterLink to="/user/results"><i class="bi bi-list-check"></i> Results</RouterLink>
                     </li>
                     <li class="list-group-item">
-                        <RouterLink to="/user/live"><i class="bi bi-list-check"></i> Live Update</RouterLink>
+                        <RouterLink to="/user/live"><i class="bi bi-circle"></i> Live Update</RouterLink>
+                    </li>
+
+                    <li class="list-group-item">
+                        <RouterLink to="/user/predictions"><i class="bi bi-command"></i> Predictions</RouterLink>
+                    </li>
+
+                    <li class="list-group-item mt-5">
+                        <div class="cursor-pointer" @click="logOut"><i class="bi bi-box-arrow-left"></i> Logout </div>
                     </li>
                 </ul>
             </div>

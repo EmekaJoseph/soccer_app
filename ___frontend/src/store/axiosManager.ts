@@ -49,6 +49,10 @@ export default {
         return $instance.post(`save_prediction`, JSON.stringify(data))
     },
 
+    getPredictions(tour_id: any) {
+        return $instance.get(`get_predictions?tour_id=${tour_id}`)
+    },
+
 
 
     // USER
