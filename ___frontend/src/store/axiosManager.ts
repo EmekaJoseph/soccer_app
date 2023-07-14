@@ -78,8 +78,6 @@ export default {
     },
 
 
-
-
     createTournament(data: object) {
         return $instance.post(`createTournament`, JSON.stringify(data))
     },

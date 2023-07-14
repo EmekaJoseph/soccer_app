@@ -11,6 +11,7 @@ export const useStatsStore = defineStore('stats', () => {
   const tourSchedules = ref<any[]>([])
   const tourLives = ref<any[]>([])
   const apiError = ref<boolean>(false)
+  const statsLoaded = ref<boolean>(false)
   const apiLoading = ref<boolean>(true)
   // const doubleCount = computed(() => count.value * 2)
 
@@ -97,6 +98,7 @@ export const useStatsStore = defineStore('stats', () => {
     tourResults,
     tourSchedules,
     tourLives,
+    statsLoaded,
     getStandings,
     getResults,
     getSchedules,

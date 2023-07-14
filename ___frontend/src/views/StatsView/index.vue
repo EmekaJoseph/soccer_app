@@ -19,7 +19,8 @@
                                 :class="{ 'shadow-sm menu-active': currentShowing == 'results' }">RESULTS</div>
                             <div @click="showPanel('live')" class="menu-item"
                                 :class="{ 'shadow-sm menu-active': currentShowing == 'live' }">LIVE
-                                <i v-if="stats.tourLives.length" class="bi bi-circle-fill text-success small"></i>
+                                <i v-if="stats.tourLives.length" style="font-size: 7px;"
+                                    class="float-end mt-1 ms-1 bi bi-circle-fill text-success"></i>
                             </div>
                         </div>
                     </div>
@@ -27,23 +28,25 @@
             </div>
         </div>
 
+        <!-- <div class="show-panel min-vh-100" ref="panel_for_Swipe"> -->
         <div class="show-panel min-vh-100">
-            <!-- <div class="show-panel min-vh-100" ref="show_panel"> -->
             <div class=" container">
                 <div class="row justify-content-center">
                     <div class="col-md-10 col-lg-8">
-                        <div v-if="currentShowing == 'standings'">
-                            <StandingsPanel />
-                        </div>
-                        <div v-if="currentShowing == 'matches'">
-                            <SchedulePanel />
-                        </div>
-                        <div v-if="currentShowing == 'results'">
-                            <ResultsPanel />
-                        </div>
-                        <div v-if="currentShowing == 'live'">
-                            <LivePanel />
-                        </div>
+                        <StatsLayout>
+                            <div v-if="currentShowing == 'standings'">
+                                <StandingsPanel />
+                            </div>
+                            <div v-else-if="currentShowing == 'matches'">
+                                <SchedulePanel />
+                            </div>
+                            <div v-else-if="currentShowing == 'results'">
+                                <ResultsPanel />
+                            </div>
+                            <div v-else-if="currentShowing == 'live'">
+                                <LivePanel />
+                            </div>
+                        </StatsLayout>
                     </div>
                 </div>
             </div>
@@ -56,6 +59,7 @@
 import { useRoute } from 'vue-router';
 import { onMounted, ref, onUnmounted, watch } from 'vue'
 import { useStatsStore } from '@/store/statsStore'
+import StatsLayout from './StatsLayout.vue';
 
 import { useSwipe } from '@vueuse/core'
 
@@ -69,8 +73,46 @@ const route = useRoute()
 
 const currentShowing = ref('standings')
 
-const show_panel = ref<any>(null)
-const { direction } = useSwipe(show_panel, {
+onMounted(async () => {
+    if (!stats.statsLoaded) {
+        stats.tour_id = route.params.tour_id
+        stats.apiLoading = true
+        await stats.getTourDetails()
+        loadAllData()
+        stats.getLiveMatches()
+    }
+})
+
+
+async function loadAllData() {
+    await stats.getStandings()
+    await stats.getSchedules()
+    stats.getResults()
+}
+
+// load all data every 180secs(3mins)
+let allDataInterval = setInterval(() => {
+    loadAllData()
+}, 180000)
+
+// load live results every 10secs(0.10mins)
+let liveMatchInterval = setInterval(() => {
+    stats.getLiveMatches()
+}, 10000)
+
+onUnmounted(() => {
+    clearInterval(allDataInterval)
+    clearInterval(liveMatchInterval)
+})
+
+function showPanel(name: string) {
+    currentShowing.value = name;
+    window.scrollTo(0, 0);
+}
+
+
+const panel_for_Swipe = ref<any>(null)
+const { direction } = useSwipe(panel_for_Swipe, {
     onSwipe() {
         if (direction.value == 'left') {
             if (currentShowing.value == 'standings') {
@@ -97,39 +139,10 @@ const { direction } = useSwipe(show_panel, {
     }
 })
 
-onMounted(async () => {
-    stats.tour_id = route.params.tour_id
-    stats.apiLoading = true
-    await stats.getTourDetails()
-    loadAllData()
-    stats.getLiveMatches()
-})
 
-async function loadAllData() {
-    await stats.getStandings()
-    await stats.getSchedules()
-    stats.getResults()
-}
 
-// load all data every 3min(180secs)
-let allDataInterval = setInterval(() => {
-    loadAllData()
-}, 180000)
 
-// load live results every 1min(60secs)
-let liveMatchInterval = setInterval(() => {
-    stats.getLiveMatches()
-}, 10000)
 
-onUnmounted(() => {
-    clearInterval(allDataInterval)
-    clearInterval(liveMatchInterval)
-})
-
-function showPanel(name: string) {
-    currentShowing.value = name;
-    window.scrollTo(0, 0);
-}
 </script>
 
 <style scoped>
@@ -164,7 +177,7 @@ function showPanel(name: string) {
 @media screen and (max-width: 992px) {
     .menu-item {
         padding: 10px;
-        font-size: 10px;
+        font-size: 12px;
     }
 
     .sm-logo {

@@ -59,10 +59,11 @@
                 </div>
 
                 <div v-else class="mt-4 text-center text-muted">
-                  <span v-html="greeting()"></span> <span v-if="DLAM_visitor" class=" text-capitalize">, {{ DLAM_visitor
+                  <span v-html="greeting()"></span><span v-if="DLAM_visitor" class=" text-capitalize">, {{ DLAM_visitor
                   }}</span>
                 </div>
 
+                <!-- hidden button -->
                 <button data-bs-toggle="modal" data-bs-target="#predictionModal" class="d-none" ref="modalBtn"></button>
 
               </div>
@@ -89,11 +90,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useStorage, useOnline } from '@vueuse/core'
 import predictionModal from '@/components/modals/predictionModal.vue'
 import api from '@/store/axiosManager'
 import { useToast } from 'vue-toast-notification';
+import { useStatsStore } from '@/store/statsStore'
+
+// hardcoded tournament_id
+const tour_id = '01h4299vwq5mkm8nzdpcdkskmv';
+
+
+onMounted(async () => {
+  stats.apiLoading = true
+  stats.tour_id = tour_id
+  await stats.getTourDetails()
+  await stats.getStandings()
+  await stats.getSchedules()
+  await stats.getResults()
+  await stats.getLiveMatches()
+  stats.statsLoaded = true
+})
+
 
 // vueuse check if online
 const isOnline = useOnline()
@@ -101,13 +119,12 @@ const isOnline = useOnline()
 const hasPredicted: any = useStorage('DLAM_FA_predict', '0', localStorage)
 const DLAM_visitor: any = useStorage('DLAM_FA_visitor', '', localStorage)
 
+const stats = useStatsStore()
 const teams = ref([]);
 const isLoadingTeams = ref(false);
 const modalBtn = ref<any>(null);
 const $toast = useToast();
 
-// hardcoded tournament_id
-const tour_id = '01h4299vwq5mkm8nzdpcdkskmv';
 
 async function openPredictionModal() {
   isLoadingTeams.value = true;
@@ -129,13 +146,9 @@ const greeting = () => {
   var curHr = today.getHours()
   let text = ''
 
-  if (curHr < 12) {
-    text = '<i class="bi bi-sunrise"></i> Good morning'
-  } else if (curHr < 18) {
-    text = '<i class="bi bi-brightness-alt-high"></i> Good afternoon'
-  } else {
-    text = '<i class="bi bi-moon"></i> Good evening'
-  }
+  if (curHr < 12) text = '<i class="bi bi-sunrise"></i> Good morning'
+  else if (curHr < 18) text = '<i class="bi bi-brightness-alt-high"></i> Good afternoon'
+  else text = '<i class="bi bi-moon"></i> Good evening'
 
   return text;
 }
