@@ -17,8 +17,8 @@
                         <button ref="btnX" type="button" class="btn-close" data-bs-dismiss="modal"
                             aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <div class="alert alert-light text-center border-0 py-1">
+                    <div class="modal-body p-4">
+                        <div class="alert alert-warning text-center border-0 py-3">
                             <i class="bi bi-exclamation-circle"></i> You can only predict ONCE.
                         </div>
                         <div class="row gy-3">
@@ -60,7 +60,7 @@
                             </div>
                             <div class="col-12">
                                 <label>Phone Number:</label>
-                                <input @input="replace" v-model="form.phone_number" type="text" class="form-control">
+                                <input @input="replace" v-model="form.phone_number" type="number" class="form-control">
                             </div>
                         </div>
                         <div v-if="form.inComplete" class="text-center text-danger mt-2">Please complete the form!</div>

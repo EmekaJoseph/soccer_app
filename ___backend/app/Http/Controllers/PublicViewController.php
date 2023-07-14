@@ -182,7 +182,7 @@ class PublicViewController extends BaseController
 
     public function get_predictions(Request $req)
     {
-        $predictions = PredictionModel::where('tour_id', $req->input('tour_id'))->get();
+        $predictions = PredictionModel::where('tour_id', $req->input('tour_id'))->orderByDesc('created_at')->get();
 
         if (sizeof($predictions) > 0) {
             foreach ($predictions as $prediction) {

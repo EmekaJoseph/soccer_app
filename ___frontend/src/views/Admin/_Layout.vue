@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-ligh min-vh-100">
+    <div class="bg-light min-vh-100">
         <nav class="navbar py-4 px-lg-3 shadow-sm bg-body-tertiary bg-light">
             <div class="container-fluid">
                 <div>
@@ -29,6 +29,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body">
+                <!-- {{ account }} -->
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                         <RouterLink to="/user/dashboard"><i class="bi bi-view-stacked"></i> Dashboard</RouterLink>

@@ -16,17 +16,10 @@
             <img class="dlam_academy" src="@/assets/images/dlam_academy.png" alt="anglican logo">
             <img class="stationery_logo" src="@/assets/images/stationery_logo.png" alt="stationeryfc logo">
 
-            <div class="d-none d-md-block">
-              CHURCH OF NIGERIA ANGLICAN COMMUNION
-            </div>
-            <div class="d-md-none">
-              CHURCH OF NIGERIA
+            <div class="d-none d-md-block"> CHURCH OF NIGERIA ANGLICAN COMMUNION </div>
 
-            </div>
-            <div class="d-md-none">
-              ANGLICAN COMMUNION
-
-            </div>
+            <div class="d-md-none"> CHURCH OF NIGERIA </div>
+            <div class="d-md-none"> ANGLICAN COMMUNION </div>
 
             <div class="fw-bolder fs-5">
               <vue-writer :array="['DIOCESE OF LAGOS MAINLAND']" :iterations='1' :typeSpeed="100" :start="1000" />
@@ -54,18 +47,29 @@
         <div class="row justify-content-center align-items-center">
           <div class="col-10 col-lg-6">
             <div class="row justify-content-center g-3">
-              <div class="col-md-6">
+              <div v-if="isOnline" class="col-md-6">
                 <RouterLink :to="'stats/' + tour_id" class="btn btn-primary w-100 hover-tilt-Y btn-lg">
                   SEE STATS
                   <i class="bi bi-chevron-right"></i>
                 </RouterLink>
-                <div @click="openPredictionModal" v-if="hasPredicted == 0"
-                  class="mt-4 text-center cursor-pointer text-primary">
-                  Make your prediction <i class="bi bi-trophy"></i>
+                <div v-if="hasPredicted == 0" @click="openPredictionModal"
+                  class="mt-4 text-center bg-warning-subtle p-2 cursor-pointer text-primary">
+                  Make your predictions <i v-if="!isLoadingTeams" class="bi bi-trophy"></i>
+                  <span v-else class="spinner-border spinner-border-sm"> </span>
+                </div>
+
+                <div v-else class="mt-4 text-center text-muted">
+                  <span v-html="greeting()"></span> <span v-if="DLAM_visitor" class=" text-capitalize">, {{ DLAM_visitor
+                  }}</span>
                 </div>
 
                 <button data-bs-toggle="modal" data-bs-target="#predictionModal" class="d-none" ref="modalBtn"></button>
 
+              </div>
+              <div v-else class="col-md-6">
+                <button class="btn btn-dark w-100 btn-lg" disabled>
+                  You are offline <i class="bi bi-wifi-off"></i>
+                </button>
               </div>
               <!-- <div class="col-md-6">
                 <RouterLink to="stats/01h429avf0ykmdah080bdj5t43" class="btn btn-primary w-100 hover-tilt-Y btn-lg">
@@ -85,53 +89,58 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useStorage } from '@vueuse/core'
+import { ref } from 'vue';
+import { useStorage, useOnline } from '@vueuse/core'
 import predictionModal from '@/components/modals/predictionModal.vue'
 import api from '@/store/axiosManager'
 import { useToast } from 'vue-toast-notification';
+
+// vueuse check if online
+const isOnline = useOnline()
 
 const hasPredicted: any = useStorage('DLAM_FA_predict', '0', localStorage)
 const DLAM_visitor: any = useStorage('DLAM_FA_visitor', '', localStorage)
 
 const teams = ref([]);
+const isLoadingTeams = ref(false);
 const modalBtn = ref<any>(null);
 const $toast = useToast();
 
+// hardcoded tournament_id
 const tour_id = '01h4299vwq5mkm8nzdpcdkskmv';
 
 async function openPredictionModal() {
+  isLoadingTeams.value = true;
   let resp = await api.getTournamentTeams(tour_id);
   teams.value = resp.data
+  isLoadingTeams.value = false
   modalBtn.value.click()
 }
 
 
 function atPredictDone(name: string) {
-  console.log('done');
-  $toast.success('Thank you ' + name + ', Prediction saved.', { position: 'top-right' });
+  $toast.success('Your prediction has been saved, ' + name, { position: 'top-right' });
   hasPredicted.value = 1
   DLAM_visitor.value = name
 }
 
-onMounted(() => {
+const greeting = () => {
+  var today = new Date()
+  var curHr = today.getHours()
+  let text = ''
 
-  // const $toast = useToast();
+  if (curHr < 12) {
+    text = '<i class="bi bi-sunrise"></i> Good morning'
+  } else if (curHr < 18) {
+    text = '<i class="bi bi-brightness-alt-high"></i> Good afternoon'
+  } else {
+    text = '<i class="bi bi-moon"></i> Good evening'
+  }
 
-  // var today = new Date()
-  // var curHr = today.getHours()
-  // let text = ''
+  return text;
+}
 
-  // if (curHr < 12) {
-  //   text = '<i class="bi bi-sunrise"></i> Good Morning'
-  // } else if (curHr < 18) {
-  //   text = '<i class="bi bi-brightness-alt-high"></i> Good Afternoon'
-  // } else {
-  //   text = '<i class="bi bi-moon"></i> Good Evening'
-  // }
 
-  // $toast.default(text, { position: 'top-left' });
-})
 </script>
 
 
