@@ -65,6 +65,19 @@ export default {
         return $instance.get(`userLogout`,)
     },
 
+    subUsersList() {
+        return $instance.get(`subUsersList`,)
+    },
+
+    createSubUser(data: object) {
+        return $instance.post(`createSubUser`, JSON.stringify(data))
+    },
+
+    deleteSubUser(id: any) {
+        return $instance.get(`deleteSubUser/${id}`)
+    },
+
+
 
 
     createTournament(data: object) {

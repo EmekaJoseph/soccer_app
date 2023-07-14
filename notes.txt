@@ -1,14 +1,13 @@
 db_pass:  p4^?UQ8wEG)d
 
+###################################
+Work to do!
+-- role route guard
+-- update password
 
-GOLD: #FFD700
-ROYAL BLUE: #4169e1
-YELLOW: #FFFF00
-PINK: #FFC0CB
-GREEN: #00FF00
-PURPLE: #A020F0
-WINE: #722F37
-ORANGE: #FFA500
-LEMON: #FAFA33
-POWDER BLUE: #B6D0E2
-RED: #FF0000
+###################################
+
+
+
+
+

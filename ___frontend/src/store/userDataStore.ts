@@ -10,6 +10,7 @@ export const useUserDataStore = defineStore('dataStore', () => {
   const tournamentShedules = ref<any>([])
   const tournamentResults = ref<any>([])
   const tournamentLive = ref<any>([])
+  const subUsers = ref<any>([])
   const predictions = ref<any>([])
   const match_stages = ref<any>(['Group_Stage', 'Round_of_32', 'Knock_Out', 'Quarter_Final', 'Semi_Final', 'Final'])
   const valid_groups = ref<any>(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'])
@@ -68,6 +69,18 @@ export const useUserDataStore = defineStore('dataStore', () => {
     }
   }
 
+
+  async function getSubUsers() {
+    try {
+      let resp = await api.subUsersList()
+      subUsers.value = resp.data;
+      // console.log(resp);
+
+    } catch (error) {
+      // console.log(error);
+    }
+  }
+
   return {
     apiLoading,
     apiError,
@@ -77,6 +90,7 @@ export const useUserDataStore = defineStore('dataStore', () => {
     getTournamentResults,
     getLiveMatches,
     getPredictions,
+    getSubUsers,
     tournaments,
     tournamentTeams,
     tournamentShedules,
@@ -85,5 +99,6 @@ export const useUserDataStore = defineStore('dataStore', () => {
     match_stages,
     valid_groups,
     predictions,
+    subUsers,
   }
 })

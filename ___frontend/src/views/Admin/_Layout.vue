@@ -29,12 +29,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body">
-                <!-- {{ account }} -->
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                         <RouterLink to="/user/dashboard"><i class="bi bi-view-stacked"></i> Dashboard</RouterLink>
                     </li>
-                    <li class="list-group-item">
+                    <li v-if="account.state.role == 'admin'" class="list-group-item">
                         <RouterLink to="/user/teams"><i class="bi bi-people"></i> Teams</RouterLink>
                     </li>
                     <li class="list-group-item">

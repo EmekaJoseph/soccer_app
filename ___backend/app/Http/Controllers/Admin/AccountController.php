@@ -14,13 +14,14 @@ use Illuminate\Support\Facades\DB;
 
 use App\Models\TournamentModel;
 use App\Models\UserModel;
+use App\Models\SubUserModel;
 use stdClass;
 
 class AccountController extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
-    public function userCreate(Request $req)
+    public function userRegister(Request $req)
     {
         // add rule to email type
         $rules = [
@@ -44,6 +45,48 @@ class AccountController extends BaseController
         return response()->json('created', 200);
     }
 
+
+
+    public function createSubUser(Request $req)
+    {
+        // add rule to email type
+        $rules = [
+            'email' => 'required|email',
+            'password' => 'required',
+        ];
+        $validator = Validator::make($req->all(),  $rules);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        if (SubUserModel::where('email', $req->input('email'))->exists()) {
+            return response()->json('exists', 203);
+        }
+
+        $account = new SubUserModel();
+        $account->email = $req->input('email');
+        $account->password = Hash::make($req->input('password'));
+        $account->user_id = $req->user()->user_id;
+        $account->role = 'sub';
+        $account->created_at = Carbon::now();
+        $account->save();
+        return response()->json('created', 200);
+    }
+
+
+    public function subUsersList(Request $req)
+    {
+        $subUsers =  SubUserModel::where('user_id', $req->user()->user_id)->get();
+        return response()->json($subUsers, 200);
+    }
+
+    public function deleteSubUser(Request $req, $subuser_id)
+    {
+        SubUserModel::find($subuser_id)->delete();
+        return 'deleted';
+    }
+
     public function userLogin(Request $req)
     {
         $email = $req->input('email');
@@ -51,16 +94,21 @@ class AccountController extends BaseController
 
         // validate passwords?
         $account = UserModel::where('email', $email)->first();
+        $subAccount = SubUserModel::where('email', $email)->first();
+
         if (!$account || !Hash::check($password, $account->password)) {
-            return response()->json('invalid login', 203);
+            if (!$subAccount || !Hash::check($password, $subAccount->password)) {
+                return response()->json('invalid login', 203);
+            }
         }
 
         // return logged-in credentials with token
         $data = [
-            'id' => $account->user_id,
-            'email' => $account->email,
-            'firstname' => $account->firstname,
-            'token' => $account->createToken('_token')->plainTextToken,
+            'id' => $account ? $account->user_id : $subAccount->user_id,
+            'email' => $account ? $account->email : $subAccount->email,
+            'firstname' => $account ? $account->firstname : $subAccount->firstname,
+            'role' => $account ? $account->role : $subAccount->role,
+            'token' =>  $account ? $account->createToken('_token')->plainTextToken : $subAccount->createToken('_token')->plainTextToken,
         ];
 
         return response()->json($data, 200);

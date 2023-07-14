@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 04, 2023 at 05:09 PM
+-- Generation Time: Jul 14, 2023 at 03:50 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.2
 
@@ -55,7 +55,8 @@ CREATE TABLE `migrations` (
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (1, '2019_08_19_000000_create_failed_jobs_table', 1),
-(2, '2019_12_14_000001_create_personal_access_tokens_table', 1);
+(2, '2019_12_14_000001_create_personal_access_tokens_table', 1),
+(3, '0000_00_00_000000_create_websockets_statistics_entries_table', 2);
 
 -- --------------------------------------------------------
 
@@ -82,7 +83,8 @@ CREATE TABLE `personal_access_tokens` (
 
 INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `name`, `token`, `abilities`, `last_used_at`, `expires_at`, `created_at`, `updated_at`) VALUES
 (1, 'App\\Models\\UserModel', 2, '_token', '4895d06c32cb42b790a1124895267a6a5b5c5a62d361612521c5a56b4e4bb34b', '[\"*\"]', '2023-07-02 08:59:36', NULL, '2023-06-05 20:19:36', '2023-07-02 08:59:36'),
-(10, 'App\\Models\\UserModel', 2, '_token', '4b2388506d2589045ebc2b5fd21ac33af8b89c84b262468aaaa394189480d0d0', '[\"*\"]', '2023-06-26 21:36:20', NULL, '2023-06-26 09:40:05', '2023-06-26 21:36:20');
+(10, 'App\\Models\\UserModel', 2, '_token', '4b2388506d2589045ebc2b5fd21ac33af8b89c84b262468aaaa394189480d0d0', '[\"*\"]', '2023-06-26 21:36:20', NULL, '2023-06-26 09:40:05', '2023-06-26 21:36:20'),
+(24, 'App\\Models\\UserModel', 2, '_token', '61c72992d0cd93c9402414f1dd0efbc78ebfedb818717549e828a5440a519d52', '[\"*\"]', '2023-07-14 12:49:59', NULL, '2023-07-14 12:29:09', '2023-07-14 12:49:59');
 
 -- --------------------------------------------------------
 
@@ -105,6 +107,34 @@ CREATE TABLE `tbl_live` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `tbl_prediction`
+--
+
+CREATE TABLE `tbl_prediction` (
+  `prediction_id` varchar(100) NOT NULL,
+  `first_place` varchar(100) NOT NULL,
+  `second_place` varchar(100) NOT NULL,
+  `third_place` varchar(100) NOT NULL,
+  `created_at` varchar(100) NOT NULL,
+  `full_name` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `phone_number` varchar(100) NOT NULL,
+  `device_ip` varchar(100) NOT NULL,
+  `tour_id` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `tbl_prediction`
+--
+
+INSERT INTO `tbl_prediction` (`prediction_id`, `first_place`, `second_place`, `third_place`, `created_at`, `full_name`, `email`, `phone_number`, `device_ip`, `tour_id`) VALUES
+('01h4tqdmhadpj7srpfj1a91zs5', '01h4arfsbeenqgdfvpk4qxbxts', '01h4argvsmaxzw4nkerdpp4vq1', '01h4arz4qdwpcpvqy0kafxp8xq', '2023-07-08 12:25:26', 'Emeka', 'default', '08139590011', '127.0.0.1', '01h4299vwq5mkm8nzdpcdkskmv'),
+('01h5a10a7d70hhshkcc9dhr31q', '01h4arfsbeenqgdfvpk4qxbxts', '01h4arp4asbfv9yjvsqk68r0tg', '01h4argvsmaxzw4nkerdpp4vq1', '2023-07-14 11:01:32', 'aaaaaaaaaaaaaaaa', 'default', '22222222222222222222', '127.0.0.1', '01h4299vwq5mkm8nzdpcdkskmv'),
+('01h5a1b6x6r248bamjbvwk8z4c', '01h4argvsmaxzw4nkerdpp4vq1', '01h4arfsbeenqgdfvpk4qxbxts', '01h4arp4asbfv9yjvsqk68r0tg', '2023-07-14 11:07:29', 'Emeka', 'default', '080', '127.0.0.1', '01h4299vwq5mkm8nzdpcdkskmv');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tbl_results`
 --
 
@@ -120,14 +150,6 @@ CREATE TABLE `tbl_results` (
   `tour_id` varchar(100) NOT NULL,
   `date_played` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `tbl_results`
---
-
-INSERT INTO `tbl_results` (`result_id`, `away_team`, `home_team`, `home_score`, `away_score`, `match_stage`, `created_at`, `updated_at`, `tour_id`, `date_played`) VALUES
-('01h4cf9tjb0z9ktwes6z8sqz7f', '01h4as5gqqgbjn4av7bgak2tad', '01h4arehbevb541jqqdn7y5y7d', '0', '0', 'Round_of_32', '2023-07-02 23:34:11', '2023-07-02 23:34:11', '01h4299vwq5mkm8nzdpcdkskmv', '2023-07-02'),
-('01h4cgc32vkya0ztxqzbcjbggc', '01h4as5gqqgbjn4av7bgak2tad', '01h4arfsbeenqgdfvpk4qxbxts', '4', '0', 'Round_of_32', '2023-07-02 23:52:54', '2023-07-02 23:52:54', '01h4299vwq5mkm8nzdpcdkskmv', '2023-07-02');
 
 -- --------------------------------------------------------
 
@@ -206,6 +228,24 @@ CREATE TABLE `tbl_standings_league` (
   `created_at` varchar(100) NOT NULL,
   `updated_at` varchar(100) NOT NULL,
   `extra_col` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_subusers`
+--
+
+CREATE TABLE `tbl_subusers` (
+  `subuser_id` int(100) NOT NULL,
+  `firstname` varchar(100) DEFAULT NULL,
+  `lastname` varchar(100) DEFAULT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(100) NOT NULL,
+  `user_id` varchar(100) NOT NULL,
+  `created_at` varchar(100) NOT NULL,
+  `is_active` varchar(10) NOT NULL DEFAULT '1',
+  `role` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -291,7 +331,23 @@ CREATE TABLE `tbl_users` (
 --
 
 INSERT INTO `tbl_users` (`user_id`, `email`, `password`, `firstname`, `lastname`, `no_of_leagues`, `no_of_cups`, `role`) VALUES
-(2, 'email.com', '$2y$10$BNIN4vFOpuGYFJG67pyx5OIMhN6zdL3jR/1MUU5ufHwk2E6MP3yXW', NULL, NULL, 7, 6, 'admin');
+(2, 'dlam@admin.com', '$2y$10$BNIN4vFOpuGYFJG67pyx5OIMhN6zdL3jR/1MUU5ufHwk2E6MP3yXW', NULL, NULL, 7, 6, 'admin');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `websockets_statistics_entries`
+--
+
+CREATE TABLE `websockets_statistics_entries` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `app_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `peak_connection_count` int(11) NOT NULL,
+  `websocket_message_count` int(11) NOT NULL,
+  `api_message_count` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Indexes for dumped tables
@@ -325,6 +381,12 @@ ALTER TABLE `tbl_live`
   ADD PRIMARY KEY (`live_id`);
 
 --
+-- Indexes for table `tbl_prediction`
+--
+ALTER TABLE `tbl_prediction`
+  ADD PRIMARY KEY (`prediction_id`);
+
+--
 -- Indexes for table `tbl_results`
 --
 ALTER TABLE `tbl_results`
@@ -349,6 +411,12 @@ ALTER TABLE `tbl_standings_league`
   ADD PRIMARY KEY (`standing_id`);
 
 --
+-- Indexes for table `tbl_subusers`
+--
+ALTER TABLE `tbl_subusers`
+  ADD PRIMARY KEY (`subuser_id`);
+
+--
 -- Indexes for table `tbl_teams`
 --
 ALTER TABLE `tbl_teams`
@@ -367,6 +435,12 @@ ALTER TABLE `tbl_users`
   ADD PRIMARY KEY (`user_id`);
 
 --
+-- Indexes for table `websockets_statistics_entries`
+--
+ALTER TABLE `websockets_statistics_entries`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -380,25 +454,37 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `tbl_live`
 --
 ALTER TABLE `tbl_live`
-  MODIFY `live_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `live_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `tbl_subusers`
+--
+ALTER TABLE `tbl_subusers`
+  MODIFY `subuser_id` int(100) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `tbl_users`
 --
 ALTER TABLE `tbl_users`
   MODIFY `user_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `websockets_statistics_entries`
+--
+ALTER TABLE `websockets_statistics_entries`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -14,8 +14,9 @@ use App\Http\Controllers\PublicViewController;
 
 //  ######################## UNPROTECTED ########################## //
 Route::controller(AccountController::class)->group(function () {
-    Route::post('userCreate',  'userCreate');
+    Route::post('userRegister',  'userRegister');
     Route::post('userLogin',  'userLogin');
+
     /**WARNING REMOVE!!!!!**/ Route::get('resetApp',  'resetApp');
 });
 
@@ -45,6 +46,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('getTournaments',  'getTournaments');
         Route::post('updateTournament/{tour_id}',  'updateTournament');
         Route::get('userLogout',  'userLogout');
+        Route::post('createSubUser',  'createSubUser');
+        Route::get('deleteSubUser/{subuser_id}',  'deleteSubUser');
+        Route::get('subUsersList',  'subUsersList');
     });
 
     Route::resource('team', TeamsController::class)->except(['index']);;
