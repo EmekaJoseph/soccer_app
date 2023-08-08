@@ -96,13 +96,13 @@ let allDataInterval = setInterval(() => {
 }, 180000)
 
 // load live results every 10secs(0.10mins)
-let liveMatchInterval = setInterval(() => {
-    stats.getLiveMatches()
-}, 10000)
+// let liveMatchInterval = setInterval(() => {
+//     stats.getLiveMatches()
+// }, 10000)
 
 onUnmounted(() => {
     clearInterval(allDataInterval)
-    clearInterval(liveMatchInterval)
+    // clearInterval(liveMatchInterval)
 })
 
 function showPanel(name: string) {

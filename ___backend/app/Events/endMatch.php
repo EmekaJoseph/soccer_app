@@ -10,26 +10,18 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-
-use Illuminate\Support\Facades\DB;
-
-use App\Models\TeamModel;
-
-
-class liveScore implements ShouldBroadcast
+class endMatch implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $live_id;
-    public $results;
 
     /**
      * Create a new event instance.
      */
-    public function __construct($live_id, $results)
+    public function __construct($live_id)
     {
         $this->live_id = $live_id;
-        $this->results = $results;
     }
 
     /**
@@ -40,7 +32,7 @@ class liveScore implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('liveMatch'),
+            new Channel('endMatch'),
         ];
     }
 }

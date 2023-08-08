@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\endMatch;
+use App\Events\liveScore;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
@@ -36,6 +38,7 @@ class LiveUpdateController extends BaseController
             'match_stage' => $req->input('match_stage'),
 
         ]);
+
         return response()->json('started', 200);
     }
 
@@ -54,12 +57,15 @@ class LiveUpdateController extends BaseController
             return response()->json($validator->errors(), 422);
         }
 
-        DB::table('tbl_live')->where('live_id', $live_id)
-            ->update([
-                'home_team_score' => $req->input('home_team_score'),
-                'away_team_score' => $req->input('away_team_score'),
-                'curr_time' => $req->input('curr_time'),
-            ]);
+        $dataToUpdate = [
+            'home_team_score' => $req->input('home_team_score'),
+            'away_team_score' => $req->input('away_team_score'),
+            'curr_time' => $req->input('curr_time'),
+        ];
+
+        DB::table('tbl_live')->where('live_id', $live_id)->update($dataToUpdate);
+
+        event(new liveScore($live_id, $dataToUpdate));
 
         return response()->json('updated', 200);
     }
@@ -67,6 +73,7 @@ class LiveUpdateController extends BaseController
     public function endLiveMatch(Request $req, $live_id)
     {
         DB::table('tbl_live')->where('live_id', $live_id)->delete();
+        event(new endMatch($live_id));
         return response()->json('ended', 200);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Events\liveScore;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,6 +13,12 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get('/broadcast', function () {
+    // broadcast(new liveScore());
+    return "Event has been sent!";
+});
+
 
 Route::get('/', function () {
     return view('index');

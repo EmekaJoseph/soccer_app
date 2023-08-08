@@ -1,5 +1,8 @@
 db_pass:  p4^?UQ8wEG)d
 
+
+https://ahmedshaltout.com/laravel/how-to-use-laravel-websockets-and-laravel-echo-with-vue-3-app-example/
+
 ###################################
 Work to do!
 -- role route guard
