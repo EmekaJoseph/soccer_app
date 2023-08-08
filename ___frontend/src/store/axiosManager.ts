@@ -3,10 +3,13 @@ import axios from 'axios'
 const hostURL = 'http://127.0.0.1:8000' //dev
 // const hostURL = '' //build
 
-const apiURL = `${hostURL}/api/`
+// const webSocketHost = window.location.hostname //dev
+const webSocketHost = 'localhost' //build
+
+
 
 const $instance = axios.create({
-    baseURL: apiURL,
+    baseURL: `${hostURL}/api/`,
     headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json;charset=UTF-8;text/json',
@@ -24,6 +27,8 @@ $instance.interceptors.request.use(
 );
 
 export default {
+
+    webSocketHost() { return webSocketHost },
 
     standings(tour_id: string) {
         return $instance.get(`view/standings/${tour_id}`,)

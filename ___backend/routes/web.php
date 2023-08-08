@@ -14,10 +14,10 @@ use App\Events\liveScore;
 |
 */
 
-Route::get('/broadcast', function () {
-    // broadcast(new liveScore());
-    return "Event has been sent!";
-});
+// Route::get('/broadcast', function () {
+//     // broadcast(new liveScore());
+//     return "Event has been sent!";
+// });
 
 
 Route::get('/', function () {

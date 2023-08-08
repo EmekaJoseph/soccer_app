@@ -65,7 +65,7 @@ class LiveUpdateController extends BaseController
 
         DB::table('tbl_live')->where('live_id', $live_id)->update($dataToUpdate);
 
-        event(new liveScore($live_id, $dataToUpdate));
+        // event(new liveScore($live_id, $dataToUpdate));
 
         return response()->json('updated', 200);
     }
@@ -73,7 +73,7 @@ class LiveUpdateController extends BaseController
     public function endLiveMatch(Request $req, $live_id)
     {
         DB::table('tbl_live')->where('live_id', $live_id)->delete();
-        event(new endMatch($live_id));
+        // event(new endMatch($live_id));
         return response()->json('ended', 200);
     }
 }

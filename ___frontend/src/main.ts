@@ -43,27 +43,28 @@ import VueWriter from "vue-writer";
 // import Vue3TouchEvents from "vue3-touch-events";
 // app.use(Vue3TouchEvents);
 
-import Echo from "laravel-echo"
-import Pusher from 'pusher-js';
-// @ts-ignore
-window.Pusher = Pusher;
-// @ts-ignore
-window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: 'dlamfa',
-    wsHost: '127.0.0.1',
-    wsPort: 6001,
-    cluster: "mt1",
-    forceTLS: false,
-    disableStats: true,
-    // authEndpoint: 'http://127.0.0.1:8000/api/broadcasting/auth',
-    auth: {
-        headers: {
-            Authorization: 'Bearer ' + localStorage.getItem('dlam_cup_T'),
-        }
-    },
+// import Echo from "laravel-echo"
+// import Pusher from 'pusher-js';
+// import axiosManager from './store/axiosManager'
+// // @ts-ignore
+// window.Pusher = Pusher;
+// // @ts-ignore
+// window.Echo = new Echo({
+//     broadcaster: 'pusher',
+//     key: 'dlamfa',
+//     wsHost: axiosManager.webSocketHost(),
+//     wsPort: 6001,
+//     cluster: "mt1",
+//     forceTLS: false,
+//     disableStats: true,
+//     // authEndpoint: 'http://127.0.0.1:8000/api/broadcasting/auth',
+//     auth: {
+//         headers: {
+//             Authorization: 'Bearer ' + localStorage.getItem('dlam_cup_T'),
+//         }
+//     },
 
-});
+// });
 
 
 app.use(createPinia())
