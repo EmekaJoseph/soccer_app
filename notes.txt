@@ -12,12 +12,6 @@ Work to do!
 
 
 
-to deploy:
---liveUpdateController,
--- app/Events/*,
-
-
-
 
 
 

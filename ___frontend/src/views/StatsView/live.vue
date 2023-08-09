@@ -5,11 +5,11 @@
         </emptyDataComponent>
     </div>
     <div v-else>
-        <div class="row justify-content-center">
+        <div class="row justify-content-cente">
             <div v-for="({ match_stage, home_team, away_team, home_team_score, away_team_score, curr_time }, i) in stats.tourLives"
                 :key="i" class="col-sm-6">
-                <div class="card bg-success-subtle  rounded-0 mb-4">
-                    <div class="card-header fw-bold bg-transparent shadow border-0 rounded-0 small">
+                <div class="card bg-success-subtl live-bg  rounded-0 mb-4">
+                    <div class="card-header fw-bold bg-transparent shadow-sm border-0 rounded-0 small">
                         <span class="text-success  fw-bold fs-5">{{ curr_time }}'
                         </span>
                         <div class="float-end">{{ match_stage ? match_stage.replaceAll('_', ' ') : '' }}</div>
@@ -39,20 +39,28 @@ import { useStatsStore } from '@/store/statsStore';
 const stats = useStatsStore();
 
 // @ts-ignore
-// window.Echo.channel('liveMatch').listen('liveScore', (e) => {
-//     //console.log(e); // the data from the server
-//     let liveMatch = stats.tourLives.find((x) => x.live_id == e.live_id)
-//     liveMatch.home_team_score = e.results.home_team_score
-//     liveMatch.away_team_score = e.results.away_team_score
-//     liveMatch.curr_time = e.results.curr_time
-// })
+window.Echo.channel('liveMatch').listen('liveScore', async (e) => {
+    // console.log(e); // the data from the server
+    let liveMatch = stats.tourLives.find((x) => x.live_id == e.live_id)
+    if (!liveMatch) {
+        await stats.getLiveMatches()
+    }
 
-// // @ts-ignore
-// window.Echo.channel('endMatch').listen('endMatch', (e) => {
-//     //console.log(e); // the data from the server
-//     stats.tourLives = stats.tourLives.filter((x) => x.live_id != e.live_id)
-// })
+    liveMatch.home_team_score = e.results.home_team_score
+    liveMatch.away_team_score = e.results.away_team_score
+    liveMatch.curr_time = e.results.curr_time
+})
 
+// @ts-ignore
+window.Echo.channel('endMatch').listen('endMatch', (e) => {
+    // console.log(e); // the data from the server
+    stats.tourLives = stats.tourLives.filter((x) => x.live_id != e.live_id)
+})
+
+// @ts-ignore
+window.Echo.channel('startMatch').listen('startMatch', (e) => {
+    stats.getLiveMatches()
+})
 </script>
 
 <style scoped>
@@ -62,7 +70,7 @@ const stats = useStatsStore();
     }
 }
 
-.winner {
-    border-right: 2px solid green;
+.live-bg {
+    background-color: rgba(212, 243, 212, 0.61);
 }
 </style>

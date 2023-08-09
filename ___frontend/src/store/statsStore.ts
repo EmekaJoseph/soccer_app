@@ -1,8 +1,10 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import api from '@/store/axiosManager'
+import { useOnline } from '@vueuse/core'
 
 export const useStatsStore = defineStore('stats', () => {
+  const isOnline: any = useOnline()
   const tour_id = ref<any>('')
   const tour_title = ref<any>('')
   const tour_type = ref<any>('')
@@ -99,6 +101,7 @@ export const useStatsStore = defineStore('stats', () => {
     tourSchedules,
     tourLives,
     statsLoaded,
+    isOnline,
     getStandings,
     getResults,
     getSchedules,

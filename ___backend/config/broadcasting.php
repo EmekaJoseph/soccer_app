@@ -56,9 +56,13 @@ return [
             'options' => [
                 'cluster' => env('PUSHER_APP_CLUSTER'),
                 'encrypted' => true,
+                'useTLS' => true,
+
+                // remove on production ##########
                 'host' => '127.0.0.1',
                 'port' => env('PUSHER_PORT', 443),
                 'scheme' => 'http'
+                // remove on production: #########
             ],
         ],
 

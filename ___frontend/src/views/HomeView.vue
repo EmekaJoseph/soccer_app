@@ -9,7 +9,8 @@
     </nav> -->
 
     <!-- <div class="tint px-lg-5 min-vh-100"> -->
-    <div class="animate__animated  animate__bounceInUp">
+    <!-- <div class="animate__animated  animate__bounceInUp"> -->
+    <div>
       <div class="container pb-5">
         <div class="d-flex justify-content-center align-items-center pt-lg-5 py-4 text-center">
           <div class="col-12 col-md-8 ">
@@ -34,7 +35,7 @@
               <vue-writer :array="['STATIONERY STORES FC']" :iterations='1' :typeSpeed="100" :start="3000" />
             </div>
 
-            <div class="large-text animate__animated animate__pulse animate__delay-1s">
+            <div class="large-text ">
               DLAM Football Competition 2023
             </div>
 
@@ -47,7 +48,7 @@
         <div class="row justify-content-center align-items-center">
           <div class="col-10 col-lg-6">
             <div class="row justify-content-center g-3">
-              <div v-if="isOnline" class="col-md-6">
+              <div v-if="stats.isOnline" class="col-md-6">
                 <RouterLink :to="'stats/' + tour_id" class="btn btn-primary w-100 hover-tilt-Y btn-lg">
                   SEE STATS
                   <i class="bi bi-chevron-right"></i>
@@ -91,7 +92,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useStorage, useOnline } from '@vueuse/core'
+import { useStorage } from '@vueuse/core'
 import predictionModal from '@/components/modals/predictionModal.vue'
 import api from '@/store/axiosManager'
 import { useToast } from 'vue-toast-notification';
@@ -112,10 +113,6 @@ onMounted(async () => {
   stats.statsLoaded = true
 })
 
-
-// vueuse check if online
-const isOnline = useOnline()
-
 const hasPredicted: any = useStorage('DLAM_FA_predict', '0', localStorage)
 const DLAM_visitor: any = useStorage('DLAM_FA_visitor', '', localStorage)
 
@@ -124,7 +121,6 @@ const teams = ref([]);
 const isLoadingTeams = ref(false);
 const modalBtn = ref<any>(null);
 const $toast = useToast();
-
 
 async function openPredictionModal() {
   isLoadingTeams.value = true;

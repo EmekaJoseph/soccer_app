@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Events\endMatch;
 use App\Events\liveScore;
+use App\Events\startMatch;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
@@ -39,6 +40,12 @@ class LiveUpdateController extends BaseController
 
         ]);
 
+        try {
+            event(new startMatch());
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+
         return response()->json('started', 200);
     }
 
@@ -65,7 +72,11 @@ class LiveUpdateController extends BaseController
 
         DB::table('tbl_live')->where('live_id', $live_id)->update($dataToUpdate);
 
-        // event(new liveScore($live_id, $dataToUpdate));
+        try {
+            event(new liveScore($live_id, $dataToUpdate));
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
 
         return response()->json('updated', 200);
     }
@@ -73,7 +84,12 @@ class LiveUpdateController extends BaseController
     public function endLiveMatch(Request $req, $live_id)
     {
         DB::table('tbl_live')->where('live_id', $live_id)->delete();
-        // event(new endMatch($live_id));
+        try {
+            event(new endMatch($live_id));
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+
         return response()->json('ended', 200);
     }
 }

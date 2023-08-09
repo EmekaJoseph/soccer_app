@@ -11,14 +11,14 @@
                     <div class="col-md-10 col-lg-6">
                         <div class="d-flex justify-content-between menu mb-0">
                             <div @click="showPanel('standings')" class="menu-item"
-                                :class="{ ' shadow-sm menu-active': currentShowing == 'standings' }">STANDINGS
+                                :class="{ ' shadow-s menu-active': currentShowing == 'standings' }">STANDINGS
                             </div>
                             <div @click="showPanel('matches')" class="menu-item"
-                                :class="{ ' shadow-sm menu-active': currentShowing == 'matches' }">MATCHES</div>
+                                :class="{ ' shadow-s menu-active': currentShowing == 'matches' }">MATCHES</div>
                             <div @click="showPanel('results')" class="menu-item"
-                                :class="{ 'shadow-sm menu-active': currentShowing == 'results' }">RESULTS</div>
+                                :class="{ 'shadow-s menu-active': currentShowing == 'results' }">RESULTS</div>
                             <div @click="showPanel('live')" class="menu-item"
-                                :class="{ 'shadow-sm menu-active': currentShowing == 'live' }">LIVE
+                                :class="{ 'shadow-s menu-active': currentShowing == 'live' }">LIVE
                                 <i v-if="stats.tourLives.length" style="font-size: 7px;"
                                     class="float-end mt-1 ms-1 bi bi-circle-fill text-success"></i>
                             </div>
@@ -96,13 +96,13 @@ let allDataInterval = setInterval(() => {
 }, 180000)
 
 // load live results every 10secs(0.10mins)
-let liveMatchInterval = setInterval(() => {
-    stats.getLiveMatches()
-}, 10000)
+// let liveMatchInterval = setInterval(() => {
+//     stats.getLiveMatches()
+// }, 10000)
 
 onUnmounted(() => {
     clearInterval(allDataInterval)
-    clearInterval(liveMatchInterval)
+    // clearInterval(liveMatchInterval)
 })
 
 function showPanel(name: string) {
@@ -167,7 +167,7 @@ const { direction } = useSwipe(panel_for_Swipe, {
 
 .menu-active {
     background-color: var(--theme-color-3bb);
-    border-bottom: 3px solid #fff;
+    border-bottom: 4px solid #fff;
 }
 
 .sm-logo {

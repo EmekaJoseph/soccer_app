@@ -103,38 +103,43 @@ const liveData = reactive({
     timeIsPaused: false
 })
 
-
 const $toast = useToast();
 
 const userData = useUserDataStore()
 
-
-// TABLE #####################################
-
-
 async function updateLive() {
     if (confirm('Update Live Match ?')) {
-        try {
-            let resp = await api.updateLiveMatch(liveData)
-            if (resp.status == 200) {
-                userData.getLiveMatches(prop.teamData.tour_id)
-                $toast.default('Data Updated succesfully', { position: 'top-right' });
-            }
-        } catch (error) {
-            console.log(error);
-            $toast.error('Could not update, Internet Error', { position: 'top-right' });
-        }
+        await sendUpdate()
+        $toast.default('Updated succesfully', { position: 'top-right' });
     }
 }
+
+async function sendUpdate() {
+    try {
+        let resp = await api.updateLiveMatch(liveData)
+        if (resp.status == 200) {
+            userData.getLiveMatches(prop.teamData.tour_id)
+        }
+    } catch (error) {
+        console.log(error);
+        $toast.error('Could not update, Internet Error', { position: 'top-right' });
+    }
+}
+
+// updateLive every (5mins)
+let liveUpdater = setInterval(() => {
+    sendUpdate()
+}, 300000)
 
 async function endLive() {
     if (confirm('End Live Match ?')) {
         try {
-            let resp = await api.endLiveMatch(liveData.live_id)
+            let resp = await api.endLiveMatch(prop.teamData.live_id)
             if (resp.status == 200) {
                 userData.getLiveMatches(prop.teamData.tour_id)
                 $toast.default('Match ended succesfully', { position: 'top-right' });
             }
+            clearInterval(liveUpdater)
         } catch (error) {
             console.log(error);
             $toast.error('Operation not successfull, Internet Error', { position: 'top-right' });
@@ -142,10 +147,7 @@ async function endLive() {
     }
 }
 
-
-// ################################################ FORM
-
-// load live results every 1min(60secs)
+// increment time every 1min(60secs)
 let liveMatchInterval = setInterval(() => {
     if (!liveData.timeIsPaused) {
         liveData.curr_time += 1
@@ -153,7 +155,8 @@ let liveMatchInterval = setInterval(() => {
 }, 60000)
 
 onUnmounted(() => {
-    clearInterval(liveMatchInterval)
+    // clearInterval(liveMatchInterval)
+    clearInterval(liveUpdater)
 })
 
 
