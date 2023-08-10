@@ -126,10 +126,10 @@ async function sendUpdate() {
     }
 }
 
-// updateLive every (5mins)
+// updateLive every (3mins)
 let liveUpdater = setInterval(() => {
     sendUpdate()
-}, 300000)
+}, 180000)
 
 async function endLive() {
     if (confirm('End Live Match ?')) {

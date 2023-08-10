@@ -1,7 +1,7 @@
 <template>
     <div v-if="!stats.tourSchedules.length">
         <emptyDataComponent>
-            No matches yet, <br> Come back later.
+            No shedules yet, <br> Come back later.
         </emptyDataComponent>
 
     </div>

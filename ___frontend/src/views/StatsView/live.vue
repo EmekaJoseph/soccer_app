@@ -1,7 +1,7 @@
 <template>
     <div v-if="!stats.tourLives.length">
         <emptyDataComponent>
-            No Live Matches
+            No Live Matches at the moment.
         </emptyDataComponent>
     </div>
     <div v-else>
@@ -38,29 +38,7 @@
 import { useStatsStore } from '@/store/statsStore';
 const stats = useStatsStore();
 
-// @ts-ignore
-window.Echo.channel('liveMatch').listen('liveScore', async (e) => {
-    // console.log(e); // the data from the server
-    let liveMatch = stats.tourLives.find((x) => x.live_id == e.live_id)
-    if (!liveMatch) {
-        await stats.getLiveMatches()
-    }
 
-    liveMatch.home_team_score = e.results.home_team_score
-    liveMatch.away_team_score = e.results.away_team_score
-    liveMatch.curr_time = e.results.curr_time
-})
-
-// @ts-ignore
-window.Echo.channel('endMatch').listen('endMatch', (e) => {
-    // console.log(e); // the data from the server
-    stats.tourLives = stats.tourLives.filter((x) => x.live_id != e.live_id)
-})
-
-// @ts-ignore
-window.Echo.channel('startMatch').listen('startMatch', (e) => {
-    stats.getLiveMatches()
-})
 </script>
 
 <style scoped>

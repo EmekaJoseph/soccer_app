@@ -9,8 +9,7 @@
     </nav> -->
 
     <!-- <div class="tint px-lg-5 min-vh-100"> -->
-    <!-- <div class="animate__animated  animate__bounceInUp"> -->
-    <div>
+    <div class="animate__animated  animate__bounceInUp">
       <div class="container pb-5">
         <div class="d-flex justify-content-center align-items-center pt-lg-5 py-4 text-center">
           <div class="col-12 col-md-8 ">
@@ -101,16 +100,8 @@ import { useStatsStore } from '@/store/statsStore'
 // hardcoded tournament_id
 const tour_id = '01h4299vwq5mkm8nzdpcdkskmv';
 
-
 onMounted(async () => {
-  stats.apiLoading = true
   stats.tour_id = tour_id
-  await stats.getTourDetails()
-  await stats.getStandings()
-  await stats.getSchedules()
-  await stats.getResults()
-  await stats.getLiveMatches()
-  stats.statsLoaded = true
 })
 
 const hasPredicted: any = useStorage('DLAM_FA_predict', '0', localStorage)

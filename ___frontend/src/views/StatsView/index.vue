@@ -60,7 +60,6 @@ import { useRoute } from 'vue-router';
 import { onMounted, ref, onUnmounted, watch } from 'vue'
 import { useStatsStore } from '@/store/statsStore'
 import StatsLayout from './StatsLayout.vue';
-
 import { useSwipe } from '@vueuse/core'
 
 import StandingsPanel from './standings.vue'
@@ -80,6 +79,7 @@ onMounted(async () => {
         await stats.getTourDetails()
         loadAllData()
         stats.getLiveMatches()
+        stats.statsLoaded = true
     }
 })
 
@@ -87,7 +87,7 @@ onMounted(async () => {
 async function loadAllData() {
     await stats.getStandings()
     await stats.getSchedules()
-    stats.getResults()
+    await stats.getResults()
 }
 
 // load all data every 180secs(3mins)
@@ -138,6 +138,33 @@ const { direction } = useSwipe(panel_for_Swipe, {
         }
     }
 })
+
+
+// #################### Listen to websocet ################
+// @ts-ignore
+window.Echo.channel('liveMatch').listen('liveScore', async (e) => {
+    // console.log(e); // the data from the server
+    let liveMatch = stats.tourLives.find((x) => x.live_id == e.live_id)
+    if (!liveMatch) {
+        await stats.getLiveMatches()
+    }
+
+    liveMatch.home_team_score = e.results.home_team_score
+    liveMatch.away_team_score = e.results.away_team_score
+    liveMatch.curr_time = e.results.curr_time
+})
+
+// @ts-ignore
+window.Echo.channel('endMatch').listen('endMatch', (e) => {
+    // console.log(e); // the data from the server
+    stats.tourLives = stats.tourLives.filter((x) => x.live_id != e.live_id)
+})
+
+// @ts-ignore
+window.Echo.channel('startMatch').listen('startMatch', async (e) => {
+    await stats.getLiveMatches()
+})
+// #################### Listen to websocet ################
 
 
 

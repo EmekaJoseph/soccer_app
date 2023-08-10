@@ -57,11 +57,11 @@ window.Echo = new Echo({
     cluster: "mt1",
     forceTLS: false, //true on production
 
-    // remove on production ##################
+    //############## remove on production ##################
     wsHost: axiosManager.webSocketHost(),
     wsPort: 6001,
     disableStats: true,
-    // remove on production #################
+    //################ remove on production #################
 
     auth: {
         headers: {

@@ -1,7 +1,7 @@
 <template>
     <div v-if="!stats.tourResults.length">
         <emptyDataComponent>
-            No Results Yet.
+            No Results recorded.
         </emptyDataComponent>
     </div>
     <!-- <div v-else class="animate__animated  animate__bounceInUp"> -->
