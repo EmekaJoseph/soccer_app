@@ -1,10 +1,10 @@
 <template>
-    <div v-if="!stats.tourLives.length">
+    <div v-if="!stats.tourLives.length" class="min-vh-100">
         <emptyDataComponent>
             No Live Matches at the moment.
         </emptyDataComponent>
     </div>
-    <div v-else>
+    <div v-else class="min-vh-100">
         <div class="row justify-content-cente">
             <div v-for="({ match_stage, home_team, away_team, home_team_score, away_team_score, curr_time }, i) in stats.tourLives"
                 :key="i" class="col-sm-6">

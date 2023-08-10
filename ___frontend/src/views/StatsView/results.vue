@@ -1,11 +1,11 @@
 <template>
-    <div v-if="!stats.tourResults.length">
+    <div v-if="!stats.tourResults.length" class="min-vh-100">
         <emptyDataComponent>
             No Results recorded.
         </emptyDataComponent>
     </div>
     <!-- <div v-else class="animate__animated  animate__bounceInUp"> -->
-    <div v-else>
+    <div v-else class="min-vh-100">
         <div class="row justify-content-center gy-3">
             <div v-for="({ match_stage, home_team, away_team, home_name, away_name, away_score, home_score, winner, date_played }, i) in stats.tourResults"
                 :key="i" class="col-sm-6">

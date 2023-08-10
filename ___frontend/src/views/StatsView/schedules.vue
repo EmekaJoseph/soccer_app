@@ -1,12 +1,12 @@
 <template>
-    <div v-if="!stats.tourSchedules.length">
+    <div v-if="!stats.tourSchedules.length" class="min-vh-100">
         <emptyDataComponent>
             No shedules yet, <br> Come back later.
         </emptyDataComponent>
 
     </div>
     <!-- <div v-else class="animate__animated  animate__bounceInUp"> -->
-    <div v-else>
+    <div v-else class="min-vh-100">
         <div v-for="({ match_stage, kick_off, home_team, away_team, venue }, i) in stats.tourSchedules" :key="i"
             class="card bg-white rounded-0 mb-4">
             <div class="card-header fw-bolder bg-white shadow-sm border-0 text-center">

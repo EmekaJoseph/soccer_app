@@ -18,8 +18,13 @@
             </div>
         </nav>
 
-        <div class="py-5">
-            <RouterView />
+        <div class="py-5 container min-vh-100">
+            <div class="card shadow-sm border-0 rounded-0">
+                <div class="card-body">
+                    <RouterView />
+                </div>
+            </div>
+
         </div>
 
 

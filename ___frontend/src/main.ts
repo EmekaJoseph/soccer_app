@@ -13,11 +13,14 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
 
 import './assets/custom.css'
-import 'animate.css';
 
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 app.component('VueDatePicker', VueDatePicker);
+
+
+// https://swiperjs.com/element
+import 'swiper/css';
 
 // npm install vue-toast-notification@^3.0
 import 'vue-toast-notification/dist/theme-sugar.css';
@@ -39,12 +42,6 @@ app.component('EasyDataTable', Vue3EasyDataTable);
 // @ts-ignore
 import VueWriter from "vue-writer";
 
-// npm install vue3-touch-events
-// import Vue3TouchEvents from "vue3-touch-events";
-// app.use(Vue3TouchEvents);
-
-
-
 import Echo from "laravel-echo"
 import Pusher from 'pusher-js';
 import axiosManager from './store/axiosManager'
@@ -55,12 +52,12 @@ window.Echo = new Echo({
     broadcaster: 'pusher',
     key: axiosManager.webSocketKey(),
     cluster: "mt1",
-    forceTLS: false, //true on production
+    forceTLS: true, //true on production
 
     //############## remove on production ##################
-    wsHost: axiosManager.webSocketHost(),
-    wsPort: 6001,
-    disableStats: true,
+    // wsHost: axiosManager.webSocketHost(),
+    // wsPort: 6001,
+    // disableStats: true,
     //################ remove on production #################
 
     auth: {

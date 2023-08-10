@@ -7,7 +7,7 @@
             <div class="row g-4">
                 <div class="col-12 mb-4">
                     <div class="col-lg-4">
-                        <label>Tournament: </label>
+                        <!-- <label>Tournament: </label> -->
                         <select v-model="selectedTournament"
                             class="form-select text-uppercase rounded-0 border-end-0 border-start-0 border-top-0  border-bottom-3 cursor-pointer"
                             @change="loadLiveMatches">

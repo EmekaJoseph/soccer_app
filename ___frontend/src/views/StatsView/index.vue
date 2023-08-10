@@ -10,15 +10,15 @@
                 <div class="row justify-content-center ">
                     <div class="col-md-10 col-lg-6">
                         <div class="d-flex justify-content-between menu mb-0">
-                            <div @click="showPanel('standings')" class="menu-item"
-                                :class="{ ' shadow-s menu-active': currentShowing == 'standings' }">STANDINGS
+                            <div @click="showPanel(0)" class="menu-item" :class="{ 'menu-active': currentShowing == 0 }">
+                                STANDINGS
                             </div>
-                            <div @click="showPanel('matches')" class="menu-item"
-                                :class="{ ' shadow-s menu-active': currentShowing == 'matches' }">MATCHES</div>
-                            <div @click="showPanel('results')" class="menu-item"
-                                :class="{ 'shadow-s menu-active': currentShowing == 'results' }">RESULTS</div>
-                            <div @click="showPanel('live')" class="menu-item"
-                                :class="{ 'shadow-s menu-active': currentShowing == 'live' }">LIVE
+                            <div @click="showPanel(1)" class="menu-item" :class="{ 'menu-active': currentShowing == 1 }">
+                                MATCHES</div>
+                            <div @click="showPanel(2)" class="menu-item" :class="{ 'menu-active': currentShowing == 2 }">
+                                RESULTS</div>
+                            <div @click="showPanel(3)" class="menu-item" :class="{ 'menu-active': currentShowing == 3 }">
+                                LIVE
                                 <i v-if="stats.tourLives.length" style="font-size: 7px;"
                                     class="float-end mt-1 ms-1 bi bi-circle-fill text-success"></i>
                             </div>
@@ -28,24 +28,26 @@
             </div>
         </div>
 
-        <!-- <div class="show-panel min-vh-100" ref="panel_for_Swipe"> -->
+
         <div class="show-panel min-vh-100">
             <div class=" container">
                 <div class="row justify-content-center">
                     <div class="col-md-10 col-lg-8">
                         <StatsLayout>
-                            <div v-if="currentShowing == 'standings'">
-                                <StandingsPanel />
-                            </div>
-                            <div v-else-if="currentShowing == 'matches'">
-                                <SchedulePanel />
-                            </div>
-                            <div v-else-if="currentShowing == 'results'">
-                                <ResultsPanel />
-                            </div>
-                            <div v-else-if="currentShowing == 'live'">
-                                <LivePanel />
-                            </div>
+                            <Swiper ref="theSwipe" @swiper="onSwiper" @slideChange="onSlideChange">
+                                <swiper-slide>
+                                    <StandingsPanel />
+                                </swiper-slide>
+                                <swiper-slide>
+                                    <SchedulePanel />
+                                </swiper-slide>
+                                <swiper-slide>
+                                    <ResultsPanel />
+                                </swiper-slide>
+                                <swiper-slide>
+                                    <LivePanel />
+                                </swiper-slide>
+                            </Swiper>
                         </StatsLayout>
                     </div>
                 </div>
@@ -56,21 +58,41 @@
 </template>
 
 <script setup lang="ts">
+import { Swiper, SwiperSlide } from "swiper/vue";
 import { useRoute } from 'vue-router';
-import { onMounted, ref, onUnmounted, watch } from 'vue'
+import { onMounted, ref, onUnmounted } from 'vue'
 import { useStatsStore } from '@/store/statsStore'
 import StatsLayout from './StatsLayout.vue';
-import { useSwipe } from '@vueuse/core'
 
 import StandingsPanel from './standings.vue'
 import ResultsPanel from './results.vue'
 import SchedulePanel from './schedules.vue'
 import LivePanel from './live.vue'
 
+
+const swiper = ref<any>(null)
+const onSlideChange = (event: any) => {
+    if (event) {
+        window.scrollTo(0, 0);
+        currentShowing.value = event.activeIndex
+    }
+};
+
+const onSwiper = (swip: any) => {
+    swiper.value = swip
+};
+
+function showPanel(sideIndex: number) {
+    swiper.value.slideTo(sideIndex)
+    currentShowing.value = sideIndex;
+    window.scrollTo(0, 0);
+}
+
+
 const stats = useStatsStore()
 const route = useRoute()
 
-const currentShowing = ref('standings')
+const currentShowing = ref(0)
 
 onMounted(async () => {
     if (!stats.statsLoaded) {
@@ -103,40 +125,6 @@ let allDataInterval = setInterval(() => {
 onUnmounted(() => {
     clearInterval(allDataInterval)
     // clearInterval(liveMatchInterval)
-})
-
-function showPanel(name: string) {
-    currentShowing.value = name;
-    window.scrollTo(0, 0);
-}
-
-
-const panel_for_Swipe = ref<any>(null)
-const { direction } = useSwipe(panel_for_Swipe, {
-    onSwipe() {
-        if (direction.value == 'left') {
-            if (currentShowing.value == 'standings') {
-                currentShowing.value = 'matches'
-            }
-            else if (currentShowing.value == 'matches') {
-                currentShowing.value = 'results'
-            }
-            else if (currentShowing.value == 'results') {
-                currentShowing.value = 'live'
-            }
-        }
-        else if (direction.value == 'right') {
-            if (currentShowing.value == 'live') {
-                currentShowing.value = 'results'
-            }
-            else if (currentShowing.value == 'results') {
-                currentShowing.value = 'matches'
-            }
-            else if (currentShowing.value == 'matches') {
-                currentShowing.value = 'standings'
-            }
-        }
-    }
 })
 
 
@@ -187,11 +175,6 @@ window.Echo.channel('startMatch').listen('startMatch', async (e) => {
     border-radius: 0px;
 }
 
-
-.menu-item:hover {
-    background-color: var(--theme-color-3bb);
-}
-
 .menu-active {
     background-color: var(--theme-color-3bb);
     border-bottom: 4px solid #fff;
@@ -215,4 +198,10 @@ window.Echo.channel('startMatch').listen('startMatch', async (e) => {
 .show-panel {
     padding-top: 160px;
 }
+
+/* @media screen and (min-width: 992px) {
+    .menu-item:hover {
+        background-color: var(--theme-color-3bb);
+    }
+} */
 </style>
