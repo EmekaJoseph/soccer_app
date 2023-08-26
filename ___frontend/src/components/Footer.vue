@@ -6,19 +6,20 @@
             <div class="col-lg-4">
                 <div class="row justify-content-center align-items-center">
                     <div class="col-md-6  text-center">
-                        <span class="text-white my-2">&copy; {{ (new Date()).getFullYear() }} | DLAMYOUTHS
+                        <span class="text-white my-2">&copy; {{ (new Date()).getFullYear() }} | DLAMFA
                         </span>
                     </div>
 
                 </div>
             </div>
 
-
-
         </footer>
         <div class="text-center mt-2 text-proffix"><span class="text-mute fst-italic">designed by </span>
             ProfficTech - 08139590011
         </div>
+        <router-link to="/user" class="float-end small text-danger">
+            <i class="bi bi-person"></i>
+        </router-link>
     </div>
 </template>
 

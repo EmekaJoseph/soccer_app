@@ -3,10 +3,9 @@ import { useAccount } from '@/store/accountStore';
 
 
 import HomeView from '../views/HomeView.vue'
-import AboutView from '../views/AboutView.vue'
 import GeneralLayout from '../views/_layout.vue'
-import PageNotFound from '../views/PageNotFound.vue'
-import StatsView from '../views/StatsView/index.vue'
+// import PageNotFound from '../views/PageNotFound.vue'
+// import StatsView from '../views/StatsView/index.vue'
 
 import UserLogin from '../views/Admin/UserLogin.vue'
 import userLayout from '../views/Admin/_Layout.vue'
@@ -32,8 +31,7 @@ const router = createRouter({
       component: GeneralLayout,
       children: [
         { path: '', name: 'Home', component: HomeView },
-        { path: 'about', name: 'About', component: AboutView },
-        { path: 'stats/:tour_id', name: 'Tournament Stats', component: StatsView },
+        { path: 'stats/:tour_id', name: 'Tournament Stats', component: () => import('../views/StatsView/index.vue') },
       ],
     },
 
@@ -68,13 +66,10 @@ const router = createRouter({
       ],
     },
 
-
-
-
     {
       path: '/:pathMatch(.*)*',
       name: 'Invalid',
-      component: PageNotFound
+      component: () => import('../views/PageNotFound.vue')
     },
   ],
 })

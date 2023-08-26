@@ -12,7 +12,7 @@ export const useUserDataStore = defineStore('dataStore', () => {
   const tournamentLive = ref<any>([])
   const subUsers = ref<any>([])
   const predictions = ref<any>([])
-  const match_stages = ref<any>(['Group_Stage', 'Round_of_32', 'Knock_Out', 'Quarter_Final', 'Semi_Final', 'Final'])
+  const match_stages = ref<any>(['Friendly', 'Group_Stage', 'Round_of_32', 'Round_of_16', 'Knock_Out', 'Quarter_Final', 'Semi_Final', 'Final'])
   const valid_groups = ref<any>(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'])
 
   async function getTournaments() {

@@ -1,5 +1,5 @@
 <template>
-    <div class="col-12 col-md-6">
+    <div class="col-12 col-md-6 col-lg-4">
         <fieldset class="border rounded-3 p-3 bg-white h-100 shadow">
             <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">LIVE MATCH:
             </legend>
@@ -150,7 +150,8 @@ async function endLive() {
 // increment time every 1min(60secs)
 let liveMatchInterval = setInterval(() => {
     if (!liveData.timeIsPaused) {
-        liveData.curr_time += 1
+        liveData.curr_time = parseInt(liveData.curr_time) + 1
+        // liveData.curr_time += 1
     }
 }, 60000)
 

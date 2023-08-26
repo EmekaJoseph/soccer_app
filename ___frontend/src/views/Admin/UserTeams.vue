@@ -16,7 +16,7 @@
                 <div class="col-lg-12">
                     <div class="row gy-3">
                         <div class="col-lg-4">
-                            <fieldset class="border rounded-3 p-3 bg-white h-100">
+                            <fieldset class="border rounded-3 p-3 bg-white">
                                 <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">CREATE A TEAM:
                                 </legend>
                                 <div class="row g-3">
@@ -61,7 +61,7 @@
                                 </div>
 
                                 <div class="col-md-12 mt-3">
-                                    <div class="card">
+                                    <div class="card border-0">
                                         <div class="card-body p-1 m-1">
                                             <div v-if="userData.tournamentTeams">
                                                 <EasyDataTable class="border-0"

@@ -2,9 +2,9 @@
     <div class="container">
         <div class="min-vh-100 d-flex justify-content-center align-items-center">
             <div class="col-lg-4 col-md-6">
-                <div class="card shadow-sm rounded-0">
-                    <div class="card-header fs-3 text-center fw-bold border-0">
-                        ADMIN
+                <div class="card shadow-sm rounded-">
+                    <div class="card-header fs-4 text-center fw-bold border-0 py-3">
+                        DLAMFA- <span class="text-muted">ADMIN</span>
                     </div>
                     <div class="card-body pt-5">
                         <form @submit.prevent="login" class="row gy-3">
@@ -27,14 +27,16 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12">
+                            <div class="col-12 mt-4">
                                 <button :disabled="form.isLoading" type="submit"
                                     class="btn btn-primary w-100 btn-lg">LOGIN</button>
-                                <span class="float-end cursor-pointer">forgot password?</span>
+                                <!-- <span class="float-end cursor-pointer">forgot password?</span> -->
                             </div>
 
                             <div class="col-12 mt-5 text-center">
-                                <RouterLink class="text-decoration-none" to="/">Create Account</RouterLink>
+                                <RouterLink class="text-decoration-none" to="/">
+                                    <i class="bi bi-chevron-left"></i> Homepage
+                                </RouterLink>
                             </div>
                         </form>
                     </div>

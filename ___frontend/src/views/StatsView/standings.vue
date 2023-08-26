@@ -16,6 +16,9 @@
 
         </div>
         <div class="backdrop "></div>
+        <div class="card rounded-0">
+            <div class="card-body text-center py-1">END</div>
+        </div>
     </div>
 </template>
 

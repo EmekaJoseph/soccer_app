@@ -15,7 +15,7 @@
                 </div>
                 <div class="col-lg-12">
                     <div class="row gy-3">
-                        <div class="col-lg-4">
+                        <div class="col-lg-5">
                             <fieldset class="border rounded-3 p-3 bg-white h-100">
                                 <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">NEW RESULT:
                                 </legend>
@@ -43,7 +43,7 @@
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="row">
-                                                    <div class="col-sm-9">
+                                                    <div class="col-sm-8">
                                                         <label>Home Team: </label>
                                                         <select v-model="form.homeTeam" class="form-select  text-uppercase">
                                                             <option value="" selected disabled></option>
@@ -54,7 +54,7 @@
                                                         </select>
                                                     </div>
 
-                                                    <div class="col-sm-3">
+                                                    <div class="col-sm-4">
                                                         <label class="small">score:</label>
                                                         <input v-model="form.homeTeam_score" type="number"
                                                             class="form-control">
@@ -68,7 +68,7 @@
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="row">
-                                                    <div class="col-sm-9">
+                                                    <div class="col-sm-8">
                                                         <label>Away Team: </label>
                                                         <select v-model="form.awayTeam" class="form-select  text-uppercase">
                                                             <option value="" selected disabled></option>
@@ -79,7 +79,7 @@
                                                         </select>
                                                     </div>
 
-                                                    <div class="col-sm-3">
+                                                    <div class="col-sm-4">
                                                         <label class="small">score:</label>
                                                         <input v-model="form.awayTeam_score" type="number"
                                                             class="form-control ">
@@ -109,12 +109,12 @@
                             </fieldset>
                         </div>
 
-                        <div class="col-lg-8">
+                        <div class="col-lg-7">
                             <fieldset class="border rounded-3 p-3 bg-white h-100">
                                 <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">LIST</legend>
 
                                 <div class="col-md-12 mt-3">
-                                    <div class="card">
+                                    <div class="card border-0">
                                         <div class="card-body p-1 m-1">
                                             <div v-if="userData.tournamentResults">
                                                 <EasyDataTable class="border-0" :headers="tableHeaders"

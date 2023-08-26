@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-light min-vh-100">
+    <div class="bg-admin min-vh-100">
         <nav class="navbar py-4 px-lg-3 shadow-sm bg-body-tertiary bg-light">
             <div class="container-fluid">
                 <div>
@@ -18,9 +18,9 @@
             </div>
         </nav>
 
-        <div class="py-5 container min-vh-100">
-            <div class="card shadow-sm border-0 rounded-0">
-                <div class="card-body">
+        <div class="py-5 container ">
+            <div class="card border-0 rounded-0 min-vh-100">
+                <div class="card-body px-0">
                     <RouterView />
                 </div>
             </div>
@@ -127,5 +127,9 @@ function logOut() {
 
 .list-group-item .active {
     background-color: var(--bs-light);
+}
+
+.bg-admin {
+    background-color: #ebeefd;
 }
 </style>

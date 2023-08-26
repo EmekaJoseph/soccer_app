@@ -1,5 +1,5 @@
 <template>
-  <div class="main min-vh-100  general-body">
+  <div class="main bg-gradient min-vh-100  general-body">
     <!-- <nav class="navbar m-0 p-0">
       <div class="container-fluid p-0">
         <span></span>
@@ -13,7 +13,7 @@
       <div class="container pb-5">
         <div class="d-flex justify-content-center align-items-center pt-lg-5 py-4 text-center">
           <div class="col-12 col-md-8 ">
-            <img class="dlam_academy" src="@/assets/images/dlam_academy.png" alt="anglican logo">
+            <img class="dlam_academy_logo" src="@/assets/images/dlam_academy.png" alt="anglican logo">
             <img class="stationery_logo" src="@/assets/images/stationery_logo.png" alt="stationeryfc logo">
 
             <div class="d-none d-md-block"> CHURCH OF NIGERIA ANGLICAN COMMUNION </div>
@@ -34,7 +34,7 @@
               <vue-writer :array="['STATIONERY STORES FC']" :iterations='1' :typeSpeed="100" :start="3000" />
             </div>
 
-            <div class="large-text ">
+            <div class="large-text">
               DLAM Football Competition 2023
             </div>
 
@@ -140,19 +140,10 @@ const greeting = () => {
   return text;
 }
 
-
 </script>
 
-
-
 <style scoped>
-.main {
-  background-color: var(--bs-light);
-  background-image: linear-gradient(90deg, #fff, #fcf5e1, #fff) !important;
-  /* background: url("@/assets/images/big_bg.jpg") no-repeat center/cover; */
-}
-
-.dlam_academy,
+.dlam_academy_logo,
 .stationery_logo {
   width: 100px;
   margin-block: 1rem;
@@ -169,7 +160,7 @@ const greeting = () => {
 
 @media screen and (max-width: 992px) {
 
-  .dlam_academy,
+  .dlam_academy_logo,
   .stationery_logo {
     width: 70px;
   }

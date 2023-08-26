@@ -6,7 +6,7 @@
         <div v-else>
 
             <div class="row justify-content-center gy-4">
-                <div class="col-lg-7">
+                <div class="col-lg-8">
 
                     <fieldset class="border rounded-3 p-3 bg-white h-100">
                         <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">TOURNAMENTS</legend>
@@ -71,24 +71,24 @@
                         </div>
                     </fieldset>
                 </div>
-                <div v-if="account.state.role == 'admin'" class="col-lg-5">
+                <div v-if="account.state.role == 'admin'" class="col-lg-4">
                     <fieldset class="border rounded-3 p-3 h-100 bg-white">
                         <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">USERS</legend>
                         <div class="content-panel">
                             <form @submit.prevent="">
-                                <div class="row g-2">
-                                    <div class="col-lg-5">
-                                        <input v-model="usersForm.email" type="text" class="form-control form-control-sm"
+                                <div class="row g-3">
+                                    <div class="col-lg-12">
+                                        <input v-model="usersForm.email" type="text" class="form-control"
                                             placeholder="valid email">
                                     </div>
-                                    <div class="col-lg-5">
-                                        <input v-model="usersForm.password" type="text" class="form-control form-control-sm"
+                                    <div class="col-lg-12">
+                                        <input v-model="usersForm.password" type="text" class="form-control"
                                             placeholder="password">
                                     </div>
-                                    <div class="col-lg-2">
+                                    <div class="col-lg-12 ">
                                         <button @click="submitUser" :disabled="usersForm.isSaving"
-                                            class="btn btn-primary btn-sm w-100">
-                                            <i class="bi bi-arrow-down"></i>
+                                            class="btn btn-primary float-end w-100">
+                                            <i class="bi bi-arrow-down "></i> Add
                                         </button>
                                     </div>
 
@@ -222,6 +222,8 @@ async function submitUser() {
             userData.getSubUsers()
             resetFrom()
         } catch (error) {
+            console.log(error);
+
             resetFrom()
         }
     }

@@ -1,4 +1,6 @@
-db_pass:  p4^?UQ8wEG)d
+db_pass(main):  p4^?UQ8wEG)d
+db_pass(demo): xmQ3E@4]O6d?
+cpanel_pass: u8WJHOn6z0;7*y
 
 
 https://ahmedshaltout.com/laravel/how-to-use-laravel-websockets-and-laravel-echo-with-vue-3-app-example/

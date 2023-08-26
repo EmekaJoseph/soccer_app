@@ -83,6 +83,7 @@ const onSwiper = (swip: any) => {
 };
 
 function showPanel(sideIndex: number) {
+    // if (swiper.value) 
     swiper.value.slideTo(sideIndex)
     currentShowing.value = sideIndex;
     window.scrollTo(0, 0);

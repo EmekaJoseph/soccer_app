@@ -15,8 +15,8 @@
                 </div>
                 <div class="col-lg-12">
                     <div class="row gy-3">
-                        <div class="col-lg-6">
-                            <fieldset class="border rounded-3 p-3 bg-white h-100">
+                        <div class="col-lg-5">
+                            <fieldset class="border rounded-3 p-3 bg-white">
                                 <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">NEW SCHEDULE:
                                 </legend>
                                 <div class="row g-3">
@@ -25,7 +25,7 @@
                                         <div class="card shadow-sm">
                                             <div class="card-body">
                                                 <div class="row g-2">
-                                                    <div class="col-md-5">
+                                                    <div class="col-md-">
                                                         <label>Home Team: </label>
                                                         <select v-model="form.homeTeam" class="form-select  text-uppercase">
                                                             <option value="" selected disabled></option>
@@ -35,12 +35,12 @@
                                                             </option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-2 my-0 my-md-2 p-0">
+                                                    <div class="col-md- my-0  p-0">
                                                         <label>&nbsp;</label>
-                                                        <div class="card p-2 text-center border-0 fw-bolder">VS</div>
+                                                        <div class="card p-2 text-center border-0 fw-bold">VS</div>
                                                     </div>
 
-                                                    <div class="col-md-5">
+                                                    <div class="col-md-">
                                                         <label>Away Team: </label>
                                                         <select v-model="form.awayTeam" class="form-select  text-uppercase">
                                                             <option value="" selected disabled></option>
@@ -91,12 +91,12 @@
                             </fieldset>
                         </div>
 
-                        <div class="col-lg-6">
+                        <div class="col-lg-7">
                             <fieldset class="border rounded-3 p-3 bg-white h-100">
                                 <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">LIST</legend>
 
                                 <div class="col-md-12 mt-3">
-                                    <div class="card">
+                                    <div class="card border-0 p-0">
                                         <div class="card-body p-1 m-1">
                                             <div v-if="userData.tournamentShedules">
                                                 <EasyDataTable class="border-0" :headers="tableHeaders"
@@ -113,7 +113,6 @@
 
                                                     <template #item-delete="item">
                                                         <div class="operation-wrapper">
-
                                                             <span @click="deleteSchedule(item)"
                                                                 class="operation-icon cursor-pointer">
                                                                 <i class="bi bi-trash3 text-danger"></i>

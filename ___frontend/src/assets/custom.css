@@ -110,3 +110,10 @@ button:focus,
 .text-dim {
   color: #b3b0b0;
 }
+
+
+.bg-gradient {
+  /* background-color: var(--bs-light); */
+  background-image: linear-gradient(90deg, #fff, #fcf5e1, #fff) !important;
+  /* background: url("@/assets/images/big_bg.jpg") no-repeat center/cover; */
+}

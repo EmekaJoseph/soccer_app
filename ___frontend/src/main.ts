@@ -31,8 +31,8 @@ app.component('internetErrorComponent', internetErrorComponent);
 import emptyDataComponent from '@/components/emptyData.vue'
 app.component('emptyDataComponent', emptyDataComponent);
 
-import shareSite from '@/components/share.vue'
-app.component('shareSite', shareSite);
+// import shareSite from '@/components/share.vue'
+// app.component('shareSite', shareSite);
 
 
 import Vue3EasyDataTable from 'vue3-easy-data-table';
@@ -54,11 +54,11 @@ window.Echo = new Echo({
     cluster: "mt1",
     forceTLS: true, //true on production
 
-    //############## remove on production ##################
+    //############## ONLY for development ##################
     // wsHost: axiosManager.webSocketHost(),
     // wsPort: 6001,
     // disableStats: true,
-    //################ remove on production #################
+    //################ ONLY for development #################
 
     auth: {
         headers: {
