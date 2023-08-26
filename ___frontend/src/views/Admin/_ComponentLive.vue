@@ -126,11 +126,6 @@ async function sendUpdate() {
     }
 }
 
-// updateLive every (3mins)
-let liveUpdater = setInterval(() => {
-    sendUpdate()
-}, 180000)
-
 async function endLive() {
     if (confirm('End Live Match ?')) {
         try {
@@ -139,7 +134,8 @@ async function endLive() {
                 userData.getLiveMatches(prop.teamData.tour_id)
                 $toast.default('Match ended succesfully', { position: 'top-right' });
             }
-            clearInterval(liveUpdater)
+            // clearInterval(liveUpdater)
+            clearInterval(liveMatchInterval)
         } catch (error) {
             console.log(error);
             $toast.error('Operation not successfull, Internet Error', { position: 'top-right' });
@@ -151,13 +147,14 @@ async function endLive() {
 let liveMatchInterval = setInterval(() => {
     if (!liveData.timeIsPaused) {
         liveData.curr_time = parseInt(liveData.curr_time) + 1
+        sendUpdate()
         // liveData.curr_time += 1
     }
 }, 60000)
 
 onUnmounted(() => {
     // clearInterval(liveMatchInterval)
-    clearInterval(liveUpdater)
+    // clearInterval(liveUpdater)
 })
 
 
