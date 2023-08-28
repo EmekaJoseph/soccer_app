@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 14, 2023 at 03:50 PM
+-- Generation Time: Aug 28, 2023 at 02:25 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.2
 
@@ -84,7 +84,15 @@ CREATE TABLE `personal_access_tokens` (
 INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `name`, `token`, `abilities`, `last_used_at`, `expires_at`, `created_at`, `updated_at`) VALUES
 (1, 'App\\Models\\UserModel', 2, '_token', '4895d06c32cb42b790a1124895267a6a5b5c5a62d361612521c5a56b4e4bb34b', '[\"*\"]', '2023-07-02 08:59:36', NULL, '2023-06-05 20:19:36', '2023-07-02 08:59:36'),
 (10, 'App\\Models\\UserModel', 2, '_token', '4b2388506d2589045ebc2b5fd21ac33af8b89c84b262468aaaa394189480d0d0', '[\"*\"]', '2023-06-26 21:36:20', NULL, '2023-06-26 09:40:05', '2023-06-26 21:36:20'),
-(24, 'App\\Models\\UserModel', 2, '_token', '61c72992d0cd93c9402414f1dd0efbc78ebfedb818717549e828a5440a519d52', '[\"*\"]', '2023-07-14 12:49:59', NULL, '2023-07-14 12:29:09', '2023-07-14 12:49:59');
+(24, 'App\\Models\\UserModel', 2, '_token', '61c72992d0cd93c9402414f1dd0efbc78ebfedb818717549e828a5440a519d52', '[\"*\"]', '2023-07-14 12:49:59', NULL, '2023-07-14 12:29:09', '2023-07-14 12:49:59'),
+(26, 'App\\Models\\UserModel', 2, '_token', 'f6d19d60d11b5e83b061cf59fda31601164065a6082bb57d6b80ba3527eb9466', '[\"*\"]', '2023-08-07 14:11:27', NULL, '2023-08-07 12:23:12', '2023-08-07 14:11:27'),
+(27, 'App\\Models\\UserModel', 2, '_token', 'ad0b6ef83704b259a195d10c1c76481b599c7f47bb2fee0fd55a49c30b36cdd4', '[\"*\"]', '2023-08-09 10:44:49', NULL, '2023-08-08 09:21:06', '2023-08-09 10:44:49'),
+(28, 'App\\Models\\UserModel', 2, '_token', 'd0b6e97d7712c5abe506375b8a671d1f6532e198a927d9cbafaab970673fce4d', '[\"*\"]', '2023-08-09 10:51:36', NULL, '2023-08-08 11:43:31', '2023-08-09 10:51:36'),
+(29, 'App\\Models\\UserModel', 2, '_token', 'a478d2d48ba17fabaf5b0a1781738fa0cd46471e5cb3226911839aa91d42b627', '[\"*\"]', '2023-08-10 11:51:20', NULL, '2023-08-09 12:40:52', '2023-08-10 11:51:20'),
+(31, 'App\\Models\\UserModel', 2, '_token', 'a264366ff47e946f4ffe83ad5cc4aa28da66af139e3758a0aad9e7beb64e868b', '[\"*\"]', '2023-08-25 06:31:46', NULL, '2023-08-25 04:57:25', '2023-08-25 06:31:46'),
+(34, 'App\\Models\\SubUserModel', 2, '_token', 'ea0a5f196eda280375c550bb2dbc6d02be6d88735ae9e98b06f43dffe2ccf75f', '[\"*\"]', '2023-08-26 09:51:51', NULL, '2023-08-26 09:26:26', '2023-08-26 09:51:51'),
+(35, 'App\\Models\\UserModel', 2, '_token', 'c2ad7860dfe8f41d22e9774c2d6241fc24d3e38b3fb1706de623e6384ce0df9c', '[\"*\"]', '2023-08-26 10:55:11', NULL, '2023-08-26 10:43:11', '2023-08-26 10:55:11'),
+(49, 'App\\Models\\UserModel', 2, '_token', '9568b1f080a7d8bc5202dcb3287567545ae1421f490147091799722de999a9dd', '[\"*\"]', '2023-08-28 10:55:26', NULL, '2023-08-28 10:51:26', '2023-08-28 10:55:26');
 
 -- --------------------------------------------------------
 
@@ -99,6 +107,7 @@ CREATE TABLE `tbl_live` (
   `home_team_score` int(10) NOT NULL DEFAULT 0,
   `away_team_score` int(10) NOT NULL DEFAULT 0,
   `tour_id` varchar(100) NOT NULL,
+  `creator` varchar(100) NOT NULL,
   `isPaused` int(10) NOT NULL DEFAULT 0,
   `match_stage` varchar(100) DEFAULT NULL,
   `curr_time` int(100) NOT NULL DEFAULT 0
@@ -122,15 +131,6 @@ CREATE TABLE `tbl_prediction` (
   `device_ip` varchar(100) NOT NULL,
   `tour_id` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `tbl_prediction`
---
-
-INSERT INTO `tbl_prediction` (`prediction_id`, `first_place`, `second_place`, `third_place`, `created_at`, `full_name`, `email`, `phone_number`, `device_ip`, `tour_id`) VALUES
-('01h4tqdmhadpj7srpfj1a91zs5', '01h4arfsbeenqgdfvpk4qxbxts', '01h4argvsmaxzw4nkerdpp4vq1', '01h4arz4qdwpcpvqy0kafxp8xq', '2023-07-08 12:25:26', 'Emeka', 'default', '08139590011', '127.0.0.1', '01h4299vwq5mkm8nzdpcdkskmv'),
-('01h5a10a7d70hhshkcc9dhr31q', '01h4arfsbeenqgdfvpk4qxbxts', '01h4arp4asbfv9yjvsqk68r0tg', '01h4argvsmaxzw4nkerdpp4vq1', '2023-07-14 11:01:32', 'aaaaaaaaaaaaaaaa', 'default', '22222222222222222222', '127.0.0.1', '01h4299vwq5mkm8nzdpcdkskmv'),
-('01h5a1b6x6r248bamjbvwk8z4c', '01h4argvsmaxzw4nkerdpp4vq1', '01h4arfsbeenqgdfvpk4qxbxts', '01h4arp4asbfv9yjvsqk68r0tg', '2023-07-14 11:07:29', 'Emeka', 'default', '080', '127.0.0.1', '01h4299vwq5mkm8nzdpcdkskmv');
 
 -- --------------------------------------------------------
 
@@ -158,15 +158,39 @@ CREATE TABLE `tbl_results` (
 --
 
 CREATE TABLE `tbl_schedules` (
-  `schedule_id` varchar(100) NOT NULL,
-  `tour_id` varchar(100) NOT NULL,
-  `venue` varchar(255) NOT NULL,
-  `kick_off` varchar(100) NOT NULL,
-  `home_team` varchar(100) NOT NULL,
-  `away_team` varchar(100) NOT NULL,
-  `match_stage` varchar(100) DEFAULT NULL,
-  `created` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `schedule_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tour_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `venue` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `kick_off` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `home_team` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `away_team` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `match_stage` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `tbl_schedules`
+--
+
+INSERT INTO `tbl_schedules` (`schedule_id`, `tour_id`, `venue`, `kick_off`, `home_team`, `away_team`, `match_stage`, `created`) VALUES
+('01h86f75fbw3a0a9ybjhwn6gzy', '01h4299vwq5mkm8nzdpcdkskmv', 'Igbobi College, Yaba.', '2023-09-02T08:00:00.000Z', '01h4arehbevb541jqqdn7y5y7d', '01h4arfsbeenqgdfvpk4qxbxts', 'Group_Stage', '2023-08-19 08:40:04'),
+('01h86f9kgddq8hpnp3z7scn04f', '01h4299vwq5mkm8nzdpcdkskmv', 'Igbobi College, Yaba.', '2023-09-02T11:00:00.000Z', '01h4arp4asbfv9yjvsqk68r0tg', '01h4argvsmaxzw4nkerdpp4vq1', 'Group_Stage', '2023-08-19 08:41:24'),
+('01h86fgb8216wwc6wdvn613mns', '01h4299vwq5mkm8nzdpcdkskmv', 'Igbobi College, Yaba.', '2023-09-09T09:00:00.000Z', '01h4as2w4xzfhrf4dydnj5b596', '01h4as00btdt98nnt8v3r9kzmk', 'Group_Stage', '2023-08-19 08:45:05'),
+('01h86fk3pwchw0c94jjgyphyvy', '01h4299vwq5mkm8nzdpcdkskmv', 'CMS Grammar school, Bariga.', '2023-09-09T09:00:00.000Z', '01h4as5tmte5xry4xeta54wb1t', '01h4as5gqqgbjn4av7bgak2tad', 'Group_Stage', '2023-08-19 08:46:36'),
+('01h86g9jmbnca0x2gfe4nyqfh5', '01h4299vwq5mkm8nzdpcdkskmv', 'CMS Grammar school, Bariga.', '2023-09-09T11:00:00.000Z', '01h4arz4qdwpcpvqy0kafxp8xq', '01h4as23yzsp0htg2pbqh9384d', 'Group_Stage', '2023-08-19 08:58:52'),
+('01h86gazgafnbwx5c23hx4sbm1', '01h4299vwq5mkm8nzdpcdkskmv', 'Igbobi College, Yaba', '2023-09-09T11:00:00.000Z', '01h4as4w5160f91sjkx2n4jyg5', '01h4as4ex4y3k8gnfes6gtbkna', 'Group_Stage', '2023-08-19 08:59:38'),
+('01h86gc6czftsv10wrpavcgmyf', '01h4299vwq5mkm8nzdpcdkskmv', 'CMS Grammar school, Bariga.', '2023-09-16T09:00:00.000Z', '01h4arfsbeenqgdfvpk4qxbxts', '01h4arp4asbfv9yjvsqk68r0tg', 'Group_Stage', '2023-08-19 09:00:18'),
+('01h86gea8tzgt6nkfdryaa01fp', '01h4299vwq5mkm8nzdpcdkskmv', 'Igbobi College, Yaba', '2023-09-16T09:00:00.000Z', '01h4as23yzsp0htg2pbqh9384d', '01h4as2w4xzfhrf4dydnj5b596', 'Group_Stage', '2023-08-19 09:01:27'),
+('01h86gfmhbr4xmv2ppkbzbqd51', '01h4299vwq5mkm8nzdpcdkskmv', 'CMS Grammar school, Bariga.', '2023-09-16T11:00:00.000Z', '01h4argvsmaxzw4nkerdpp4vq1', '01h4arehbevb541jqqdn7y5y7d', 'Group_Stage', '2023-08-19 09:02:10'),
+('01h86ggzy71jwc3vrykrtwh6r1', '01h4299vwq5mkm8nzdpcdkskmv', 'Igbobi College, Yaba', '2023-09-16T11:00:00.000Z', '01h4as00btdt98nnt8v3r9kzmk', '01h4arz4qdwpcpvqy0kafxp8xq', 'Group_Stage', '2023-08-19 09:02:55'),
+('01h86gnwchjhsrfq8ky1y1gfee', '01h4299vwq5mkm8nzdpcdkskmv', 'CMS Grammar school, Bariga.', '2023-09-23T09:00:00.000Z', '01h4as4ex4y3k8gnfes6gtbkna', '01h4as5tmte5xry4xeta54wb1t', 'Group_Stage', '2023-08-19 09:05:35'),
+('01h86gq7em2q3pcj6r99zmaehc', '01h4299vwq5mkm8nzdpcdkskmv', 'Igbobi College, Yaba.', '2023-09-23T09:00:00.000Z', '01h4as4w5160f91sjkx2n4jyg5', '01h4as5gqqgbjn4av7bgak2tad', 'Group_Stage', '2023-08-19 09:06:19'),
+('01h86gsyqqe610jty1pbzabdp4', '01h4299vwq5mkm8nzdpcdkskmv', 'Igbobi College, Yaba', '2023-09-23T11:00:00.000Z', '01h4arfsbeenqgdfvpk4qxbxts', '01h4argvsmaxzw4nkerdpp4vq1', 'Group_Stage', '2023-08-19 09:07:49'),
+('01h86gtwn01vsqsapk7aajsadm', '01h4299vwq5mkm8nzdpcdkskmv', 'CMS Grammar school, Bariga.', '2023-09-23T11:00:00.000Z', '01h4arehbevb541jqqdn7y5y7d', '01h4arp4asbfv9yjvsqk68r0tg', 'Group_Stage', '2023-08-19 09:08:19'),
+('01h86gyj7azt51exeydn52tzk3', '01h4299vwq5mkm8nzdpcdkskmv', 'Igbobi College, Yaba.', '2023-09-30T09:00:00.000Z', '01h4as23yzsp0htg2pbqh9384d', '01h4as00btdt98nnt8v3r9kzmk', 'Group_Stage', '2023-08-19 09:10:20'),
+('01h86gzq60dfkf02q1590vzhcg', '01h4299vwq5mkm8nzdpcdkskmv', 'CMS Grammar school, Bariga.', '2023-09-30T09:00:00.000Z', '01h4as2w4xzfhrf4dydnj5b596', '01h4arz4qdwpcpvqy0kafxp8xq', 'Group_Stage', '2023-08-19 09:10:57'),
+('01h86h12jje45fs553bze6pmvf', '01h4299vwq5mkm8nzdpcdkskmv', 'Igbobi College, Yaba', '2023-09-30T11:00:00.000Z', '01h4as4ex4y3k8gnfes6gtbkna', '01h4as5gqqgbjn4av7bgak2tad', 'Group_Stage', '2023-08-19 09:11:42'),
+('01h86h26rqmn9y1s7bzfv0eqrd', '01h4299vwq5mkm8nzdpcdkskmv', 'CMS Grammar school, Bariga.', '2023-09-30T11:00:00.000Z', '01h4as5tmte5xry4xeta54wb1t', '01h4as4w5160f91sjkx2n4jyg5', 'Group_Stage', '2023-08-19 09:12:19');
 
 -- --------------------------------------------------------
 
@@ -196,8 +220,8 @@ CREATE TABLE `tbl_standings_cup` (
 
 INSERT INTO `tbl_standings_cup` (`standing_id`, `team_id`, `tour_id`, `group_in`, `played`, `won`, `draw`, `lose`, `goal_diff`, `points`, `created_at`, `updated_at`, `extra_col`) VALUES
 ('01h4arehczjgp3kwjsrvtzep4p', '01h4arehbevb541jqqdn7y5y7d', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 0, 0, 0, 0, 0, 0, '2023-07-02 07:35:34', '2023-07-02 11:44:15', NULL),
-('01h4arfse0zxvxg2dcw4kjhj5z', '01h4arfsbeenqgdfvpk4qxbxts', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 0, 0, 0, 0, 0, 0, '2023-07-02 07:36:15', '2023-07-02 07:36:15', NULL),
-('01h4argvykma6fq042sfdn4cgc', '01h4argvsmaxzw4nkerdpp4vq1', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 0, 0, 0, 0, 0, 0, '2023-07-02 07:36:50', '2023-07-02 07:36:50', NULL),
+('01h4arfse0zxvxg2dcw4kjhj5z', '01h4arfsbeenqgdfvpk4qxbxts', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 0, 0, 0, 0, 0, 0, '2023-07-02 07:36:15', '2023-07-14 21:20:02', NULL),
+('01h4argvykma6fq042sfdn4cgc', '01h4argvsmaxzw4nkerdpp4vq1', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 0, 0, 0, 0, 0, 0, '2023-07-02 07:36:50', '2023-07-14 21:20:02', NULL),
 ('01h4arp4cvtm2rkcpbprpzbc5k', '01h4arp4asbfv9yjvsqk68r0tg', '01h4299vwq5mkm8nzdpcdkskmv', 'A', 0, 0, 0, 0, 0, 0, '2023-07-02 07:39:42', '2023-07-02 11:44:15', NULL),
 ('01h4arz4rz4a21zh8fr1qpnj3m', '01h4arz4qdwpcpvqy0kafxp8xq', '01h4299vwq5mkm8nzdpcdkskmv', 'B', 0, 0, 0, 0, 0, 0, '2023-07-02 07:44:38', '2023-07-02 07:44:38', NULL),
 ('01h4as00ge560kk2k6byme0v6j', '01h4as00btdt98nnt8v3r9kzmk', '01h4299vwq5mkm8nzdpcdkskmv', 'B', 0, 0, 0, 0, 0, 0, '2023-07-02 07:45:06', '2023-07-02 07:45:06', NULL),
@@ -275,8 +299,8 @@ CREATE TABLE `tbl_teams` (
 
 INSERT INTO `tbl_teams` (`team_id`, `team_name`, `tour_id`, `match_played`, `group_in`, `address`, `manager`, `created_at`, `updated_at`, `team_brief`, `team_badge`, `team_color`) VALUES
 ('01h4arehbevb541jqqdn7y5y7d', 'Cathedral group', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'A', NULL, NULL, '2023-07-02 07:35:33', '2023-07-02 11:44:15', NULL, NULL, '#FFD700'),
-('01h4arfsbeenqgdfvpk4qxbxts', 'Ijeshatedo', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'A', NULL, NULL, '2023-07-02 07:36:14', '2023-07-02 07:36:14', NULL, NULL, '#B6D0E2'),
-('01h4argvsmaxzw4nkerdpp4vq1', 'Mushin', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'A', NULL, NULL, '2023-07-02 07:36:50', '2023-07-02 07:36:50', NULL, NULL, '#A020F0'),
+('01h4arfsbeenqgdfvpk4qxbxts', 'Ijeshatedo', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'A', NULL, NULL, '2023-07-02 07:36:14', '2023-07-14 21:20:00', NULL, NULL, '#B6D0E2'),
+('01h4argvsmaxzw4nkerdpp4vq1', 'Mushin', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'A', NULL, NULL, '2023-07-02 07:36:50', '2023-07-14 21:20:02', NULL, NULL, '#A020F0'),
 ('01h4arp4asbfv9yjvsqk68r0tg', 'Odi-olowo', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'A', NULL, NULL, '2023-07-02 07:39:42', '2023-07-02 11:44:15', NULL, NULL, '#FFA500'),
 ('01h4arz4qdwpcpvqy0kafxp8xq', 'Aguda', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'B', NULL, NULL, '2023-07-02 07:44:38', '2023-07-02 07:44:38', NULL, NULL, '#FFC0CB'),
 ('01h4as00btdt98nnt8v3r9kzmk', 'Idi-oro', '01h4299vwq5mkm8nzdpcdkskmv', 0, 'B', NULL, NULL, '2023-07-02 07:45:06', '2023-07-02 07:45:06', NULL, NULL, '#4169e1'),
@@ -331,7 +355,7 @@ CREATE TABLE `tbl_users` (
 --
 
 INSERT INTO `tbl_users` (`user_id`, `email`, `password`, `firstname`, `lastname`, `no_of_leagues`, `no_of_cups`, `role`) VALUES
-(2, 'dlam@admin.com', '$2y$10$BNIN4vFOpuGYFJG67pyx5OIMhN6zdL3jR/1MUU5ufHwk2E6MP3yXW', NULL, NULL, 7, 6, 'admin');
+(2, 'admin@dlamfa.com', '$2y$10$BNIN4vFOpuGYFJG67pyx5OIMhN6zdL3jR/1MUU5ufHwk2E6MP3yXW', NULL, NULL, 7, 6, 'admin');
 
 -- --------------------------------------------------------
 
@@ -460,19 +484,19 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `tbl_live`
 --
 ALTER TABLE `tbl_live`
-  MODIFY `live_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `live_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
 
 --
 -- AUTO_INCREMENT for table `tbl_subusers`
 --
 ALTER TABLE `tbl_subusers`
-  MODIFY `subuser_id` int(100) NOT NULL AUTO_INCREMENT;
+  MODIFY `subuser_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `tbl_users`

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Events\endMatch;
 use App\Events\liveScore;
 use App\Events\startMatch;
+use App\Models\TeamModel;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
@@ -31,13 +32,14 @@ class LiveUpdateController extends BaseController
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+        $currentUser = ($req->user()->role == 'admin') ? $req->user()->user_id : $req->user()->subuser_id;
 
         DB::table('tbl_live')->insert([
             'home_team' => $req->input('home_team'),
             'away_team' => $req->input('away_team'),
             'tour_id' => $req->input('tour_id'),
             'match_stage' => $req->input('match_stage'),
-
+            'creator' => $currentUser
         ]);
 
         try {
@@ -47,6 +49,24 @@ class LiveUpdateController extends BaseController
         }
 
         return response()->json('started', 200);
+    }
+
+
+    public function getLiveMatchesByUser(Request $req, $tour_id)
+    {
+        $currentUser = ($req->user()->role == 'admin') ? $req->user()->user_id : $req->user()->subuser_id;
+        $liveUpdates = DB::table('tbl_live')
+            ->where('tour_id', $tour_id)
+            ->where('creator', $currentUser)
+            ->get();
+        if (sizeof($liveUpdates) > 0) {
+            foreach ($liveUpdates as $result) {
+                $result->home_team = (TeamModel::find($result->home_team))->team_name;
+                $result->away_team = (TeamModel::find($result->away_team))->team_name;
+            }
+        }
+
+        return response()->json($liveUpdates, 200);
     }
 
     public function updateLiveMatch(Request $req, $live_id)

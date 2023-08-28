@@ -15,7 +15,7 @@
                 </div>
 
                 <div class="col-lg-12">
-                    <fieldset class="border rounded-3 p-3 bg-white h-100">
+                    <fieldset class="border rounded-3 p-3 bg-light-subtle h-100">
                         <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">PREDICTIONS:
                         </legend>
 

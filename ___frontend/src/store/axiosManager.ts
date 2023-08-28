@@ -46,6 +46,8 @@ export default {
         return $instance.get(`view/live/${tour_id}`,)
     },
 
+
+
     savePrediction(data: any) {
         return $instance.post(`save_prediction`, JSON.stringify(data))
     },
@@ -140,5 +142,9 @@ export default {
 
     endLiveMatch(live_id: string) {
         return $instance.get(`endLiveMatch/${live_id}`)
-    }
+    },
+
+    getLiveMatchesByUser(tour_id: string) {
+        return $instance.get(`getLiveMatchesByUser/${tour_id}`,)
+    },
 }

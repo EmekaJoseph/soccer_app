@@ -33,6 +33,10 @@
                                 </emptyDataComponent>
                             </div>
                             <div class="row  gy-5">
+                                <div v-if="userData.tournamentLive.length"
+                                    class="col-12 alert border-0 fs-5 mb-0 text-danger alert-warning">
+                                    <b>Live Match is ON!</b>, Do not logout or refresh page.
+                                </div>
                                 <ComponentLive v-for="(liveData, i) in userData.tournamentLive" :key="i"
                                     :team-data="liveData" />
                             </div>
@@ -91,7 +95,7 @@ onMounted(async () => {
 
 function loadLiveMatches() {
     userData.getTournamentTeams(selectedTournament.value.id)
-    userData.getLiveMatches(selectedTournament.value.id)
+    userData.getLiveMatchesByUser(selectedTournament.value.id)
 }
 
 </script>

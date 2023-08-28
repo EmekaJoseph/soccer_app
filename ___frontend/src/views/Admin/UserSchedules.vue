@@ -15,8 +15,8 @@
                 </div>
                 <div class="col-lg-12">
                     <div class="row gy-3">
-                        <div class="col-lg-5">
-                            <fieldset class="border rounded-3 p-3 bg-white">
+                        <div class="col-lg-4">
+                            <fieldset class="border rounded-3 p-3 bg-white shadow">
                                 <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">NEW SCHEDULE:
                                 </legend>
                                 <div class="row g-3">
@@ -91,8 +91,8 @@
                             </fieldset>
                         </div>
 
-                        <div class="col-lg-7">
-                            <fieldset class="border rounded-3 p-3 bg-white h-100">
+                        <div class="col-lg-8">
+                            <fieldset class="border rounded-3 p-3 bg-light-subtle h-100">
                                 <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">LIST</legend>
 
                                 <div class="col-md-12 mt-3">

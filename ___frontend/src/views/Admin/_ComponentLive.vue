@@ -94,7 +94,6 @@ const prop = defineProps({
     }
 })
 
-
 const liveData = reactive({
     away_team_score: prop.teamData.away_team_score,
     home_team_score: prop.teamData.home_team_score,
@@ -118,7 +117,7 @@ async function sendUpdate() {
     try {
         let resp = await api.updateLiveMatch(liveData)
         if (resp.status == 200) {
-            userData.getLiveMatches(prop.teamData.tour_id)
+            userData.getLiveMatchesByUser(prop.teamData.tour_id)
         }
     } catch (error) {
         console.log(error);
@@ -131,7 +130,7 @@ async function endLive() {
         try {
             let resp = await api.endLiveMatch(prop.teamData.live_id)
             if (resp.status == 200) {
-                userData.getLiveMatches(prop.teamData.tour_id)
+                userData.getLiveMatchesByUser(prop.teamData.tour_id)
                 $toast.default('Match ended succesfully', { position: 'top-right' });
             }
             // clearInterval(liveUpdater)

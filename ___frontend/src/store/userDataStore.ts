@@ -51,9 +51,9 @@ export const useUserDataStore = defineStore('dataStore', () => {
     }
   }
 
-  async function getLiveMatches(id: string) {
+  async function getLiveMatchesByUser(id: string) {
     try {
-      let resp = await api.getLiveMatches(id)
+      let resp = await api.getLiveMatchesByUser(id)
       tournamentLive.value = (resp.status == 200) ? resp.data : [];
     } catch (error) {
       // console.log(error);
@@ -88,7 +88,7 @@ export const useUserDataStore = defineStore('dataStore', () => {
     getTournamentTeams,
     getTournamentSchedules,
     getTournamentResults,
-    getLiveMatches,
+    getLiveMatchesByUser,
     getPredictions,
     getSubUsers,
     tournaments,

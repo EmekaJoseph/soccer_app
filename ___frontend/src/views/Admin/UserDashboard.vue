@@ -8,7 +8,7 @@
             <div class="row justify-content-center gy-4">
                 <div class="col-lg-8">
 
-                    <fieldset class="border rounded-3 p-3 bg-white h-100">
+                    <fieldset class="border rounded-3 p-3 bg-light-subtle h-100">
                         <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">TOURNAMENTS</legend>
                         <div v-if="account.state.role == 'admin'"
                             class="d-flex justify-content-end col-12 mb-3  hover-tilt-Y">
@@ -71,8 +71,8 @@
                         </div>
                     </fieldset>
                 </div>
-                <div v-if="account.state.role == 'admin'" class="col-lg-4">
-                    <fieldset class="border rounded-3 p-3 h-100 bg-white">
+                <div class="col-lg-4">
+                    <fieldset v-if="account.state.role == 'admin'" class="border rounded-3 p-3 bg-white shadow">
                         <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">USERS</legend>
                         <div class="content-panel">
                             <form @submit.prevent="">

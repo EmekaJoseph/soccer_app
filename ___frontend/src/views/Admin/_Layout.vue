@@ -20,7 +20,7 @@
 
         <div class="py-5 container ">
             <div class="card border-0 rounded-0 min-vh-100">
-                <div class="card-body px-0">
+                <div class="card-body px-1 px-md-4 pt-5">
                     <RouterView />
                 </div>
             </div>

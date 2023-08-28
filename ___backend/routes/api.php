@@ -67,6 +67,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('startLiveMatch',  'startLiveMatch');
         Route::post('updateLiveMatch/{live_id}',  'updateLiveMatch');
         Route::get('endLiveMatch/{live_id}',  'endLiveMatch');
+        Route::get('getLiveMatchesByUser/{tour_id}',  'getLiveMatchesByUser');
     });
 });
 

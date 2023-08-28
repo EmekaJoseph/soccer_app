@@ -16,7 +16,7 @@
                 <div class="col-lg-12">
                     <div class="row gy-3">
                         <div class="col-lg-4">
-                            <fieldset class="border rounded-3 p-3 bg-white">
+                            <fieldset class="border rounded-3 p-3 bg-white shadow">
                                 <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">CREATE A TEAM:
                                 </legend>
                                 <div class="row g-3">
@@ -49,7 +49,7 @@
                         </div>
 
                         <div class="col-lg-8">
-                            <fieldset class="border rounded-3 p-3 bg-white">
+                            <fieldset class="border rounded-3 p-3 bg-light-subtle">
                                 <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">TEAMS:</legend>
                                 <div class="row">
                                     <div class="d-none d-lg-block col-md-4 float-end">

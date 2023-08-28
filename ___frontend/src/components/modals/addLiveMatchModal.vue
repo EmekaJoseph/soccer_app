@@ -90,6 +90,7 @@ const form = reactive({
     away_team: '',
     match_stage: '',
     tour_id: prop.tour.id,
+    creator: '',
 })
 
 const awayDropdown = computed(() => {
@@ -124,7 +125,7 @@ async function start() {
             form.away_team = "";
             form.match_stage = "";
             btnX.value.click()
-            userData.getLiveMatches(form.tour_id)
+            userData.getLiveMatchesByUser(form.tour_id)
         }
     } catch (error) {
         console.log(error);
@@ -132,7 +133,6 @@ async function start() {
         $toast.error('Error occoured', { position: 'top-right' });
         isSaving.value = false
     }
-
 }
 
 const btnX: any = ref(null)
