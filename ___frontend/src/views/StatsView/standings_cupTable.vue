@@ -10,7 +10,7 @@
                 <template #item-team_badge="item">
                     <div v-if="item.badge"> {{ item.badge }} </div>
                     <div v-else>
-                        <i :style="{ color: `${!item.team_color ? '#ccc' : item.team_color}` }"
+                        <i :style="{ color: `${!item.team_color ? '#eee' : item.team_color}` }"
                             class="bi bi-shield-fill"></i>
                     </div>
                 </template>

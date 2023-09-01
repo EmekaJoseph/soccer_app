@@ -47,7 +47,11 @@
         <div class="row justify-content-center align-items-center">
           <div class="col-10 col-lg-6">
             <div class="row justify-content-center g-3">
+              <div class="text-center">
+                <router-link to="/anthem"><i class="bi bi-music-note-beamed"></i> Competion Anthem</router-link>
+              </div>
               <div v-if="stats.isOnline" class="col-md-6">
+
                 <RouterLink :to="'stats/' + tour_id" class="btn btn-primary w-100 hover-tilt-Y btn-lg">
                   SEE STATS
                   <i class="bi bi-chevron-right"></i>
@@ -58,7 +62,7 @@
                   <span v-else class="spinner-border spinner-border-sm"> </span>
                 </div>
 
-                <div v-else class="mt-4 text-center text-muted">
+                <div v-else class="mt-4 text-center" style="color: #ccccccde;">
                   <span v-html="greeting()"></span><span v-if="DLAM_visitor" class=" text-capitalize">, {{ DLAM_visitor
                   }}</span>
                 </div>

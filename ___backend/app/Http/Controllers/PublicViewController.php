@@ -129,12 +129,12 @@ class PublicViewController extends BaseController
             'away_team',
             'match_stage',
             'venue',
-            'kick_off'
+            'kick_off',
         )->where('tour_id', $tour_id)->where('kick_off', '>=', $today)->orderBy('kick_off')->get();
         if (sizeof($results) > 0) {
             foreach ($results as $result) {
-                $result->home_team = (TeamModel::find($result->home_team))->team_name;
-                $result->away_team = (TeamModel::find($result->away_team))->team_name;
+                $result->home_team = (TeamModel::find($result->home_team));
+                $result->away_team = (TeamModel::find($result->away_team));
             }
         }
         return response()->json($results, 200);

@@ -5,7 +5,7 @@
                 <div>
                     <span ref="btnClose" class="navbar-toggler-icon cursor-pointer" data-bs-toggle="offcanvas"
                         data-bs-target="#offcanvasExample" aria-controls="offcanvasExample"></span>
-                    <span class="ms-2 text-capitalize fw-bolder">{{ route.name }}</span>
+                    <span class="ms-4 text-uppercase fw-bold">{{ route.name }}</span>
                 </div>
                 <div class="dropdown d-none d-md-block">
                     <button class=" bg-transparent border-0 dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -81,13 +81,17 @@ watch(() => route.path, () => {
 })
 
 function logOut() {
+    btnClose.value.click()
     try {
         api.logout()
     } catch (error) {
         // 
     }
-    account.state = account.nullState;
-    router.replace({ path: '/user' })
+    finally {
+        account.state = account.nullState;
+        router.replace({ path: '/user' })
+    }
+
 }
 
 </script>

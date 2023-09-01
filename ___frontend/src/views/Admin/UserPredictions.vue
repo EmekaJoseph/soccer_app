@@ -18,13 +18,18 @@
                     <fieldset class="border rounded-3 p-3 bg-light-subtle h-100">
                         <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">PREDICTIONS:
                         </legend>
-
                         <div class="col-md-12 mt-3">
-                            <div class="card">
+                            <div class="card border-0 p-0">
                                 <div class="card-body p-1 m-1">
                                     <div v-if="userData.predictions">
                                         <EasyDataTable class="border-0" :headers="tableHeaders"
                                             :items="userData.predictions" show-index>
+
+
+                                            <template #item-full_name="item">
+                                                {{ item.full_name }},
+                                                ({{ item.phone_number }})
+                                            </template>
                                         </EasyDataTable>
                                     </div>
                                 </div>

@@ -5,6 +5,8 @@
         </emptyDataComponent>
 
     </div>
+
+
     <!-- <div v-else class="animate__animated  animate__bounceInUp"> -->
     <div v-else class="min-vh-100">
         <div v-for="({ match_stage, kick_off, home_team, away_team, venue }, i) in stats.tourSchedules" :key="i"
@@ -14,13 +16,27 @@
                 {{ dateFormat(kick_off) }},
                 {{ new Date(kick_off).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-5 fw-bolder text-uppercase text-center">{{ home_team }}</div>
-                    <div class="col-2">
-                        <span class="fw-bold versus text-center">VS</span>
+            <div class="card-body px-2">
+                <div class="row justify-content-center">
+                    <div class="col-4 fw-bolder text-uppercase text-center team_name">{{ home_team.team_name }}</div>
+                    <div class="col-1">
+                        <span v-if="home_team.team_badge"> {{ home_team.team_badge }} </span>
+                        <span v-else>
+                            <i :style="{ color: `${!home_team.team_color ? '#eee' : home_team.team_color}` }"
+                                class="bi bi-shield-fill"></i>
+                        </span>
                     </div>
-                    <div class="col-5 fw-bolder text-uppercase text-center">{{ away_team }}</div>
+                    <div class="col-2">
+                        <div class="text-center small">-</div>
+                    </div>
+                    <div class="col-1">
+                        <span v-if="away_team.team_badge"> {{ away_team.team_badge }} </span>
+                        <span v-else>
+                            <i :style="{ color: `${!away_team.team_color ? '#eee' : away_team.team_color}` }"
+                                class="bi bi-shield-fill"></i>
+                        </span>
+                    </div>
+                    <div class="col-4  fw-bolder text-uppercase text-center team_name">{{ away_team.team_name }}</div>
                 </div>
             </div>
             <div class="card-footer border-0 bg-white text-muted py-0 pb-2">
@@ -45,9 +61,15 @@ const dateFormat = (date: any) => useDateFormat(new Date(date), 'ddd, DD MMMM YY
     color: var(--theme-color-2);
 }
 
+
+
 @media screen and (max-width: 992px) {
     .card {
         font-size: 12px;
     }
+
+    /* .team_name {
+        font-size: 11px;
+    } */
 }
 </style>

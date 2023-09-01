@@ -14,11 +14,6 @@ Work to do!
 
 
 
-to update:
-
-ALTER TABLE `tbl_live` ADD `creator` VARCHAR(100) NOT NULL AFTER `tour_id`;
-
-
 
 
 

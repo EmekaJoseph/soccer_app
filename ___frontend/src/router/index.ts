@@ -32,6 +32,7 @@ const router = createRouter({
       children: [
         { path: '', name: 'Home', component: HomeView },
         { path: 'stats/:tour_id', name: 'Tournament Stats', component: () => import('../views/StatsView/index.vue') },
+        { path: 'anthem', name: 'Diocesan Anthem', component: () => import('../views/anthem.vue') },
       ],
     },
 
