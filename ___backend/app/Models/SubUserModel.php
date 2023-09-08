@@ -21,8 +21,8 @@ class SubUserModel extends Authenticatable
 
     public $timestamps = false;
 
-    public function relatedTournaments()
+    public function relatedUser()
     {
-        return $this->hasMany(TournamentModel::class, 'user_id');
+        return $this->belongsTo(UserModel::class, 'user_id');
     }
 }

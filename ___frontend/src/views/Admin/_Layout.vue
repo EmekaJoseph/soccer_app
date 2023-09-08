@@ -20,7 +20,7 @@
 
         <div class="py-5 container ">
             <div class="card border-0 rounded-0 min-vh-100">
-                <div class="card-body px-1 px-md-4 pt-5">
+                <div class="card-body px-1 px-md-4 py-5">
                     <RouterView />
                 </div>
             </div>
@@ -28,7 +28,8 @@
         </div>
 
 
-        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasExample"
+            aria-labelledby="offcanvasExampleLabel">
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title" id="offcanvasExampleLabel">SOCCER APP</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>

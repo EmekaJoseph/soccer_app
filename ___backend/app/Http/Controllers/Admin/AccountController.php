@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\TournamentModel;
 use App\Models\UserModel;
 use App\Models\SubUserModel;
+use Illuminate\Support\Facades\Auth;
 use stdClass;
 
 class AccountController extends BaseController
@@ -35,6 +36,10 @@ class AccountController extends BaseController
         }
 
         if (UserModel::where('email', $req->input('email'))->exists()) {
+            return response()->json('exists', 203);
+        }
+
+        if (SubUserModel::where('email', $req->input('email'))->exists()) {
             return response()->json('exists', 203);
         }
 
@@ -60,6 +65,10 @@ class AccountController extends BaseController
             return response()->json($validator->errors(), 422);
         }
 
+        if (UserModel::where('email', $req->input('email'))->exists()) {
+            return response()->json('exists', 203);
+        }
+
         if (SubUserModel::where('email', $req->input('email'))->exists()) {
             return response()->json('exists', 203);
         }
@@ -77,14 +86,14 @@ class AccountController extends BaseController
 
     public function subUsersList(Request $req)
     {
-        $subUsers =  SubUserModel::where('user_id', $req->user()->user_id)->get();
-        return response()->json($subUsers, 200);
+        $thisUser = Auth::user(); //UserModel::find($req->user()->user_id);
+        return response()->json($thisUser->relatedSubUsers, 200);
     }
 
     public function deleteSubUser(Request $req, $subuser_id)
     {
         SubUserModel::find($subuser_id)->delete();
-        return 'deleted';
+        return response()->json('deleted', 200);
     }
 
     public function userLogin(Request $req)
@@ -113,6 +122,7 @@ class AccountController extends BaseController
 
         return response()->json($data, 200);
     }
+
 
     public function userLogout(Request $req)
     {

@@ -35,10 +35,8 @@
                                                             </option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-md- my-0  p-0">
-                                                        <label>&nbsp;</label>
-                                                        <div class="card p-2 text-center border-0 fw-bold">VS</div>
-                                                    </div>
+
+                                                    <div class=" text-center fw-bold mt-3 text-secondary">VS</div>
 
                                                     <div class="col-md-">
                                                         <label>Away Team: </label>
@@ -63,7 +61,7 @@
 
 
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <label>Kick-Off:</label>
                                         <VueDatePicker :preview-format="format" :minDate="today" v-model="form.kick_off"
                                             hideInputIcon :enableTimePicker="true" :is-24="false" :clearable="false"
@@ -71,7 +69,7 @@
                                         </VueDatePicker>
                                     </div>
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <label>Match Type:</label>
                                         <select :disabled="selectedTournament.type != 'cup'" v-model="form.match_stage"
                                             class="form-select  text-">
@@ -82,7 +80,7 @@
                                     </div>
 
 
-                                    <div v-if="userData.tournamentTeams.length" class="col-md-12 mt-3">
+                                    <div v-if="userData.tournamentTeams.length" class="col-md-12 mt-4">
                                         <button v-if="!form.isSaving" @click.prevent="save"
                                             class="btn btn-primary btn w-100">Save</button>
                                         <button v-else class="float-end theme-btn btn w-100" disabled>Saving...</button>

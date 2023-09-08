@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-// const hostURL = 'http://127.0.0.1:8000' //dev
-const hostURL = '' //build
+const hostURL = 'http://127.0.0.1:8000' //dev
+// const hostURL = '' //build
 
 const $instance = axios.create({
     baseURL: `${hostURL}/api/`,
@@ -147,4 +147,11 @@ export default {
     getLiveMatchesByUser(tour_id: string) {
         return $instance.get(`getLiveMatchesByUser/${tour_id}`,)
     },
+
+    getLiveMatchesForAdmin(tour_id: string) {
+        return $instance.get(`getLiveMatchesForAdmin/${tour_id}`,)
+    },
+    getWinnersByPrediction(data: object) {
+        return $instance.post(`getWinnersByPrediction/`, JSON.stringify(data))
+    }
 }

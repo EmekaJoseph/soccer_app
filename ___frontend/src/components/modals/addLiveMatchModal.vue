@@ -15,7 +15,7 @@
                                 <form class="row g-3">
                                     <div class="col-md-12">
                                         <label>Home Team: </label>
-                                        <select class="form-select" v-model="form.home_team">
+                                        <select class="form-select form-select-lg" v-model="form.home_team">
                                             <option value="" selected disabled></option>
                                             <option v-for="i in userData.tournamentTeams" :key="i" :value="i.team_id">{{
                                                 i.team_name
@@ -26,7 +26,7 @@
 
                                     <div class="col-md-12">
                                         <label>Away Team: </label>
-                                        <select class="form-select  " v-model="form.away_team">
+                                        <select class="form-select form-select-lg  " v-model="form.away_team">
                                             <option value="" selected disabled></option>
                                             <option v-for="i in awayDropdown" :key="i" :value="i.team_id">{{
                                                 i.team_name
@@ -37,7 +37,7 @@
 
                                     <div class="col-md-12">
                                         <label>Match Stage: </label>
-                                        <select class="form-select" v-model="form.match_stage">
+                                        <select class="form-select form-select-lg" v-model="form.match_stage">
                                             <option value="" selected disabled></option>
                                             <option v-for="i in userData.match_stages" :key="i" :value="i">{{
                                                 i
@@ -47,10 +47,11 @@
                                     </div>
 
 
-                                    <div class="col-md-12 mt-3">
+                                    <div class="col-md-12 mt-4">
                                         <button v-if="!isSaving" @click.prevent="start"
-                                            class="btn btn-primary btn w-100">Start !</button>
-                                        <button v-else class="float-end theme-btn btn w-100" disabled>Starting...</button>
+                                            class="btn btn-primary btn-lg btn w-100">Start Now !</button>
+                                        <button v-else class="float-end theme-btn btn btn-lg w-100"
+                                            disabled>Starting...</button>
                                     </div>
                                 </form>
                             </div>

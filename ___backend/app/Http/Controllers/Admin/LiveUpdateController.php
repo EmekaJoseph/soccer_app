@@ -6,12 +6,15 @@ use App\Events\endMatch;
 use App\Events\liveScore;
 use App\Events\startMatch;
 use App\Models\TeamModel;
+use App\Models\SubUserModel;
+use App\Models\UserModel;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Validator;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class LiveUpdateController extends BaseController
@@ -49,6 +52,33 @@ class LiveUpdateController extends BaseController
         }
 
         return response()->json('started', 200);
+    }
+
+
+    public function getLiveMatchesForAdmin($tour_id)
+    {
+        $me = Auth::user();
+        $liveUpdates = DB::table('tbl_live')
+            ->where('tour_id', $tour_id)
+            ->get();
+        if (sizeof($liveUpdates) > 0) {
+            foreach ($liveUpdates as $live) {
+                $live->home_team = (TeamModel::find($live->home_team))->team_name;
+                $live->away_team = (TeamModel::find($live->away_team))->team_name;
+
+                $creator = SubUserModel::find($live->creator);
+
+                if (!$creator) {
+                    $creator = UserModel::find($live->creator);
+                }
+
+                $live->isMe = ($creator->email === $me->email) ? 'You' : null;
+
+                $live->creator =  $creator;
+            }
+        }
+
+        return response()->json($liveUpdates, 200);
     }
 
 

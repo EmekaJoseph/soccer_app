@@ -14,7 +14,7 @@
                                 STANDINGS
                             </div>
                             <div @click="showPanel(1)" class="menu-item" :class="{ 'menu-active': currentShowing == 1 }">
-                                MATCHES</div>
+                                SCHEDULES</div>
                             <div @click="showPanel(2)" class="menu-item" :class="{ 'menu-active': currentShowing == 2 }">
                                 RESULTS</div>
                             <div @click="showPanel(3)" class="menu-item" :class="{ 'menu-active': currentShowing == 3 }">

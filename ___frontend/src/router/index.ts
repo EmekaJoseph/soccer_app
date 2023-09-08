@@ -39,7 +39,16 @@ const router = createRouter({
 
     {
       path: '/user',
-      name: 'User',
+      beforeEnter: (to, from, next) => {
+        const account = useAccount()
+        if (account.state.id) {
+          next({ path: '/user/dashboard' });
+        }
+        else {
+          next();
+        }
+      },
+      name: 'Account Login',
       component: UserLogin
     },
 

@@ -117,3 +117,13 @@ button:focus,
   background-image: linear-gradient(90deg, #fff, #fcf5e1, #fff) !important;
   /* background: url("@/assets/images/big_bg.jpg") no-repeat center/cover; */
 }
+
+.blinker {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}

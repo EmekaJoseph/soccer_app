@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\Results_CupController;
 use App\Http\Controllers\Admin\Results_LeagueController;
 use App\Http\Controllers\Admin\LiveUpdateController;
+use App\Http\Controllers\Admin\PredictionsController;
 
 use App\Http\Controllers\PublicViewController;
 
@@ -29,8 +30,9 @@ Route::controller(PublicViewController::class)->prefix('view')->group(function (
     Route::get('live/{tour_id}',  'showLiveMatches');
 });
 
-Route::post('save_prediction', [PublicViewController::class, 'save_prediction']);
-Route::get('get_predictions', [PublicViewController::class, 'get_predictions']);
+Route::post('save_prediction', [PredictionsController::class, 'save_prediction']);
+Route::get('get_predictions', [PredictionsController::class, 'get_predictions']);
+Route::post('getWinnersByPrediction', [PredictionsController::class, 'getWinnersByPrediction']);
 
 Route::resource('team', TeamsController::class)->only(['index']);
 
@@ -68,6 +70,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('updateLiveMatch/{live_id}',  'updateLiveMatch');
         Route::get('endLiveMatch/{live_id}',  'endLiveMatch');
         Route::get('getLiveMatchesByUser/{tour_id}',  'getLiveMatchesByUser');
+        Route::get('getLiveMatchesForAdmin/{tour_id}',  'getLiveMatchesForAdmin');
     });
 });
 

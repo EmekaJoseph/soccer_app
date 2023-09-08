@@ -10,8 +10,8 @@
                 </div>
             </div>
             <div class="col-lg-10">
-                <div class="alert alert-warning border-0 py-4">
-                    Our Lagos Mainland Diosese, a sacred fellowship. <br>
+                <div class="alert alert-warning border-0 py-5">
+                    Our Lagos Mainland Diocese, a sacred fellowship. <br>
                     Firmly rooted in the charge to spread the gospel far and near. <br>
                     Bound in love, we strive to build a diocese we all can call <br>
                     An epitome of Christ.
@@ -30,7 +30,7 @@
             </div>
             <div class="col-lg-4 mt-3">
                 <a href="/audio/diocesan_anthem.mp3" class="form-control btn btn-primary" download>
-                    <i class="bi bi-download"></i> Download Anthem
+                    Download Tune
                 </a>
             </div>
 

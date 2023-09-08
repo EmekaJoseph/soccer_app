@@ -17,7 +17,7 @@
                 </div>
 
                 <div class="col-lg-12">
-                    <div class="row">
+                    <div class="row g-5">
                         <!-- <div class="col-12 mb-5">
                             <div class="float-lg-en">
                                 <button data-bs-toggle="modal" data-bs-target="#addLiveMatchModal"
@@ -34,14 +34,13 @@
                             </div>
                             <div class="row  gy-5">
                                 <div v-if="userData.tournamentLive.length"
-                                    class="col-12 alert border-0 fs-5 mb-0 text-danger alert-warning">
-                                    <b>Live Match is ON!</b>, Do not logout or refresh page.
+                                    class="col-12 alert border-0 mb-0 text-danger alert-warning">
+                                    <b>Live Match is ON!, Do not logout or refresh page.</b>
                                 </div>
                                 <ComponentLive v-for="(liveData, i) in userData.tournamentLive" :key="i"
                                     :team-data="liveData" />
                             </div>
                         </div>
-
                     </div>
                 </div>
                 <!-- <div v-if="userData.tournamentLive.length" class="col-lg-4 mt-lg-4 mb-4  border-0  p-3 card">
@@ -64,8 +63,18 @@
             </div>
         </div>
         <addLiveMatchModal :tour="selectedTournament" />
+        <otherLiveMatchesModal :tour="selectedTournament" :clicker="clicker" />
 
-        <div class="fixed-bottom-btn">
+        <div v-if="account.state.role == 'admin'" class="fixed-bottom-btn" @click="clicker = !clicker">
+            <div class="justify-content-end floatPanel floatPanel-2 hover-tilt-Y">
+                <div class="card newLiveCard otherLiveCard shadow" data-bs-toggle="modal"
+                    data-bs-target="#otherLiveMatchesModal">
+                    <div><i class="bi bi-info"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="userData.tournamentLive.length == 0" class="fixed-bottom-btn">
             <div class="justify-content-end floatPanel hover-tilt-Y">
                 <div class="card newLiveCard shadow" data-bs-toggle="modal" data-bs-target="#addLiveMatchModal">
                     <div><i class="bi bi-plus-lg"></i></div>
@@ -80,15 +89,18 @@ import { onMounted, ref } from 'vue';
 import { useUserDataStore } from '@/store/userDataStore';
 import ComponentLive from './_ComponentLive.vue'
 import addLiveMatchModal from '@/components/modals/addLiveMatchModal.vue';
+import otherLiveMatchesModal from '@/components/modals/otherLiveMatchesModal.vue';
+import { useAccount } from '@/store/accountStore';
 
 const userData = useUserDataStore()
 const selectedTournament = ref<any>({})
+const clicker = ref<boolean>(false)
+const account = useAccount()
 
 onMounted(async () => {
     await userData.getTournaments()
     if (userData.tournaments.length) {
         selectedTournament.value = userData.tournaments[0]
-        // console.log(selectedTournament.value);
         loadLiveMatches()
     }
 })
@@ -110,13 +122,17 @@ function loadLiveMatches() {
 
 
 .floatPanel {
-    margin-bottom: 80px;
+    margin-bottom: 60px;
     padding-right: 24px;
     display: flex;
     z-index: 999;
     position: relative;
     transition: all ease-in-out 0.4s;
     font-size: 11px;
+}
+
+.floatPanel-2 {
+    margin-bottom: 130px !important;
 }
 
 .newLiveCard {
@@ -130,5 +146,10 @@ function loadLiveMatches() {
     color: #fff;
     background-color: #27566d;
     cursor: pointer;
+}
+
+.otherLiveCard {
+    color: #fff;
+    background-color: #6c6d27 !important;
 }
 </style>

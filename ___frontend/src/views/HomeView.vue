@@ -48,7 +48,8 @@
           <div class="col-10 col-lg-6">
             <div class="row justify-content-center g-3">
               <div class="text-center">
-                <router-link to="/anthem"><i class="bi bi-music-note-beamed"></i> Competion Anthem</router-link>
+                <router-link to="/anthem" class="text-decoration-none"> Competion Anthem <i
+                    class="bi bi-chevron-right"></i></router-link>
               </div>
               <div v-if="stats.isOnline" class="col-md-6">
 
@@ -56,13 +57,13 @@
                   SEE STATS
                   <i class="bi bi-chevron-right"></i>
                 </RouterLink>
-                <div v-if="hasPredicted == 0" @click="openPredictionModal"
+                <!-- <div v-if="hasPredicted == 0" @click="openPredictionModal"
                   class="mt-4 text-center bg-warning-subtle p-2 cursor-pointer text-primary">
                   Make your predictions <i v-if="!isLoadingTeams" class="bi bi-trophy"></i>
                   <span v-else class="spinner-border spinner-border-sm"> </span>
-                </div>
+                </div> -->
 
-                <div v-else class="mt-4 text-center" style="color: #ccccccde;">
+                <div v-if="hasPredicted == 1" class="mt-4 text-center" style="color: #ccccccde;">
                   <span v-html="greeting()"></span><span v-if="DLAM_visitor" class=" text-capitalize">, {{ DLAM_visitor
                   }}</span>
                 </div>

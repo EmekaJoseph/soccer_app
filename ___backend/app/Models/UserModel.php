@@ -25,4 +25,9 @@ class UserModel extends Authenticatable
     {
         return $this->hasMany(TournamentModel::class, 'user_id');
     }
+
+    public function relatedSubUsers()
+    {
+        return $this->hasMany(SubUserModel::class, 'user_id');
+    }
 }
