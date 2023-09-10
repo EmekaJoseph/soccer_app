@@ -98,16 +98,22 @@
                                         <div class="card-body p-1 m-1">
                                             <div v-if="userData.tournamentShedules">
                                                 <EasyDataTable class="border-0" :headers="tableHeaders"
-                                                    :items="userData.tournamentShedules" show-index>
+                                                    :items="userData.tournamentShedules">
+
+                                                    <template #item-homeVsAway="item">
+                                                        <div>
+                                                            {{ item.home_team }}
+                                                            <span class=" fw-bolder"> VS </span>
+                                                            {{ item.away_team }}
+                                                        </div>
+                                                    </template>
 
                                                     <template #item-kick_="item">
                                                         <div class=" fw-bolder"> {{ (new Date(item.kick_off)).toDateString()
                                                         }} </div>
                                                     </template>
 
-                                                    <template #item-vs="item">
-                                                        <div class=" fw-bolder"> VS </div>
-                                                    </template>
+
 
                                                     <template #item-delete="item">
                                                         <div class="operation-wrapper">
@@ -169,10 +175,8 @@ function loadTournamentSchedules() {
 
 // TABLE #####################################
 const tableHeaders: Header[] = [
+    { text: "", value: "homeVsAway" },
     { text: "", value: "match_stage" },
-    { text: "", value: "home_team" },
-    { text: "", value: "vs" },
-    { text: "", value: "away_team" },
     { text: "", value: "kick_" },
     { text: "", value: "delete" },
 ];

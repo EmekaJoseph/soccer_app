@@ -120,13 +120,10 @@
                                                 <EasyDataTable class="border-0" :headers="tableHeaders"
                                                     :items="userData.tournamentResults" show-index>
 
-                                                    <template #item-homeTeamAndScore="item">
-                                                        {{ item.home_name }},
-                                                        <span class="fw-bold">{{ item.home_score }}</span>
-                                                    </template>
-
-                                                    <template #item-awayTeamAndScore="item">
-                                                        {{ item.away_name }},
+                                                    <template #item-results="item">
+                                                        {{ item.home_name }}
+                                                        <span class="fw-bold">{{ item.home_score }}</span>, &nbsp;
+                                                        {{ item.away_name }}
                                                         <span class="fw-bold">{{ item.away_score }}</span>
                                                     </template>
 
@@ -190,9 +187,8 @@ function loadResultsData() {
 
 // TABLE #####################################
 const tableHeaders: Header[] = [
+    { text: "", value: "results" },
     { text: "", value: "match_stage" },
-    { text: "", value: "homeTeamAndScore" },
-    { text: "", value: "awayTeamAndScore" },
     { text: "", value: "played" },
     { text: "", value: "delete" },
 ];

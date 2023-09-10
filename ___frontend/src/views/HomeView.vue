@@ -68,15 +68,18 @@
                   }}</span>
                 </div>
 
-                <!-- hidden button -->
-                <button data-bs-toggle="modal" data-bs-target="#predictionModal" class="d-none" ref="modalBtn"></button>
+
+
 
               </div>
+
+
               <div v-else class="col-md-6">
                 <button class="btn btn-dark w-100 btn-lg" disabled>
                   You are offline <i class="bi bi-wifi-off"></i>
                 </button>
               </div>
+
               <!-- <div class="col-md-6">
                 <RouterLink to="stats/01h429avf0ykmdah080bdj5t43" class="btn btn-primary w-100 hover-tilt-Y btn-lg">
                   Women's Category <i class="bi bi-chevron-right"></i></RouterLink>
@@ -89,8 +92,12 @@
       <!-- </div> -->
     </div>
 
+    <!-- modals -->
     <predictionModal :teams="teams" :tour_id="tour_id" @done="atPredictDone" />
-    <!-- <shareSite /> -->
+    <feedbackModal :tour_id="tour_id" :name="DLAM_visitor" @done="atFeedackDone" />
+    <!-- hidden buttons -->
+    <button data-bs-toggle="modal" data-bs-target="#predictionModal" class="d-none" ref="pediction_modalBtn"></button>
+    <button data-bs-toggle="modal" data-bs-target="#feedbackModal" class="d-none" ref="feedback_modalBtn"></button>
   </div>
 </template>
 
@@ -98,6 +105,7 @@
 import { ref, onMounted } from 'vue';
 import { useStorage } from '@vueuse/core'
 import predictionModal from '@/components/modals/predictionModal.vue'
+import feedbackModal from '@/components/modals/feedbackModal.vue';
 import api from '@/store/axiosManager'
 import { useToast } from 'vue-toast-notification';
 import { useStatsStore } from '@/store/statsStore'
@@ -105,17 +113,22 @@ import { useStatsStore } from '@/store/statsStore'
 // hardcoded tournament_id
 const tour_id = '01h4299vwq5mkm8nzdpcdkskmv';
 
-onMounted(async () => {
+onMounted(() => {
   stats.tour_id = tour_id
+  if (!userHasSentFeedback.value) {
+    feedback_modalBtn.value.click()
+  }
 })
 
 const hasPredicted: any = useStorage('DLAM_FA_predict', '0', localStorage)
 const DLAM_visitor: any = useStorage('DLAM_FA_visitor', '', localStorage)
+const userHasSentFeedback: any = useStorage('DLAM_FA_sentFeedBack', false, localStorage)
 
 const stats = useStatsStore()
 const teams = ref([]);
 const isLoadingTeams = ref(false);
-const modalBtn = ref<any>(null);
+const prediction_modalBtn = ref<any>(null);
+const feedback_modalBtn = ref<any>(null);
 const $toast = useToast();
 
 async function openPredictionModal() {
@@ -123,11 +136,16 @@ async function openPredictionModal() {
   let resp = await api.getTournamentTeams(tour_id);
   teams.value = resp.data
   isLoadingTeams.value = false
-  modalBtn.value.click()
+  prediction_modalBtn.value.click()
 }
 
 
-function atPredictDone(name: string) {
+function atFeedackDone(name: string) {
+  $toast.success('You do well, Gbayi👍, ' + DLAM_visitor.value, { position: 'top-right' });
+  userHasSentFeedback.value = true
+}
+
+function atPredictDone() {
   $toast.success('Your prediction has been saved, ' + name, { position: 'top-right' });
   hasPredicted.value = 1
   DLAM_visitor.value = name

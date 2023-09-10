@@ -124,6 +124,47 @@
                         </div>
                     </fieldset>
                 </div>
+
+                <div v-if="account.state.role == 'admin'" class="col-12">
+                    <fieldset class="border rounded-3 p-3 bg-light-subtle h-100">
+                        <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">FEEDBACKS</legend>
+
+                        <div class="content-panel">
+                            <div class="col-md-12 mt-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div v-if="!feedBackArray.length" class="card-body text-center">
+                                            No Feedbacks
+                                        </div>
+                                        <div v-else class="card-body p-0">
+                                            <div class="table-responsive">
+                                                <table class="table table-sm small">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>S/N</th>
+                                                            <th>Name</th>
+                                                            <th>FeedBack</th>
+                                                            <th>Date</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="(feedback, index) in feedBackArray" :key="index">
+                                                            <th>{{ (index + 1) }}</th>
+                                                            <td>{{ feedback.name ?? '-' }}</td>
+                                                            <td>{{ feedback.feedbackText }}</td>
+                                                            <td>{{ new Date(feedback.created_at).toLocaleString() }}
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
             </div>
 
         </div>
@@ -131,7 +172,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { useUserDataStore } from '@/store/userDataStore';
 import type { Header } from "vue3-easy-data-table";
 import api from '@/store/axiosManager'
@@ -150,10 +191,20 @@ const form = reactive({
     isSaving: false
 })
 
+const feedBackArray = ref<any[]>([])
+
 onMounted(() => {
     userData.getTournaments()
     userData.getSubUsers()
+    getFeedbacks()
 })
+
+
+
+async function getFeedbacks() {
+    let resp = await api.getFeedbacks()
+    feedBackArray.value = resp.data
+}
 
 async function saveNewTournament() {
     if (!form.tour_title) {

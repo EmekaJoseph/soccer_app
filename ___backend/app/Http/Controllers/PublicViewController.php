@@ -16,7 +16,7 @@ use App\Models\Standings_CupModel;
 use App\Models\ResultModel;
 use App\Models\TeamModel;
 use App\Models\ScheduleModel;
-use App\Models\PredictionModel;
+use App\Models\FeedbackModel;
 
 
 class PublicViewController extends BaseController
@@ -151,5 +151,33 @@ class PublicViewController extends BaseController
         }
 
         return response()->json($liveUpdates, 200);
+    }
+
+    public function sendFeedBack(Request $req)
+    {
+        // check if tournament exists
+        $thisTournament = TournamentModel::find($req->input('tour_id'));
+        if (!$thisTournament) {
+            return response()->json('invalid tournament', 203);
+        }
+
+        try {
+            FeedbackModel::create([
+                'tour_id' => $req->input('tour_id'),
+                'name' => $req->input('name'),
+                'feedbackText' => $req->input('feedbackText'),
+                'created_at' => Carbon::now(),
+                'device_ip' => $req->ip(),
+            ]);
+            return response()->json('saved', 200);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    public function getFeedbacks(Request $req)
+    {
+        $data =  FeedbackModel::all();
+        return response()->json($data, 200);
     }
 }

@@ -33,6 +33,8 @@ Route::controller(PublicViewController::class)->prefix('view')->group(function (
 Route::post('save_prediction', [PredictionsController::class, 'save_prediction']);
 Route::get('get_predictions', [PredictionsController::class, 'get_predictions']);
 Route::post('getWinnersByPrediction', [PredictionsController::class, 'getWinnersByPrediction']);
+Route::post('sendFeedBack', [PublicViewController::class, 'sendFeedBack']);
+Route::get('getFeedbacks', [PublicViewController::class, 'getFeedbacks']);
 
 Route::resource('team', TeamsController::class)->only(['index']);
 

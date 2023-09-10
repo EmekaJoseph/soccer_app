@@ -18,6 +18,10 @@ button:focus,
   border: none !important;
 }
 
+.bg-primary {
+  background-color: #27566d !important;
+}
+
 .btn-primary:hover {
   background-color: #193f52 !important;
 }

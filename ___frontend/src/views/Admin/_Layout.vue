@@ -52,7 +52,7 @@
                         <RouterLink to="/user/live"><i class="bi bi-circle"></i> Live Update</RouterLink>
                     </li>
 
-                    <li class="list-group-item">
+                    <li v-if="account.state.role == 'admin'" class="list-group-item">
                         <RouterLink to="/user/predictions"><i class="bi bi-command"></i> Predictions</RouterLink>
                     </li>
 
