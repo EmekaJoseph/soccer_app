@@ -10,13 +10,13 @@
     <!-- <div v-else class="animate__animated  animate__bounceInUp"> -->
     <div v-else class="min-vh-100">
         <div v-for="({ match_stage, kick_off, home_team, away_team, venue }, i) in stats.tourSchedules" :key="i"
-            class="card bg-white rounded-0 mb-4">
-            <div class="card-header fw-bolder bg-white shadow-sm border-0 text-center">
+            class="card bg-white mb-4 px-2">
+            <div class="card-header fw-bolder bg-transparent text-center rounded-0 small">
                 {{ match_stage ? match_stage.replaceAll('_', ' ') : '' }}. <br>
                 {{ dateFormat(kick_off) }},
                 {{ new Date(kick_off).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}
             </div>
-            <div class="card-body px-2">
+            <div class="card-body px-0">
                 <div class="row justify-content-center">
                     <div class="col-4 fw-bolder text-uppercase text-center team_name">{{ home_team.team_name }}</div>
                     <div class="col-1">
@@ -27,7 +27,7 @@
                         </span>
                     </div>
                     <div class="col-2">
-                        <div class="text-center small">-</div>
+                        <div class="text-center small fw-bold text-dim small">VS</div>
                     </div>
                     <div class="col-1">
                         <span v-if="away_team.team_badge"> {{ away_team.team_badge }} </span>

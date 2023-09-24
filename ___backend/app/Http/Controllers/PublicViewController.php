@@ -145,8 +145,8 @@ class PublicViewController extends BaseController
         $liveUpdates = DB::table('tbl_live')->where('tour_id', $tour_id)->get();
         if (sizeof($liveUpdates) > 0) {
             foreach ($liveUpdates as $result) {
-                $result->home_team = (TeamModel::find($result->home_team))->team_name;
-                $result->away_team = (TeamModel::find($result->away_team))->team_name;
+                $result->home_team = (TeamModel::find($result->home_team));
+                $result->away_team = (TeamModel::find($result->away_team));
             }
         }
 

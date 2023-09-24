@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true">
+        <div class="modal fade" id="feedbackModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-scrollable modal-sm">
                 <div class="modal-content">
                     <div class="modal-header border-0 bg-primary py-4">
@@ -12,11 +12,11 @@
                     </div>
                     <div class="modal-body">
                         <div class="row justify-content-center g-3">
-                            <div> {{ greeting(prop.name) }}</div>
-                            <div v-if="!name.length" class="small">You no make any predictions, but no wahala😒 </div>
-                            <div class="small alert alert-light border-0 m-0 pb-0">
+                            <div class="small"> {{ greeting(prop.name) }}</div>
+                            <!-- <div v-if="!name.length" class="small">You no make any predictions, but no wahala😒 </div> -->
+                            <div class="fs-5 alert alert-light border-0 m-0 py-1">
                                 <vue-writer
-                                    :array="['How far na wetin you feel about this site? We just need feedback abeg. 😊']"
+                                    :array="['How far na wetin you feel about this App? We just need feedback abeg. 😊']"
                                     :iterations='1' :typeSpeed="50" :start="500" />
 
                             </div>
@@ -27,8 +27,8 @@
                             </div>
 
                             <div v-if="!name.length" class="col-12">
-                                <label class="small">Your name (this one no be by force)</label>
-                                <input v-model="form.name" class="form-control form-control-lg" type="text">
+                                <input v-model="form.name" class=" form-control form-cont py-2" type="text"
+                                    placeholder="Your name ( no be by force)">
                             </div>
 
                             <div class="col-12">

@@ -69,8 +69,9 @@ button:focus,
 }
 
 .general-body {
-  padding-bottom: 300px;
+  padding-bottom: 250px;
   background-color: var(--bs-light);
+  background-color: var(--bs-white);
 }
 
 .cursor-pointer {

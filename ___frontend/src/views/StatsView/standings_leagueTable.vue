@@ -1,6 +1,6 @@
 <template>
     <div class="card rounded-0 mb-4">
-        <div class="card-header fw-bolder bg-white shadow-sm border-0">
+        <div class="card-header fw-bolder bg-white shadow-sm">
             STANDINGS
         </div>
         <div v-if="data" class="card-body p-1 py-3">

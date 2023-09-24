@@ -6,25 +6,25 @@
     </div>
     <!-- <div v-else class="animate__animated  animate__bounceInUp"> -->
     <div v-else class="min-vh-100">
-        <div class="row justify-content-center gy-3">
+        <div class="row justify-content-ce gy-3">
+
             <div v-for="({ match_stage, home_team, away_team, home_name, away_name, away_score, home_score, winner, date_played }, i) in stats.tourResults"
-                :key="i" class="col-sm-6">
-                <div class="card bg-white rounded-0 mb-4 h-100">
-                    <div class="card-header fw-bolder bg-white shadow-sm border-0 text-center">
+                class="col-6">
+                <div class="card bg-white h-100 small px-2">
+                    <div class="card-header fw-bolder rounded-0 bg-transparent text-center small p-0 py-1">
                         {{ match_stage ? match_stage.replaceAll('_', ' ') : '' }}
                         ({{ dateFormat(date_played) }})
                     </div>
-                    <div class="card-body">
-                        <div class="row justify-content-center text-center g-1">
-                            <div class="col-4"> {{ home_name }}</div>
-                            <div class="col-1 fs-6 fw-bold" :class="{ 'text-success ': winner == home_team }"> {{
-                                home_score }}
-                            </div>
-                            <div class="col-2">:</div>
-                            <div class="col-1 fs-6 fw-bold" :class="{ 'text-success ': winner == away_team }">{{
-                                away_score }}
-                            </div>
-                            <div class="col-4">{{ away_name }}</div>
+                    <div class="card-body py-2">
+                        <div :class="{ 'text-muted ': winner == away_team }">{{ home_name }}:
+                            <span class="float-end" :class="{ 'fw-bold ': winner == home_team }">
+                                {{ home_score }}
+                            </span>
+                        </div>
+                        <div :class="{ 'text-muted ': winner == home_team }">{{ away_name }}:
+                            <span class="float-end " :class="{ 'fw-bold ': winner == away_team }">
+                                {{ away_score }}
+                            </span>
                         </div>
                     </div>
                 </div>

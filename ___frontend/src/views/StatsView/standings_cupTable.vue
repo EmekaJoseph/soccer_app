@@ -1,5 +1,5 @@
 <template>
-    <div v-for="({ group, teams }, i) in prop.data" :key="i" class="card rounded-0 mb-4">
+    <div v-for="({ group, teams }, i) in prop.data" :key="i" class="card mb-4">
         <div class="card-header fw-bolder bg-white shadow-sm border-0">
             GROUP {{ group }}
         </div>

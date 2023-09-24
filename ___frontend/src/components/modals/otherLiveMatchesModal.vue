@@ -18,9 +18,14 @@
                         <div v-else>
                             <ul v-if="liveMatchesList.length" class="list-group list-group-flush">
                                 <li v-for="live in liveMatchesList" class="list-group-item">
-                                    <div class="text-center">{{ live.home_team }} <span class="fw-bold">VS</span> {{
-                                        live.away_team }}</div>
-                                    <div class="text-center">{{ live.home_team_score }} : {{ live.away_team_score }}
+                                    <div class="text-center">
+                                        {{ live.home_team }}
+                                        <span class="fw-bold">VS</span>
+                                        {{ live.away_team }}
+                                        ({{ live.curr_time }}')
+                                    </div>
+                                    <div class="text-center">
+                                        {{ live.home_team_score }} : {{ live.away_team_score }}
                                     </div>
                                     <div class="text-center">
                                         <small class="text-muted text-center">created by: </small>

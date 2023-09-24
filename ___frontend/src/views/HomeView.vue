@@ -48,13 +48,13 @@
           <div class="col-10 col-lg-6">
             <div class="row justify-content-center g-3">
               <div class="text-center">
-                <router-link to="/anthem" class="text-decoration-none"> Competion Anthem <i
-                    class="bi bi-chevron-right"></i></router-link>
+                <router-link to="/anthem" class="text-decoration-none"> <i class="bi bi-chevron-left"></i> Competion
+                  Anthem</router-link>
               </div>
               <div v-if="stats.isOnline" class="col-md-6">
 
                 <RouterLink :to="'stats/' + tour_id" class="btn btn-primary w-100 hover-tilt-Y btn-lg">
-                  SEE STATS
+                  STATS
                   <i class="bi bi-chevron-right"></i>
                 </RouterLink>
                 <!-- <div v-if="hasPredicted == 0" @click="openPredictionModal"
