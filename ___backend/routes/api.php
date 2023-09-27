@@ -28,11 +28,16 @@ Route::controller(PublicViewController::class)->prefix('view')->group(function (
     Route::get('results/{tour_id}',  'results');
     Route::get('schedules/{tour_id}',  'schedules');
     Route::get('live/{tour_id}',  'showLiveMatches');
+    Route::get('infomationCenter/{tour_id}',  'infomationCenter');
 });
 
-Route::post('save_prediction', [PredictionsController::class, 'save_prediction']);
-Route::get('get_predictions', [PredictionsController::class, 'get_predictions']);
-Route::post('getWinnersByPrediction', [PredictionsController::class, 'getWinnersByPrediction']);
+Route::controller(PredictionsController::class)->group(function () {
+    Route::post('save_prediction',  'save_prediction');
+    Route::get('get_predictions',  'get_predictions');
+    Route::post('getWinnersByPrediction',  'getWinnersByPrediction');
+});
+
+
 Route::post('sendFeedBack', [PublicViewController::class, 'sendFeedBack']);
 Route::get('getFeedbacks', [PublicViewController::class, 'getFeedbacks']);
 

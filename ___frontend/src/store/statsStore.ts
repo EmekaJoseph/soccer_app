@@ -11,6 +11,7 @@ export const useStatsStore = defineStore('stats', () => {
   const tourStandings = ref<any[]>([])
   const tourResults = ref<any[]>([])
   const tourSchedules = ref<any[]>([])
+  const tourTeamsInfo = ref<any[]>([])
   const tourLives = ref<any[]>([])
   const apiError = ref<boolean>(false)
   const statsLoaded = ref<boolean>(false)
@@ -82,11 +83,26 @@ export const useStatsStore = defineStore('stats', () => {
     try {
       let resp = await api.getLiveMatches(tour_id.value)
       tourLives.value = resp.data
-      apiLoading.value = false
       // console.log(resp);
     } catch (error) {
-      apiLoading.value = false
       apiError.value = true
+    }
+    finally {
+      apiLoading.value = false
+    }
+  }
+
+  async function getTourTeamsInfo() {
+    try {
+      let resp = await api.infomationCenter(tour_id.value)
+      tourTeamsInfo.value = resp.data
+
+      // console.log(resp);
+    } catch (error) {
+      apiError.value = true
+    }
+    finally {
+      apiLoading.value = false
     }
   }
 
@@ -99,6 +115,7 @@ export const useStatsStore = defineStore('stats', () => {
     tourStandings,
     tourResults,
     tourSchedules,
+    tourTeamsInfo,
     tourLives,
     statsLoaded,
     isOnline,
@@ -106,6 +123,7 @@ export const useStatsStore = defineStore('stats', () => {
     getResults,
     getSchedules,
     getTourDetails,
-    getLiveMatches
+    getLiveMatches,
+    getTourTeamsInfo
   }
 })

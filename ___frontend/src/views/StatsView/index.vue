@@ -9,21 +9,29 @@
             </div>
             <div class="mt-5 container">
                 <div class="row justify-content-center ">
-                    <div class="col-lg-6">
-                        <div class="row">
-                            <div @click="showPanel(0)" class="menu-item col-3"
-                                :class="{ 'menu-active': currentShowing == 0 }">GROUPS</div>
-                            <div @click="showPanel(1)" class="menu-item col-3"
-                                :class="{ 'menu-active': currentShowing == 1 }">FIXTURES</div>
-                            <div @click="showPanel(2)" class="menu-item col-3"
-                                :class="{ 'menu-active': currentShowing == 2 }">LIVE
-                                <!-- <div class="spinner-grow spinner-grow-sm"> </div> -->
-                                <i v-if="stats.tourLives.length"
+                    <div class="col-lg-6 text-center">
+                        <div class="row align-items-start">
+                            <div @click="showPanel(0)" class="col menu-item"
+                                :class="{ 'menu-active': currentShowing == 0 }">
+                                GROUPS
+                            </div>
+                            <div @click="showPanel(1)" class="col menu-item"
+                                :class="{ 'menu-active': currentShowing == 1 }">
+                                FIXTURES
+                            </div>
+                            <div @click="showPanel(2)" class="col menu-item"
+                                :class="{ 'menu-active': currentShowing == 2 }">
+                                LIVE <i v-if="stats.tourLives.length"
                                     class=" blinker small ms-1 bi bi-circle-fill text-success"></i>
                             </div>
-                            <div @click="showPanel(3)" class="menu-item col-3"
-                                :class="{ 'menu-active': currentShowing == 3 }">RESULTS</div>
-                            <!-- <div class="col-1 menu-item text-info"><i class="bi bi-info-circle"></i></div> -->
+                            <div @click="showPanel(3)" class="col menu-item"
+                                :class="{ 'menu-active': currentShowing == 3 }">
+                                RESULTS
+                            </div>
+                            <div @click="showPanel(4)" class="col menu-item"
+                                :class="{ 'menu-active': currentShowing == 4 }">
+                                <i class="bi bi-info-circle-fill"></i> TEAMS
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -49,6 +57,9 @@
                                 <swiper-slide>
                                     <ResultsPanel />
                                 </swiper-slide>
+                                <swiper-slide>
+                                    <InfoPanel />
+                                </swiper-slide>
                             </Swiper>
                         </StatsLayout>
                     </div>
@@ -60,7 +71,7 @@
 
 <script setup lang="ts">
 import { Swiper, SwiperSlide } from "swiper/vue";
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { onMounted, ref, onUnmounted } from 'vue'
 import { useStatsStore } from '@/store/statsStore'
 import StatsLayout from './StatsLayout.vue';
@@ -70,11 +81,9 @@ import StandingsPanel from './standings.vue'
 import ResultsPanel from './results.vue'
 import SchedulePanel from './schedules.vue'
 import LivePanel from './live.vue'
+import InfoPanel from './informationCenter.vue'
 
 const $toast = useToast();
-
-
-
 
 const swiper = ref<any>(null)
 const onSlideChange = (event: any) => {
@@ -90,6 +99,9 @@ const onSwiper = (swip: any) => {
 
 function showPanel(sideIndex: number) {
     // if (swiper.value) 
+    if (sideIndex == 4) {
+        stats.getTourTeamsInfo()
+    }
     swiper.value.slideTo(sideIndex)
     currentShowing.value = sideIndex;
     window.scrollTo(0, 0);
@@ -98,6 +110,7 @@ function showPanel(sideIndex: number) {
 
 const stats = useStatsStore()
 const route = useRoute()
+const router = useRouter()
 
 const currentShowing = ref(0)
 
@@ -108,6 +121,7 @@ onMounted(async () => {
         await stats.getTourDetails()
         loadAllData()
         stats.getLiveMatches()
+        stats.getTourTeamsInfo()
         stats.statsLoaded = true
     }
 })
@@ -118,6 +132,11 @@ function beep() {
     // audio.addEventListener("canplaythrough", () => {
     //     audio.play()
     // });
+}
+function gotoInfoPage() {
+    router.push({
+        path: `/informationCenter/${route.params.tour_id}`
+    })
 }
 
 
@@ -207,7 +226,7 @@ window.Echo.channel('startMatch').listen('startMatch', async (e) => {
     border-bottom: 4px solid #fff;
 
     /* background-color: #fff;
-    color: #000;
+    color: var(--theme-color-3bb);
     font-weight: bold; */
 }
 
@@ -216,7 +235,7 @@ window.Echo.channel('startMatch').listen('startMatch', async (e) => {
 }
 
 .show-panel {
-    padding-top: 180px;
+    padding-top: 200px;
 }
 
 @media screen and (max-width: 992px) {

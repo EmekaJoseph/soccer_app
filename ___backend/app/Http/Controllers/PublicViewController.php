@@ -18,7 +18,6 @@ use App\Models\TeamModel;
 use App\Models\ScheduleModel;
 use App\Models\FeedbackModel;
 
-
 class PublicViewController extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
@@ -178,6 +177,82 @@ class PublicViewController extends BaseController
     public function getFeedbacks(Request $req)
     {
         $data =  FeedbackModel::all();
+        return response()->json($data, 200);
+    }
+
+
+    public function infomationCenter($tour_id)
+    {
+        $teams = TeamModel::where('tour_id', $tour_id)->get();
+        $results = ResultModel::where('tour_id', $tour_id)->get();
+
+        $data = array();
+
+        if ($results) {
+
+            // initialize wins, draws and losts
+            foreach ($teams as $team) {
+                $team->played = 0;
+                $team->won = 0;
+                $team->draw = 0;
+                $team->lost = 0;
+                $team->scored = 0;
+                $team->conceded = 0;
+            }
+
+
+            // calculate wins, draws and losts
+            foreach ($teams as $team) {
+                foreach ($results as $result) {
+                    if ($result->home_team == $team->team_id) {
+                        if ($result->home_score > $result->away_score) {
+                            $team->won += 1;
+                        } else if ($result->home_score < $result->away_score) {
+                            $team->lost += 1;
+                        } else {
+                            $team->draw += 1;
+                        }
+                        $team->scored += $result->home_score;
+                        $team->conceded += $result->away_score;
+                        $team->played += 1;
+                    } else if ($result->away_team == $team->team_id) {
+                        if ($result->away_score > $result->home_score) {
+                            $team->won += 1;
+                        } else if ($result->away_score < $result->home_score) {
+                            $team->lost += 1;
+                        } else {
+                            $team->draw += 1;
+                        }
+                        $team->scored += $result->away_score;
+                        $team->conceded += $result->home_score;
+                        $team->played += 1;
+                    }
+                }
+            }
+
+
+            // calculate performance rating
+            foreach ($teams as $team) {
+                if ($team->played !== 0) {
+                    $rating = ((($team->won * 3) + $team->draw) / ($team->played * 3)) * 100;
+                    $team->rating = ceil($rating);
+                }
+
+                array_push($data, $team);
+            }
+
+            // $collection = collect($data);
+            // $data = $collection->sortBy([
+            //     ['played', 'desc'],
+            //     ['rating', 'rating'],
+            // ]);
+
+            usort($data, function ($a, $b) {
+                return $b->rating - $a->rating;
+            });
+        }
+
+
         return response()->json($data, 200);
     }
 }

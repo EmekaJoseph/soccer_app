@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const hostURL = 'http://127.0.0.1:8000' //dev
-// const hostURL = '' //build
+// const hostURL = 'http://127.0.0.1:8000' //dev
+const hostURL = '' //build
 
 const $instance = axios.create({
     baseURL: `${hostURL}/api/`,
@@ -43,7 +43,11 @@ export default {
     },
 
     getLiveMatches(tour_id: string) {
-        return $instance.get(`view/live/${tour_id}`,)
+        return $instance.get(`view/live/${tour_id}`)
+    },
+
+    infomationCenter(tour_id: string) {
+        return $instance.get(`view/infomationCenter/${tour_id}`)
     },
 
 
