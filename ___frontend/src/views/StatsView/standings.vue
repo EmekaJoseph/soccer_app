@@ -15,7 +15,7 @@
         <div v-else>
 
         </div>
-        <div class="backdrop "></div>
+        <!-- <div class="backdrop "></div> -->
         <div class="card rounded-0">
             <div class="card-body text-center py-1">END</div>
         </div>
@@ -42,7 +42,7 @@ const stats = useStatsStore();
     background-color: rgba(136, 53, 53, 0.938);
 }
 
-.backdrop {
+/* .backdrop {
     position: fixed;
     top: 0;
     left: 0;
@@ -50,5 +50,5 @@ const stats = useStatsStore();
     width: 100vw;
     height: 100%;
     background-color: #00000000;
-}
+} */
 </style>

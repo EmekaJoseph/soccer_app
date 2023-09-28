@@ -9,22 +9,28 @@
             </div>
             <div class="mt-5 container">
                 <div class="row justify-content-center ">
-                    <div class="col-lg-8">
-                        <div class="menu-div ">
-                            <div class="d-flex justify-content-between">
-                                <div @click="showPanel(0)" :class="{ 'menu-active': currentShowing == 0 }"
-                                    class=" menu-item">GROUPS</div>
-                                <div @click="showPanel(1)" :class="{ 'menu-active': currentShowing == 1 }"
-                                    class=" menu-item">FIXTURES</div>
-                                <div @click="showPanel(2)" :class="{ 'menu-active': currentShowing == 2 }"
-                                    class=" menu-item">LIVE MATCHES
-                                    <i v-if="stats.tourLives.length"
-                                        class=" blinker small ms-1 bi bi-circle-fill text-success"></i>
-                                </div>
-                                <div @click="showPanel(3)" :class="{ 'menu-active': currentShowing == 3 }"
-                                    class=" menu-item">RESULTS</div>
-                                <div @click="showPanel(4)" :class="{ 'menu-active': currentShowing == 4 }"
-                                    class=" menu-item">TEAMS</div>
+                    <div class="col-lg-6 text-center">
+                        <div class="row align-items-start">
+                            <div @click="showPanel(0)" class="col menu-item"
+                                :class="{ 'menu-active': currentShowing == 0 }">
+                                GROUPS
+                            </div>
+                            <div @click="showPanel(1)" class="col menu-item"
+                                :class="{ 'menu-active': currentShowing == 1 }">
+                                FIXTURES
+                            </div>
+                            <div @click="showPanel(2)" class="col menu-item"
+                                :class="{ 'menu-active': currentShowing == 2 }">
+                                LIVE <i v-if="stats.tourLives.length"
+                                    class=" blinker small ms-1 bi bi-circle-fill text-success"></i>
+                            </div>
+                            <div @click="showPanel(3)" class="col menu-item"
+                                :class="{ 'menu-active': currentShowing == 3 }">
+                                RESULTS
+                            </div>
+                            <div @click="showPanel(4)" class="col menu-item"
+                                :class="{ 'menu-active': currentShowing == 4 }">
+                                <i class="bi bi-info-circle-fill"></i> TEAMS
                             </div>
                         </div>
                     </div>
@@ -33,16 +39,28 @@
         </div>
 
 
-        <div class="min-vh-10">
-            <div class=" show-panel container">
+        <div class="show-panel min-vh-100">
+            <div class=" container">
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
                         <StatsLayout>
-                            <StandingsPanel v-show="currentShowing == 0" />
-                            <SchedulePanel v-show="currentShowing == 1" />
-                            <LivePanel v-show="currentShowing == 2" />
-                            <ResultsPanel v-show="currentShowing == 3" />
-                            <InfoPanel v-show="currentShowing == 4" />
+                            <Swiper ref="theSwipe" @swiper="onSwiper" @slideChange="onSlideChange">
+                                <swiper-slide>
+                                    <StandingsPanel />
+                                </swiper-slide>
+                                <swiper-slide>
+                                    <SchedulePanel />
+                                </swiper-slide>
+                                <swiper-slide>
+                                    <LivePanel />
+                                </swiper-slide>
+                                <swiper-slide>
+                                    <ResultsPanel />
+                                </swiper-slide>
+                                <swiper-slide>
+                                    <InfoPanel />
+                                </swiper-slide>
+                            </Swiper>
                         </StatsLayout>
                     </div>
                 </div>
@@ -52,6 +70,7 @@
 </template>
 
 <script setup lang="ts">
+import { Swiper, SwiperSlide } from "swiper/vue";
 import { useRoute, useRouter } from 'vue-router';
 import { onMounted, ref, onUnmounted } from 'vue'
 import { useStatsStore } from '@/store/statsStore'
@@ -66,14 +85,25 @@ import InfoPanel from './informationCenter.vue'
 
 const $toast = useToast();
 
+const swiper = ref<any>(null)
+const onSlideChange = (event: any) => {
+    if (event) {
+        window.scrollTo(0, 0);
+        currentShowing.value = event.activeIndex
+    }
+};
 
-function showPanel(Index: number) {
-    console.log(Index);
+const onSwiper = (swip: any) => {
+    swiper.value = swip
+};
 
-    if (Index == 4) {
+function showPanel(sideIndex: number) {
+    // if (swiper.value) 
+    if (sideIndex == 4) {
         stats.getTourTeamsInfo()
     }
-    currentShowing.value = Index;
+    swiper.value.slideTo(sideIndex)
+    currentShowing.value = sideIndex;
     window.scrollTo(0, 0);
 }
 
@@ -97,13 +127,18 @@ onMounted(async () => {
 })
 
 function beep() {
-    var audio = new Audio('/audio/ping.mp3');
-    audio.play()
+    // let audio = new Audio('/audio/ping.mp3');
     // audio.muted = false;
     // audio.addEventListener("canplaythrough", () => {
     //     audio.play()
     // });
 }
+function gotoInfoPage() {
+    router.push({
+        path: `/informationCenter/${route.params.tour_id}`
+    })
+}
+
 
 async function loadAllData() {
     await stats.getStandings()
@@ -158,42 +193,42 @@ window.Echo.channel('startMatch').listen('startMatch', async (e) => {
 })
 // #################### Listen to websocet ################
 
+
+
+
+
 </script>
 
 <style scoped>
+/* .spinner-grow-sm {
+    width: 9px;
+    height: 9px;
+    color: var(--bs-success);
+} */
+
 .fixed-top {
     background-color: var(--theme-color-3b);
     color: #fff !important;
     /* height: 100px; */
 }
 
-.menu-div {
-    /* margin: 10px; */
-    padding-top: 10px;
-    padding-bottom: 20px;
-    width: 100%;
-    overflow-x: auto;
-    white-space: nowrap;
-    overflow-y: hidden;
-}
 
-.menu-div .menu-item {
-    /* display: inline-block; */
-    font-size: 13px;
-    margin-right: 10px;
-    padding: 5px 14px;
-    border-radius: 30px;
+.menu-item {
+    font-size: 12px;
     cursor: pointer;
-    background-color: var(--theme-color-3bb);
-    color: #c7c790;
+    padding: 10px 30px;
+    border-radius: 0px;
+    text-align: center;
 }
 
 .menu-active {
-    color: #ffff00 !important;
-    font-weight: bolder;
-    /* background-color: #fff !important; */
-}
+    background-color: var(--theme-color-3bb);
+    border-bottom: 4px solid #fff;
 
+    /* background-color: #fff;
+    color: var(--theme-color-3bb);
+    font-weight: bold; */
+}
 
 .sm-logo {
     width: 50px;
@@ -206,15 +241,23 @@ window.Echo.channel('startMatch').listen('startMatch', async (e) => {
 @media screen and (max-width: 992px) {
     .menu-item {
         padding: 10px;
-        font-size: 14px;
+        font-size: 11px;
     }
 
     .sm-logo {
         width: 30px;
     }
 
-    /* .show-panel {
+    .show-panel {
         padding-top: 160px;
-    } */
+    }
 }
+
+
+
+/* @media screen and (min-width: 992px) {
+    .menu-item:hover {
+        background-color: var(--theme-color-3bb);
+    }
+} */
 </style>
