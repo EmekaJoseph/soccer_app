@@ -7,24 +7,39 @@
                 </RouterLink>
                 <span class="fw-bolder text-uppercase float-end">{{ stats.tour_title }}</span>
             </div>
-            <div class="mt-5 container">
+            <div class="mt-4 container">
+
                 <div class="row justify-content-center ">
+                    <div class="col-md-5 col-12">
+                        <div class="small text-dim scrolling-text"> {{ today_date }}
+                        </div>
+                    </div>
                     <div class="col-lg-8">
                         <div class="menu-div ">
                             <div class="d-flex justify-content-between">
-                                <div @click="showPanel(0)" :class="{ 'menu-active': currentShowing == 0 }"
-                                    class=" menu-item">GROUPS</div>
+
                                 <div @click="showPanel(1)" :class="{ 'menu-active': currentShowing == 1 }"
-                                    class=" menu-item">FIXTURES</div>
+                                    class=" menu-item">
+                                    <i class="bi bi-calendar-event"></i> FIXTURES
+                                </div>
                                 <div @click="showPanel(2)" :class="{ 'menu-active': currentShowing == 2 }"
-                                    class=" menu-item">LIVE MATCHES
+                                    class=" menu-item">
+                                    <i class="bi bi-tv"></i> LIVE
                                     <i v-if="stats.tourLives.length"
                                         class=" blinker small ms-1 bi bi-circle-fill text-success"></i>
                                 </div>
                                 <div @click="showPanel(3)" :class="{ 'menu-active': currentShowing == 3 }"
-                                    class=" menu-item">RESULTS</div>
+                                    class=" menu-item">
+                                    <i class="bi bi-flag"></i> RESULTS
+                                </div>
                                 <div @click="showPanel(4)" :class="{ 'menu-active': currentShowing == 4 }"
-                                    class=" menu-item">TEAMS</div>
+                                    class=" menu-item">
+                                    <i class="bi bi-people"></i> TEAMS
+                                </div>
+                                <div @click="showPanel(0)" :class="{ 'menu-active': currentShowing == 0 }"
+                                    class=" menu-item">
+                                    <i class="bi bi-collection"></i> GROUPS
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -57,6 +72,7 @@ import { onMounted, ref, onUnmounted } from 'vue'
 import { useStatsStore } from '@/store/statsStore'
 import StatsLayout from './StatsLayout.vue';
 import { useToast } from 'vue-toast-notification';
+import { useNow, useDateFormat, useVibrate } from '@vueuse/core';
 
 import StandingsPanel from './standings.vue'
 import ResultsPanel from './results.vue'
@@ -65,6 +81,10 @@ import LivePanel from './live.vue'
 import InfoPanel from './informationCenter.vue'
 
 const $toast = useToast();
+
+const today_date = useDateFormat(useNow(), `dddd, DD/MMMM/YYYY , H:mm aa`);
+const { vibrate, stop } = useVibrate({ pattern: [300, 100, 300] })
+
 
 
 function showPanel(Index: number) {
@@ -82,7 +102,7 @@ const stats = useStatsStore()
 const route = useRoute()
 const router = useRouter()
 
-const currentShowing = ref(0)
+const currentShowing = ref(3)
 
 onMounted(async () => {
     if (!stats.statsLoaded) {
@@ -99,10 +119,7 @@ onMounted(async () => {
 function beep() {
     var audio = new Audio('/audio/ping.mp3');
     audio.play()
-    // audio.muted = false;
-    // audio.addEventListener("canplaythrough", () => {
-    //     audio.play()
-    // });
+    vibrate()
 }
 
 async function loadAllData() {
@@ -186,11 +203,13 @@ window.Echo.channel('startMatch').listen('startMatch', async (e) => {
     cursor: pointer;
     background-color: var(--theme-color-3bb);
     color: #c7c790;
+    border: solid 1px var(--theme-color-3);
 }
 
 .menu-active {
     color: #ffff00 !important;
     font-weight: bolder;
+    background-color: #02496d !important;
     /* background-color: #fff !important; */
 }
 

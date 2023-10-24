@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const hostURL = 'http://127.0.0.1:8000' //dev
-// const hostURL = '' //build
+// const hostURL = 'http://127.0.0.1:8000' //dev
+const hostURL = '' //build
 
 const $instance = axios.create({
     baseURL: `${hostURL}/api/`,

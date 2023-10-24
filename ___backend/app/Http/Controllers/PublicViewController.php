@@ -198,6 +198,7 @@ class PublicViewController extends BaseController
                 $team->lost = 0;
                 $team->scored = 0;
                 $team->conceded = 0;
+                $team->goal_diff = 0;
             }
 
 
@@ -228,13 +229,15 @@ class PublicViewController extends BaseController
                         $team->played += 1;
                     }
                 }
+                $team->goal_diff = $team->scored  - $team->conceded;
             }
 
 
             // calculate performance rating
             foreach ($teams as $team) {
                 if ($team->played !== 0) {
-                    $rating = ((($team->won * 3) + $team->draw) / ($team->played * 3)) * 100;
+                    $rating = (($team->won * 3) + $team->draw) + ($team->goal_diff / 10);
+                    // $rating = ((($team->won * 3) + $team->draw) / ($team->played * 3)) * 100;
                     $team->rating = ceil($rating);
                 }
 
@@ -250,6 +253,16 @@ class PublicViewController extends BaseController
             usort($data, function ($a, $b) {
                 return $b->rating - $a->rating;
             });
+
+
+            // usort($objects, function($a, $b) {
+            //     // Compare by property1
+            //     if ($a->property1 == $b->property1) {
+            //         // If property1 is the same, compare by property2
+            //         return $a->property2 <=> $b->property2;
+            //     }
+            //     return $a->property1 <=> $b->property1;
+            // });
         }
 
 

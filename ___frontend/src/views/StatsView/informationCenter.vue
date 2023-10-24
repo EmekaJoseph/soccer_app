@@ -45,11 +45,11 @@
                                     </ul>
 
                                     <div v-if="team.rating !== undefined">
-                                        <div class="text-muted" style="font-size: 11px;">Rating: {{ team.rating }}%
+                                        <div class="text-muted" style="font-size: 11px;">Rating: {{ team.rating * 10 }}
                                         </div>
                                         <div class="progress" style="height: 5px;">
-                                            <div class="progress-bar bg-success " :class="{ 'bg-danger': team.rating < 50 }"
-                                                role="progressbar" :style="'width:' + team.rating + '%;'"
+                                            <div class="progress-bar bg-success " :class="{ 'bg-danger': team.rating < 5 }"
+                                                role="progressbar" :style="'width:' + (team.rating * 10) + '%;'"
                                                 :aria-valuenow="team.rating" aria-valuemin="0" aria-valuemax="100">
 
                                             </div>
