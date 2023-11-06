@@ -100,7 +100,9 @@ class PublicViewController extends BaseController
             'home_score',
             'away_score',
             'match_stage',
-            'date_played'
+            'date_played',
+            'away_score_pen',
+            'home_score_pen'
         )->where('tour_id', $tour_id)->orderByDesc('date_played')->get();
         if (sizeof($results) > 0) {
             foreach ($results as $result) {

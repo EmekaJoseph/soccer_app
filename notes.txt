@@ -9,8 +9,11 @@ https://ahmedshaltout.com/laravel/how-to-use-laravel-websockets-and-laravel-echo
 Work to do!
 -- role route guard
 -- update password
+-- penalties input on results
 
 ###################################
+
+ALTER TABLE `tbl_results` ADD `home_score_pen` INT(10) NULL DEFAULT NULL AFTER `away_score`, ADD `away_score_pen` INT(10) NULL DEFAULT NULL AFTER `home_score_pen`;
 
 
 

@@ -19,6 +19,8 @@ class CreateTblResultsTable extends Migration
             $table->string('home_team', 100);
             $table->string('home_score', 100);
             $table->string('away_score', 100);
+            $table->integer('home_score_pen')->nullable();
+            $table->integer('away_score_pen')->nullable();
             $table->string('match_stage', 100)->nullable();
             $table->timestamps();
             $table->string('tour_id', 100);

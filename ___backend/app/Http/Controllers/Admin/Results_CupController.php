@@ -123,6 +123,8 @@ class Results_CupController extends BaseController
             'away_team' => $awayTeam,
             'home_score' => $homeTeam_score,
             'away_score' => $awayTeam_score,
+            'home_score_pen' => $req->input('home_score_pen', null),
+            'away_score_pen' => $req->input('away_score_pen', null),
             'tour_id' => $tour_id,
             'match_stage' => $match_stage,
             'date_played' => (Carbon::parse($date_played))->toDateString()
