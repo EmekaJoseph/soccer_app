@@ -1,5 +1,5 @@
 <template>
-    <div class="container px-3">
+    <div class="container">
         <div v-if="userData.apiError">
             <internetErrorComponent />
         </div>
@@ -16,7 +16,7 @@
                 <div class="col-lg-12">
                     <div class="row gy-3">
                         <div class="col-lg-5">
-                            <fieldset class="border rounded-3 p-3 bg-white h-100 shadow">
+                            <fieldset class="border rounded-3 p-3 bg-light-subtle  h-100">
                                 <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">NEW RESULT:
                                 </legend>
                                 <div class="row g-3">
@@ -34,30 +34,30 @@
                                         <label>Group: </label>
                                         <select v-model="form.group_in" class="form-select  text-uppercase">
                                             <option value="" selected disabled></option>
-                                            <option v-for="i in userData.valid_groups" :key="i" :value="i">{{ i }}
+                                            <option v-for="group in userData.valid_groups" :key="group" :value="group">
+                                                {{ group }}
                                             </option>
                                         </select>
                                     </div>
 
                                     <div class="col-md-12">
-                                        <div class="card">
+                                        <div class="card shadow-sm border-0">
                                             <div class="card-body">
                                                 <div class="row">
-                                                    <div class="col-sm-8">
+                                                    <div class="col-9">
                                                         <label>Home Team: </label>
                                                         <select v-model="form.homeTeam" class="form-select  text-uppercase">
                                                             <option value="" selected disabled></option>
                                                             <option v-for="i in homeTeamDrop" :key="i.team_id"
-                                                                :value="i.team_id">{{
-                                                                    i.team_name }}
+                                                                :value="i.team_id">{{ i.team_name }}
                                                             </option>
                                                         </select>
                                                     </div>
 
-                                                    <div class="col-sm-4">
+                                                    <div class="col-3">
                                                         <label class="small">score:</label>
                                                         <input v-model="form.homeTeam_score" type="number"
-                                                            class="form-control">
+                                                            class="form-control small">
                                                     </div>
                                                 </div>
                                             </div>
@@ -65,10 +65,10 @@
                                     </div>
 
                                     <div class="col-md-12">
-                                        <div class="card">
-                                            <div class="card-body">
+                                        <div class="card shadow-sm border-0">
+                                            <div class="card-body ">
                                                 <div class="row">
-                                                    <div class="col-sm-8">
+                                                    <div class="col-9">
                                                         <label>Away Team: </label>
                                                         <select v-model="form.awayTeam" class="form-select  text-uppercase">
                                                             <option value="" selected disabled></option>
@@ -79,12 +79,34 @@
                                                         </select>
                                                     </div>
 
-                                                    <div class="col-sm-4">
+                                                    <div class="col-3">
                                                         <label class="small">score:</label>
                                                         <input v-model="form.awayTeam_score" type="number"
                                                             class="form-control ">
                                                     </div>
 
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12" v-show="form.match_stage && form.match_stage != 'Group_Stage'">
+                                        <div @click="form.isPenalties = !form.isPenalties" class="cursor-pointer">
+                                            <i v-if="!form.isPenalties" class="bi bi-square"></i>
+                                            <i v-else class="bi bi-check-square-fill text-secondary"></i>
+                                            Penalty Shoot-Out?
+                                        </div>
+                                        <div v-show="form.isPenalties" class="card">
+                                            <div class="card-body small">
+                                                <div class="row mt-2">
+                                                    <div class="col-6">
+                                                        <input v-model="form.home_score_pen" type="number"
+                                                            class="form-control" placeholder="home_score">
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <input v-model="form.away_score_pen" type="number"
+                                                            class="form-control" placeholder="away_score">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -229,6 +251,9 @@ const form: any = reactive({
     awayTeam: '',
     homeTeam_score: 0,
     awayTeam_score: 0,
+    isPenalties: false,
+    home_score_pen: 0,
+    away_score_pen: 0,
     match_stage: '',
     group_in: '',
     date_played: new Date(),
@@ -295,6 +320,8 @@ async function save() {
     obj.homeTeam = form.homeTeam;
     obj.awayTeam_score = form.awayTeam_score;
     obj.homeTeam_score = form.homeTeam_score;
+    obj.home_score_pen = form.isPenalties ? form.home_score_pen : null;
+    obj.away_score_pen = form.isPenalties ? form.away_score_pen : null;
     obj.date_played = (form.date_played).toISOString();
     obj.tour_id = selectedTournament.value.id;
     obj.match_stage = selectedTournament.value.type == 'cup' ? form.match_stage : null
@@ -316,6 +343,9 @@ async function save() {
             form.homeTeam = "";
             form.awayTeam_score = 0;
             form.homeTeam_score = 0
+            form.isPenalties = false
+            form.away_score_pen = 0
+            form.home_score_pen = 0
             form.match_stage = "";
             form.group_in = "";
 

@@ -18,6 +18,11 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 app.component('VueDatePicker', VueDatePicker);
 
+// https://primevue.org/installation/
+// import PrimeVue from 'primevue/config';
+// import 'primevue/resources/themes/lara-light-teal/theme.css'
+
+
 
 // https://swiperjs.com/element
 import 'swiper/css';
@@ -71,6 +76,7 @@ window.Echo = new Echo({
 
 app.use(createPinia())
 app.use(router)
+// app.use(PrimeVue);
 app.use(VueWriter)
 
 app.mount('#app')

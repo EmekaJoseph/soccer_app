@@ -8,10 +8,10 @@
     <div v-else class="min-vh-100">
         <div class="row justify-content-ce gy-3">
 
-            <div v-for="({ match_stage, home_team, away_team, home_name, away_name, away_score, home_score, winner, date_played }, i) in stats.tourResults"
+            <div v-for="({ match_stage, home_team, away_team, home_name, away_name, away_score, home_score, winner, date_played, home_score_pen, away_score_pen }, i) in stats.tourResults"
                 class="col-6">
-                <div class="card bg-white h-100 small px-2">
-                    <div class="card-header fw-bolder rounded-0 bg-transparent text-center small p-0 py-1">
+                <div class="card bg-white h-100 small ">
+                    <div class="card-header fw-bolder rounded-0 bg-transparent text-center small p-0 py-1 mx-2">
                         {{ match_stage ? match_stage.replaceAll('_', ' ') : '' }}
                         ({{ dateFormat(date_played) }})
                     </div>
@@ -26,6 +26,12 @@
                                 {{ away_score }}
                             </span>
                         </div>
+                    </div>
+                    <div v-show="home_score_pen" class="card-footer m-0 border-0">
+                        PEN: <span class="float-end">
+                            <span :class="{ 'fw-bold ': (home_score_pen > away_score_pen) }"> {{ home_score_pen }} </span> :
+                            <span :class="{ 'fw-bold ': away_score_pen > home_score_pen }"> {{ away_score_pen }} </span>
+                        </span>
                     </div>
                 </div>
             </div>
