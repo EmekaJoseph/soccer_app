@@ -1,19 +1,20 @@
 <template>
     <div class="col-12 col-md-6 col-lg-4">
         <fieldset class="border rounded-3 p-3 bg-white h-100 shadow">
-            <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">LIVE MATCH:
-            </legend>
+            <!-- <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">LIVE MATCH:
+            </legend> -->
             <div class="row g-3">
                 <!-- <div v-if="current_type == 'cup'" class="col-md-12"> -->
                 <div class="col-md-12">
-                    <div class="card shadow-sm small">
+                    <div class="card  small">
                         <div class="card-body">
 
                             <div class="row g-2">
                                 <div class="col-12">
                                     <div class="card p-2 text-center "
                                         :class="{ 'bg-body-secondary': liveData.timeIsPaused }">
-                                        <div class="card-header bg-transparent border-0 m-0 p-0 d-flex justify-content-end">
+                                        <div
+                                            class="card-header bg-transparent border-0 m-0 p-0 d-flex justify-content-end">
                                             <!-- <button class="btn btn-outline-secondary  me-3 p-0 btn-sm px-2"> -->
                                             <span v-if="liveData.timeIsPaused"
                                                 class="small text-muted me-3 mt-1">PAUSED</span>
@@ -43,14 +44,15 @@
                                             <div class="col-6">
                                                 <button @click="adjustTime(-1)"
                                                     class="w-100 btn bg-secondary-subtle   btn-sm">
-                                                    <!-- <i class="bi bi-dash-lg"></i> -->
-                                                    <i class="bi bi-chevron-left"></i>
+                                                    <i class="bi bi-dash-lg"></i>1
+                                                    <!-- <i class="bi bi-chevron-left"></i> -->
                                                 </button>
                                             </div>
                                             <div class="col-6">
-                                                <button @click="adjustTime(1)" class="w-100 btn bg-success-subtle  btn-sm">
-                                                    <!-- <i class="bi bi-plus-lg"></i> -->
-                                                    <i class="bi bi-chevron-right"></i>
+                                                <button @click="adjustTime(1)"
+                                                    class="w-100 btn bg-success-subtle  btn-sm">
+                                                    <i class="bi bi-plus-lg"></i>1
+                                                    <!-- <i class="bi bi-chevron-right"></i> -->
                                                 </button>
                                             </div>
                                         </div>
@@ -62,8 +64,10 @@
                                         readonly :value="teamData.home_team">
                                 </div>
                                 <div class="col-3">
-                                    <input @keyup="liveData.statusChanged = true" type="number"
-                                        class="form-control form-control-sm" v-model="liveData.home_team_score">
+                                    <input class="form-control form-control-sm" v-maska data-maska="##"
+                                        v-model="liveData.home_team_score">
+                                    <!-- <input @keyup="liveData.statusChanged = true" type="number"
+                                        class="form-control form-control-sm" v-model="liveData.home_team_score"> -->
                                 </div>
 
                                 <div class="col-9">
@@ -72,8 +76,10 @@
                                         readonly :value="teamData.away_team">
                                 </div>
                                 <div class="col-3">
-                                    <input @keyup="liveData.statusChanged = true" type="number"
-                                        class="form-control form-control-sm" v-model="liveData.away_team_score">
+                                    <input class="form-control form-control-sm" v-maska data-maska="##"
+                                        v-model="liveData.away_team_score">
+                                    <!-- <input @keyup="liveData.statusChanged = true" type="number"
+                                        class="form-control form-control-sm" v-model="liveData.away_team_score"> -->
                                 </div>
                             </div>
 
@@ -84,7 +90,7 @@
                 </div>
 
                 <div class="col-9 mt-4">
-                    <button v-if="liveData.statusChanged" @click.prevent="updateLive"
+                    <button :disabled="!liveData.statusChanged" @click.prevent="updateLive"
                         class="hover-tilt-X btn btn-primary w-100">
                         <i class="bi bi-check-circle-fill"></i> UPDATE
                     </button>
@@ -100,10 +106,11 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, onUnmounted } from 'vue';
+import { reactive, onUnmounted, watch } from 'vue';
 import { useUserDataStore } from '@/store/userDataStore';
 import api from '@/store/axiosManager'
 import { useToast } from 'vue-toast-notification';
+import { vMaska } from "maska"
 
 const prop = defineProps({
     teamData: {
@@ -124,6 +131,10 @@ const liveData = reactive({
 const $toast = useToast();
 // const statusChanged = ref<boolean>(false)
 const userData = useUserDataStore()
+
+watch(() => [liveData.away_team_score, liveData.home_team_score], () => {
+    liveData.statusChanged = true
+})
 
 
 function adjustTime(val: number) {

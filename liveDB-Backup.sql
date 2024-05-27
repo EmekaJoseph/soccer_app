@@ -181,7 +181,7 @@ INSERT INTO `tbl_feedback` (`feedback_id`, `tour_id`, `name`, `feedbackText`, `c
 (57, '01h4299vwq5mkm8nzdpcdkskmv', NULL, 'Ugf', '2023-10-07 11:35:01', '129.205.124.241'),
 (58, '01h4299vwq5mkm8nzdpcdkskmv', NULL, 'Good', '2023-10-07 12:58:07', '197.210.85.130'),
 (59, '01h4299vwq5mkm8nzdpcdkskmv', 'Princess', 'I don\'t know yet', '2023-10-07 13:36:13', '102.88.62.251'),
-(60, '01h4299vwq5mkm8nzdpcdkskmv', NULL, 'Hi DLAM LOC.\n\nI suggest there\'ll be provision on the page for statistics where goal scorers and their tally will be recorded. \nEverything stats including the best and worst discipline team. \n\nThanks', '2023-10-07 14:40:18', '102.88.63.108'),
+-- (60, '01h4299vwq5mkm8nzdpcdkskmv', NULL, 'Hi DLAM LOC.\n\nI suggest there\'ll be provision on the page for statistics where goal scorers and their tally will be recorded. \nEverything stats including the best and worst discipline team. \n\nThanks', '2023-10-07 14:40:18', '102.88.63.108'),
 (61, '01h4299vwq5mkm8nzdpcdkskmv', NULL, 'It can only get better, Kudos to the DLAM Football Association.', '2023-10-14 13:29:40', '154.118.65.185');
 
 -- --------------------------------------------------------

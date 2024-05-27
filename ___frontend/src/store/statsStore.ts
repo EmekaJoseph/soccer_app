@@ -83,7 +83,7 @@ export const useStatsStore = defineStore('stats', () => {
     try {
       let resp = await api.getLiveMatches(tour_id.value)
       tourLives.value = resp.data
-      // console.log(resp);
+      console.log('live', resp);
     } catch (error) {
       apiError.value = true
     }

@@ -19,11 +19,11 @@
         </nav>
 
         <div class="py-5 container ">
-            <div class="card border-0 rounded-0 min-vh-100">
-                <div class="card-body px-1 px-md-4 py-5">
-                    <RouterView />
-                </div>
-            </div>
+            <!-- <div class="card border-0 rounded-0 min-vh-100"> -->
+            <!-- <div class="card-body px-1 px-md-4 py-5"> -->
+            <RouterView />
+            <!-- </div> -->
+            <!-- </div> -->
 
         </div>
 
@@ -135,6 +135,7 @@ function logOut() {
 }
 
 .bg-admin {
-    background-color: #ebeefd;
+    /* background-color: var(--bs-secondary-bg-subtle); */
+    background-color: var(--bs-light);
 }
 </style>

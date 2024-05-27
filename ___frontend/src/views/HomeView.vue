@@ -65,7 +65,7 @@
 
                 <div v-if="hasPredicted == 1" class="mt-4 text-center" style="color: #ccccccde;">
                   <span v-html="greeting()"></span><span v-if="DLAM_visitor" class=" text-capitalize">, {{ DLAM_visitor
-                  }}</span>
+                    }}</span>
                 </div>
 
 
@@ -109,11 +109,16 @@ import feedbackModal from '@/components/modals/feedbackModal.vue';
 import api from '@/store/axiosManager'
 import { useToast } from 'vue-toast-notification';
 import { useStatsStore } from '@/store/statsStore'
+import { useRoute } from 'vue-router';
 
 // hardcoded tournament_id
 const tour_id = '01h4299vwq5mkm8nzdpcdkskmv';
 
+const route = useRoute()
+
 onMounted(() => {
+  console.log(route);
+
   stats.tour_id = tour_id
   if (!userHasSentFeedback.value) {
     feedback_modalBtn.value.click()

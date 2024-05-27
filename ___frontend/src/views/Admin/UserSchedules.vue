@@ -5,130 +5,142 @@
         </div>
         <div v-else>
             <div class="row gy-4">
-                <div class="col-lg-4 mb-3">
+                <div class="col-lg-5 mb-3">
                     <!-- <label>Tournament: </label> -->
-                    <select v-model="selectedTournament"
-                        class="form-select text-uppercase rounded-0 border-end-0 border-start-0 border-top-0  border-bottom-3 cursor-pointer"
+                    <select v-model="selectedTournament" class="form-select text-uppercase  cursor-pointer"
                         @change="loadScheduleData">
                         <option v-for="i in userData.tournaments" :key="i" :value="i">{{ i.title }}</option>
                     </select>
                 </div>
                 <div class="col-lg-12">
                     <div class="row gy-3">
-                        <div class="col-lg-4">
-                            <fieldset class="border rounded-3 p-3 bg-white shadow">
-                                <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">NEW SCHEDULE:
-                                </legend>
-                                <div class="row g-3">
-                                    <!-- <div v-if="current_type == 'cup'" class="col-md-12"> -->
-                                    <div class="col-md-12">
-                                        <div class="card shadow-sm">
-                                            <div class="card-body">
-                                                <div class="row g-2">
-                                                    <div class="col-md-">
-                                                        <label>Home Team: </label>
-                                                        <select v-model="form.homeTeam" class="form-select  text-uppercase">
-                                                            <option value="" selected disabled></option>
-                                                            <option v-for="i in userData.tournamentTeams" :key="i.team_id"
-                                                                :value="i.team_id">{{
-                                                                    i.team_name }}
-                                                            </option>
-                                                        </select>
-                                                    </div>
+                        <div class="col-lg-5">
+                            <div class="card shadow- h-100">
+                                <div class="card-header text-muted fw-bold bg-transparent border-0">
+                                    SCHEDULE:
+                                </div>
+                                <div class="card-body">
+                                    <!-- <fieldset class="border rounded-3 p-3 bg-white shadow"> -->
+                                    <!-- <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">NEW
+                                            SCHEDULE:
+                                        </legend> -->
+                                    <div class="row g-3">
+                                        <!-- <div v-if="current_type == 'cup'" class="col-md-12"> -->
 
-                                                    <div class=" text-center fw-bold mt-3 text-secondary">VS</div>
+                                        <div class="col-md-">
+                                            <label>Home Team: </label>
+                                            <select v-model="form.homeTeam" class="form-select  text-uppercase">
+                                                <option value="" selected disabled></option>
+                                                <option v-for="i in userData.tournamentTeams" :key="i.team_id"
+                                                    :value="i.team_id">{{
+            i.team_name }}
+                                                </option>
+                                            </select>
+                                        </div>
 
-                                                    <div class="col-md-">
-                                                        <label>Away Team: </label>
-                                                        <select v-model="form.awayTeam" class="form-select  text-uppercase">
-                                                            <option value="" selected disabled></option>
-                                                            <option v-for="i in awayTeamDrop" :key="i.team_id"
-                                                                :value="i.team_id">{{
-                                                                    i.team_name }}
-                                                            </option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                        <!-- <div class=" text-center fw-bold mt-3 text-secondary">VS
+                                        </div> -->
 
-                                            </div>
+                                        <div class="col-md-">
+                                            <label>Away Team: </label>
+                                            <select v-model="form.awayTeam" class="form-select  text-uppercase">
+                                                <option value="" selected disabled></option>
+                                                <option v-for="i in awayTeamDrop" :key="i.team_id" :value="i.team_id">{{
+            i.team_name }}
+                                                </option>
+                                            </select>
+                                        </div>
+
+
+
+                                        <div class="col-md-12">
+                                            <label>Venue:</label>
+                                            <textarea v-model="form.venue" rows="2" class="form-control"></textarea>
+                                        </div>
+
+
+
+                                        <div class="col-md-12">
+                                            <label>Kick-Off:</label>
+                                            <VueDatePicker :preview-format="format" :minDate="today"
+                                                v-model="form.kick_off" hideInputIcon :enableTimePicker="true"
+                                                :is-24="false" :clearable="false" placeholder="date.." autoApply>
+                                            </VueDatePicker>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <label>Match Type:</label>
+                                            <select :disabled="selectedTournament.type != 'cup'"
+                                                v-model="form.match_stage" class="form-select  text-">
+                                                <option value="" selected disabled></option>
+                                                <option v-for="i in userData.match_stages" :key="i" :value="i">{{ i
+                                                    }}
+                                                </option>
+                                            </select>
+                                        </div>
+
+
+                                        <div v-if="userData.tournamentTeams.length" class="col-md-12 mt-4">
+                                            <button v-if="!form.isSaving" @click.prevent="save"
+                                                class="btn btn-primary btn w-100">Save</button>
+                                            <button v-else class="float-end theme-btn btn w-100"
+                                                disabled>Saving...</button>
                                         </div>
                                     </div>
-
-                                    <div class="col-md-12">
-                                        <label>Venue:</label>
-                                        <textarea v-model="form.venue" rows="2" class="form-control"></textarea>
-                                    </div>
-
-
-
-                                    <div class="col-md-12">
-                                        <label>Kick-Off:</label>
-                                        <VueDatePicker :preview-format="format" :minDate="today" v-model="form.kick_off"
-                                            hideInputIcon :enableTimePicker="true" :is-24="false" :clearable="false"
-                                            placeholder="date.." autoApply>
-                                        </VueDatePicker>
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <label>Match Type:</label>
-                                        <select :disabled="selectedTournament.type != 'cup'" v-model="form.match_stage"
-                                            class="form-select  text-">
-                                            <option value="" selected disabled></option>
-                                            <option v-for="i in userData.match_stages" :key="i" :value="i">{{ i }}
-                                            </option>
-                                        </select>
-                                    </div>
-
-
-                                    <div v-if="userData.tournamentTeams.length" class="col-md-12 mt-4">
-                                        <button v-if="!form.isSaving" @click.prevent="save"
-                                            class="btn btn-primary btn w-100">Save</button>
-                                        <button v-else class="float-end theme-btn btn w-100" disabled>Saving...</button>
-                                    </div>
+                                    <!-- </fieldset> -->
                                 </div>
-                            </fieldset>
+                            </div>
                         </div>
 
-                        <div class="col-lg-8">
-                            <fieldset class="border rounded-3 p-3 bg-light-subtle h-100">
-                                <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">LIST</legend>
+                        <div class="col-lg-7">
+                            <!-- <fieldset class="border rounded-3 p-3 bg-light-subtle h-100"> -->
+                            <!-- <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">LIST
+                                </legend> -->
 
-                                <div class="col-md-12 mt-3">
-                                    <div class="card border-0 p-0">
-                                        <div class="card-body p-1 m-1">
-                                            <div v-if="userData.tournamentShedules">
-                                                <EasyDataTable class="border-0" :headers="tableHeaders"
-                                                    :items="userData.tournamentShedules">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-header text-muted fw-bold bg-transparent border-0">
+                                    SCHEDULE LIST:
+                                </div>
+                                <div class="card-body">
+                                    <div class="col-md-12 mt-3">
+                                        <div class="card border-0 p-0">
+                                            <div class="card-body p-1 m-1">
+                                                <div v-if="userData.tournamentShedules">
+                                                    <EasyDataTable class="border-0" :headers="tableHeaders"
+                                                        :items="userData.tournamentShedules">
 
-                                                    <template #item-homeVsAway="item">
-                                                        <div>
-                                                            {{ item.home_team }}
-                                                            <span class=" fw-bolder"> VS </span>
-                                                            {{ item.away_team }}
-                                                        </div>
-                                                    </template>
+                                                        <template #item-homeVsAway="item">
+                                                            <div>
+                                                                {{ item.home_team }}
+                                                                <span class=" fw-bolder"> VS </span>
+                                                                {{ item.away_team }}
+                                                            </div>
+                                                        </template>
 
-                                                    <template #item-kick_="item">
-                                                        <div class=" fw-bolder"> {{ (new Date(item.kick_off)).toDateString()
-                                                        }} </div>
-                                                    </template>
+                                                        <template #item-kick_="item">
+                                                            <div class=" fw-bolder"> {{ (new
+            Date(item.kick_off)).toDateString()
+                                                                }} </div>
+                                                        </template>
 
 
 
-                                                    <template #item-delete="item">
-                                                        <div class="operation-wrapper">
-                                                            <span @click="deleteSchedule(item)"
-                                                                class="operation-icon cursor-pointer">
-                                                                <i class="bi bi-trash3 text-danger"></i>
-                                                            </span>
-                                                        </div>
-                                                    </template>
-                                                </EasyDataTable>
+                                                        <template #item-delete="item">
+                                                            <div class="operation-wrapper">
+                                                                <span @click="deleteSchedule(item)"
+                                                                    class="operation-icon cursor-pointer">
+                                                                    <i class="bi bi-trash3 text-danger"></i>
+                                                                </span>
+                                                            </div>
+                                                        </template>
+                                                    </EasyDataTable>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </fieldset>
+                            </div>
+                            <!-- </fieldset> -->
                         </div>
                     </div>
 

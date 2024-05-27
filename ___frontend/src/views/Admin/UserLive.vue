@@ -8,8 +8,7 @@
                 <div class="col-12 mb-4">
                     <div class="col-lg-4">
                         <!-- <label>Tournament: </label> -->
-                        <select v-model="selectedTournament"
-                            class="form-select text-uppercase rounded-0 border-end-0 border-start-0 border-top-0  border-bottom-3 cursor-pointer"
+                        <select v-model="selectedTournament" class="form-select text-uppercase  cursor-pointer"
                             @change="loadLiveMatches">
                             <option v-for="i in userData.tournaments" :key="i" :value="i">{{ i.title }}</option>
                         </select>
