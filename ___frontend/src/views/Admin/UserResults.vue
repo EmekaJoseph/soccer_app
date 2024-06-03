@@ -64,8 +64,10 @@
 
                                                 <div class="col-3">
                                                     <label class="small">score:</label>
-                                                    <input v-model="form.homeTeam_score" type="number"
-                                                        class="form-control small">
+                                                    <!-- <input v-model="form.homeTeam_score" type="number"
+                                                        class="form-control small"> -->
+                                                    <input class="form-control" v-maska data-maska="##"
+                                                        v-model="form.homeTeam_score">
                                                 </div>
                                                 <!-- </div> -->
                                                 <!-- </div> -->
@@ -89,8 +91,10 @@
 
                                                 <div class="col-3">
                                                     <label class="small">score:</label>
-                                                    <input v-model="form.awayTeam_score" type="number"
-                                                        class="form-control ">
+                                                    <input class="form-control" v-maska data-maska="##"
+                                                        v-model="form.awayTeam_score">
+                                                    <!-- <input v-model="form.awayTeam_score" type="number"
+                                                        class="form-control "> -->
                                                 </div>
 
                                                 <!-- </div> -->
@@ -213,6 +217,7 @@ import { useUserDataStore } from '@/store/userDataStore';
 import type { Header, Item, SortType } from "vue3-easy-data-table";
 import api from '@/store/axiosManager'
 import { useToast } from 'vue-toast-notification';
+import { vMaska } from "maska"
 
 const userData = useUserDataStore()
 const selectedTournament = ref<any>({})
@@ -342,11 +347,12 @@ async function save() {
         }
     }
 
+
     let obj: any = {};
     obj.awayTeam = form.awayTeam;
     obj.homeTeam = form.homeTeam;
-    obj.awayTeam_score = form.awayTeam_score;
-    obj.homeTeam_score = form.homeTeam_score;
+    obj.awayTeam_score = parseInt(form.awayTeam_score);
+    obj.homeTeam_score = parseInt(form.homeTeam_score);
     obj.home_score_pen = form.isPenalties ? form.home_score_pen : null;
     obj.away_score_pen = form.isPenalties ? form.away_score_pen : null;
     obj.date_played = (form.date_played).toISOString();

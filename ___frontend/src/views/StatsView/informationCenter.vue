@@ -1,7 +1,7 @@
 <template>
     <div class="min-vh-100">
         <div class="row justify-content-center gy-3">
-            <div v-for="(team, i) in stats.tourTeamsInfo" :key="i" class="col-lg-8">
+            <div v-for="(team, i) in stats.tourTeamsInfo" :key="i" class="col-lg-12">
                 <div class="card p-2 ">
                     <div class="accordion accordion-flush" :id="'accordionFlush' + i">
                         <div class="accordion-item">
@@ -48,8 +48,9 @@
                                         <div class="text-muted" style="font-size: 11px;">Rating: {{ team.rating * 10 }}
                                         </div>
                                         <div class="progress" style="height: 5px;">
-                                            <div class="progress-bar bg-success " :class="{ 'bg-danger': team.rating < 5 }"
-                                                role="progressbar" :style="'width:' + (team.rating * 10) + '%;'"
+                                            <div class="progress-bar bg-success "
+                                                :class="{ 'bg-danger': team.rating < 5 }" role="progressbar"
+                                                :style="'width:' + (team.rating * 10) + '%;'"
                                                 :aria-valuenow="team.rating" aria-valuemin="0" aria-valuemax="100">
 
                                             </div>

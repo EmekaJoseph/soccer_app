@@ -58,6 +58,13 @@
                                                             {{ header.text == '#' ? 'S/N' : header.text }}</div>
                                                     </template>
 
+                                                    <template #item-link="item">
+                                                        <button @click="openTournamentLinkModal(item.id)"
+                                                            class="btn btn-link btn-sm text-decoration-none border-0 p-0 m-0">
+                                                            Open
+                                                        </button>
+                                                    </template>
+
 
                                                     <template #item-edit="item">
                                                         <div class="operation-wrapper">
@@ -204,6 +211,42 @@
 
         </div>
     </div>
+
+
+
+    <!-- linkModal -->
+
+    <div class="modal fade bg-faint " :class="{ 'show d-block ': copyModal }" id="modalId" tabindex="-1"
+        data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="modalTitleId"
+        aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title" id="modalTitleId">
+
+                    </h5>
+                    <button @click="copyModal = false" type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card border-0 text-muted">{{ linkToCopy }}</div>
+
+                </div>
+                <div class="modal-footer border-0">
+                    <button @click="copy(linkToCopy)" v-if="!copied" type="button" class="btn btn-primary w-100">
+                        <i class="bi bi-clipboard"></i> Copy
+                    </button>
+
+                    <button v-else type="button" class="btn btn-light bg-success-subtle w-100">
+                        <i class="bi bi-check-lg"></i> Copied
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 </template>
 
 <script setup lang="ts">
@@ -213,11 +256,22 @@ import type { Header } from "vue3-easy-data-table";
 import api from '@/store/axiosManager'
 import { useToast } from 'vue-toast-notification';
 import { useAccount } from '@/store/accountStore';
+import { useClipboard } from '@vueuse/core'
 
 const account = useAccount()
 
+
 const userData = useUserDataStore()
 const $toast = useToast();
+
+const copyModal = ref<boolean>(false)
+const linkToCopy = ref<string>('')
+const { copy, isSupported, copied } = useClipboard()
+
+function openTournamentLinkModal(id: string) {
+    linkToCopy.value = `${window.location.host}/stats/${id}`
+    copyModal.value = true
+}
 
 const form = reactive({
     isOpen: false,
@@ -276,6 +330,7 @@ const headers: Header[] = [
     { text: "Name", value: "title" },
     { text: "TYPE", value: "type" },
     { text: "CREATED", value: "created" },
+    { text: "Link", value: "link" },
     // { text: "", value: "edit" },
     // { text: "", value: "delete" },
 
@@ -327,4 +382,8 @@ async function deleteUser(id: any) {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.bg-faint {
+    background-color: rgba(17, 15, 15, 0.183);
+}
+</style>
