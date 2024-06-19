@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\TournamentModel;
 use App\Models\UserModel;
 use App\Models\SubUserModel;
+use App\Models\TeamModel;
 use Illuminate\Support\Facades\Auth;
 use stdClass;
 
@@ -215,6 +216,15 @@ class AccountController extends BaseController
         $tournment->save();
 
         return response()->json('updated', 200);
+    }
+
+    public function deleteTournament($tour_id)
+    {
+        if (TeamModel::where('tour_id', $tour_id)->exists()) {
+            return response()->json('exists', 203);
+        }
+        TournamentModel::find($tour_id)->delete();
+        return response()->json('deleted', 200);
     }
 
     // reset all tables

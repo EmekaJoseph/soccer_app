@@ -7,7 +7,7 @@
 
             <div class="row justify-content-center gy-4">
                 <div class="col-lg-8">
-                    <div class="card shadow-sm ">
+                    <div class="card shadow-sm border-0">
                         <div class="card-header text-muted fw-bold bg-transparent border-0">
                             TOURNAMENTS
                         </div>
@@ -17,32 +17,11 @@
                             </legend> -->
                             <div v-if="account.state.role == 'admin'"
                                 class="d-flex justify-content-end col-12 mb-3  hover-tilt-Y">
-                                <span @click="form.isOpen = !form.isOpen" v-if="!form.isOpen"
-                                    class="text-primary cursor-pointer"> create new <i class="bi bi-plus-circle"></i>
+                                <span @click="newTournModal = true" class="text-primary cursor-pointer">
+                                    New Tournament <i class="bi bi-plus-circle"></i>
                                 </span>
-                                <span @click="form.isOpen = !form.isOpen" v-else class="text-danger cursor-pointer"><i
-                                        class="bi bi-x-lg"></i>
-                                    cancel </span>
                             </div>
                             <div class="content-panel">
-                                <form @submit.prevent="saveNewTournament" v-if="form.isOpen"
-                                    class="row justify-content-center gy-3">
-                                    <div class="col-md-5">
-                                        <input v-model="form.tour_title" type="text" class="form-control"
-                                            placeholder="title..">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <select v-model="form.tour_type" class="form-select">
-                                            <option value="cup" selected>type: CUP</option>
-                                            <option value="league">type: LEAGUE</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <button :disabled="form.isSaving" type="submit"
-                                            class="btn btn-primary w-100">add
-                                            new</button>
-                                    </div>
-                                </form>
                                 <div class="col-md-12 mt-3">
                                     <div class="card">
                                         <div class="card-body">
@@ -77,7 +56,8 @@
 
                                                     <template #item-delete="item">
                                                         <div class="operation-wrapper">
-                                                            <span @click="" class="operation-icon cursor-pointer">
+                                                            <span @click="deleteTournament(item.id)"
+                                                                class="operation-icon cursor-pointer">
                                                                 <i class="bi bi-trash3 text-danger"></i>
                                                             </span>
                                                         </div>
@@ -94,7 +74,7 @@
                     </div>
                 </div>
                 <div class="col-lg-4">
-                    <div class="card shadow-sm  h-100">
+                    <div class="card shadow-sm  h-100 border-0">
                         <div class="card-header text-muted fw-bold bg-transparent border-0">
                             OTHER USERS
                         </div>
@@ -158,7 +138,7 @@
                 </div>
 
                 <div v-if="account.state.role == 'admin'" class="col-12">
-                    <div class="card  shadow-sm">
+                    <div class="card  shadow-sm border-0">
                         <div class="card-header text-muted fw-bold bg-transparent border-0">
                             FEEDBACKS
                         </div>
@@ -215,37 +195,8 @@
 
 
     <!-- linkModal -->
-
-    <div class="modal fade bg-faint " :class="{ 'show d-block ': copyModal }" id="modalId" tabindex="-1"
-        data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="modalTitleId"
-        aria-hidden="true">
-        <div class="modal-dialog  modal-dialog-centered modal-sm" role="document">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title" id="modalTitleId">
-
-                    </h5>
-                    <button @click="copyModal = false" type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="card border-0 text-muted">{{ linkToCopy }}</div>
-
-                </div>
-                <div class="modal-footer border-0">
-                    <button @click="copy(linkToCopy)" v-if="!copied" type="button" class="btn btn-primary w-100">
-                        <i class="bi bi-clipboard"></i> Copy
-                    </button>
-
-                    <button v-else type="button" class="btn btn-light bg-success-subtle w-100">
-                        <i class="bi bi-check-lg"></i> Copied
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
+    <copyLinkModal v-if="copyModal" :link-to-copy="linkToCopy" @close="copyModal = false" />
+    <newTournamentModal v-if="newTournModal" @close="newTournModal = false" @done="  userData.getTournaments()" />
 
 </template>
 
@@ -254,31 +205,26 @@ import { onMounted, reactive, ref } from 'vue';
 import { useUserDataStore } from '@/store/userDataStore';
 import type { Header } from "vue3-easy-data-table";
 import api from '@/store/axiosManager'
-import { useToast } from 'vue-toast-notification';
 import { useAccount } from '@/store/accountStore';
-import { useClipboard } from '@vueuse/core'
+import copyLinkModal from '@/components/modals/userModals/copyLinkModal.vue';
+import newTournamentModal from '@/components/modals/userModals/newTournamentModal.vue';
+import { useToast } from 'vue-toast-notification';
 
 const account = useAccount()
-
-
 const userData = useUserDataStore()
+
 const $toast = useToast();
 
 const copyModal = ref<boolean>(false)
+const newTournModal = ref<boolean>(false)
 const linkToCopy = ref<string>('')
-const { copy, isSupported, copied } = useClipboard()
 
 function openTournamentLinkModal(id: string) {
     linkToCopy.value = `${window.location.host}/stats/${id}`
     copyModal.value = true
 }
 
-const form = reactive({
-    isOpen: false,
-    tour_title: '',
-    tour_type: 'cup',
-    isSaving: false
-})
+
 
 const feedBackArray = ref<any[]>([])
 
@@ -288,53 +234,38 @@ onMounted(() => {
     getFeedbacks()
 })
 
-
-
 async function getFeedbacks() {
     let resp = await api.getFeedbacks()
     feedBackArray.value = resp.data
 }
 
-async function saveNewTournament() {
-    if (!form.tour_title) {
-        $toast.default('Enter Tournament Title', { position: 'top-right' });
-        return;
-    }
-
-    form.isSaving = true;
-
-    try {
-        let resp = await api.createTournament(form)
-        if (resp.status == 203) {
-            $toast.warning('Title already exists', { position: 'top-right' });
-            form.isSaving = false;
-            return;
-        }
-
-        $toast.success('Added Successfuly', { position: 'top-right' });
-        form.isSaving = false;
-        userData.getTournaments()
-        form.isOpen = false;
-        form.tour_title = ''
-
-    } catch (error) {
-        console.log(error);
-
-        $toast.error('Network Error', { position: 'top-right' });
-        form.isSaving = false;
-    }
-
-}
-
 const headers: Header[] = [
     { text: "Name", value: "title" },
     { text: "TYPE", value: "type" },
-    { text: "CREATED", value: "created" },
+    { text: "DATED CREATED", value: "created" },
     { text: "Link", value: "link" },
     // { text: "", value: "edit" },
-    // { text: "", value: "delete" },
-
+    { text: "", value: "delete" },
 ];
+
+async function deleteTournament(id: string | number) {
+    if (confirm('Dou you really want to delete this Record?')) {
+
+        try {
+            let resp = await api.deleteTournament(id)
+            if (resp.status == 203) {
+                $toast.warning('You must Delete Teams first!', { position: 'top-right' });
+                return;
+            }
+            $toast.success('Tournament Deleted Successfuly', { position: 'top-right' });
+            userData.getTournaments()
+
+        } catch (error) {
+            console.log(error);
+            $toast.error('Network Error', { position: 'top-right' });
+        }
+    }
+}
 
 
 

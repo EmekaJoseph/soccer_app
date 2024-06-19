@@ -54,6 +54,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('createTournament',  'createTournament');
         Route::get('getTournaments',  'getTournaments');
         Route::post('updateTournament/{tour_id}',  'updateTournament');
+        Route::get('deleteTournament/{tour_id}',  'deleteTournament');
         Route::get('userLogout',  'userLogout');
         Route::post('createSubUser',  'createSubUser');
         Route::get('deleteSubUser/{subuser_id}',  'deleteSubUser');

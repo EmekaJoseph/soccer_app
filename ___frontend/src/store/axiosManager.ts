@@ -89,6 +89,10 @@ export default {
         return $instance.post(`createTournament`, JSON.stringify(data))
     },
 
+    deleteTournament(id: any) {
+        return $instance.get(`deleteTournament/${id}`)
+    },
+
 
     getTournaments() {
         return $instance.get(`getTournaments`,)
