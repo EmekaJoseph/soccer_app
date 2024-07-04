@@ -1,7 +1,7 @@
 <template>
     <div class="modal fade bg-faint show d-block " id="copyLinkModal" tabindex="-1" data-bs-backdrop="static"
         data-bs-keyboard="false" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
-        <div class="modal-dialog  modal-dialog-centere" role="document">
+        <div class="modal-dialog  modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header border-0">
                     <h5 class="modal-title" id="modalTitleId">
@@ -15,7 +15,7 @@
 
                 </div>
                 <div class="modal-footer border-0">
-                    <button @click="copy(linkToCopy)" v-if="!copied" type="button" class="btn btn-primary w-100">
+                    <button @click="copy(linkToCopy)" v-if="!copied" type="button" class="btn btn-primary-theme w-100">
                         <i class="bi bi-clipboard"></i> Copy
                     </button>
 

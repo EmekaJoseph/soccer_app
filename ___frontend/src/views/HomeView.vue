@@ -53,7 +53,7 @@
               </div>
               <div v-if="stats.isOnline" class="col-md-6">
 
-                <RouterLink :to="'stats/' + tour_id" class="btn btn-primary w-100 hover-tilt-Y btn-lg">
+                <RouterLink :to="'stats/' + tour_id" class="btn btn-primary-theme w-100 hover-tilt-Y btn-lg">
                   STATS
                   <i class="bi bi-chevron-right"></i>
                 </RouterLink>
@@ -81,7 +81,7 @@
               </div>
 
               <!-- <div class="col-md-6">
-                <RouterLink to="stats/01h429avf0ykmdah080bdj5t43" class="btn btn-primary w-100 hover-tilt-Y btn-lg">
+                <RouterLink to="stats/01h429avf0ykmdah080bdj5t43" class="btn btn-primary-theme w-100 hover-tilt-Y btn-lg">
                   Women's Category <i class="bi bi-chevron-right"></i></RouterLink>
               </div> -->
             </div>

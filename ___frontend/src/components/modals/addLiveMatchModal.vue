@@ -6,7 +6,8 @@
                     <div class="modal-header border-0 bg-light">
                         <span class="fw-bold">New Live Match:</span>
                         <span class="float-end">
-                            <button ref="btnX" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button ref="btnX" class="btn btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
                         </span>
                     </div>
                     <div class="modal-body p-sm-4">
@@ -18,8 +19,8 @@
                                         <select class="form-select form-select-lg" v-model="form.home_team">
                                             <option value="" selected disabled></option>
                                             <option v-for="i in userData.tournamentTeams" :key="i" :value="i.team_id">{{
-                                                i.team_name
-                                            }}
+                                            i.team_name
+                                        }}
                                             </option>
                                         </select>
                                     </div>
@@ -29,8 +30,8 @@
                                         <select class="form-select form-select-lg  " v-model="form.away_team">
                                             <option value="" selected disabled></option>
                                             <option v-for="i in awayDropdown" :key="i" :value="i.team_id">{{
-                                                i.team_name
-                                            }}
+                                            i.team_name
+                                        }}
                                             </option>
                                         </select>
                                     </div>
@@ -40,8 +41,8 @@
                                         <select class="form-select form-select-lg" v-model="form.match_stage">
                                             <option value="" selected disabled></option>
                                             <option v-for="i in userData.match_stages" :key="i" :value="i">{{
-                                                i
-                                            }}
+                                            i
+                                        }}
                                             </option>
                                         </select>
                                     </div>
@@ -49,7 +50,7 @@
 
                                     <div class="col-md-12 mt-4">
                                         <button v-if="!isSaving" @click.prevent="start"
-                                            class="btn btn-primary btn-lg btn w-100">Start Now !</button>
+                                            class="btn btn-primary-theme btn-lg btn w-100">Start Now !</button>
                                         <button v-else class="float-end theme-btn btn btn-lg w-100"
                                             disabled>Starting...</button>
                                     </div>

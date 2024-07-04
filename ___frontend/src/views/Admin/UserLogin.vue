@@ -29,7 +29,7 @@
                             </div>
                             <div class="col-12 mt-4">
                                 <button :disabled="form.isLoading" type="submit"
-                                    class="btn btn-primary w-100 btn-lg">LOGIN</button>
+                                    class="btn btn-primary-theme w-100 btn-lg">LOGIN</button>
                                 <!-- <span class="float-end cursor-pointer">forgot password?</span> -->
                             </div>
 
@@ -49,11 +49,12 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAccount } from '@/store/accountStore'
 import api from '@/store/axiosManager'
+import { useAuthStore } from '@/store/authStore';
+
+const authStore = useAuthStore()
 
 
-const account = useAccount();
 const router = useRouter();
 const form = reactive({
     email: '',
@@ -98,8 +99,11 @@ async function login() {
 
         form.email = ''
         form.password = ''
-        account.state = resp.data
-        account.token = resp.data.token
+        const data = resp.data
+
+        // account.state = resp.data
+        // account.token = resp.data.token
+        authStore.login(data)
         router.replace({ path: '/user/dashboard' })
         form.isLoading = false
 

@@ -85,10 +85,10 @@
 
                                 <div class="col-md-3 mt-4">
                                     <button :disabled="(formSearchObj.first == '0')" @click="searchWinners()"
-                                        v-if="!formSearchObj.isLoading" class="btn btn-primary mt-3 w-100">
+                                        v-if="!formSearchObj.isLoading" class="btn btn-primary-theme mt-3 w-100">
                                         <i class="bi bi-search"></i> Search by filter
                                     </button>
-                                    <button v-else disabled class="btn btn-primary mt-3 w-100">
+                                    <button v-else disabled class="btn btn-primary-theme mt-3 w-100">
                                         Searching ..
                                     </button>
                                 </div>
@@ -117,7 +117,8 @@
             <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header bg-light-subtle">
-                        <h6 class="modal-title fs-6 fw-bolder">WINNERS BY PREDICTIONS ({{ winnersResultData.length }})</h6>
+                        <h6 class="modal-title fs-6 fw-bolder">WINNERS BY PREDICTIONS ({{ winnersResultData.length }})
+                        </h6>
                         <button ref="btnX" type="button" class="btn-close" data-bs-dismiss="modal"
                             aria-label="Close"></button>
                     </div>

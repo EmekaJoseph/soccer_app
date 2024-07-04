@@ -1,6 +1,6 @@
 <template>
     <div class="bg-admin min-vh-100">
-        <nav class="navbar py-4 px-lg-3 shadow-sm bg-body-tertiary bg-light">
+        <nav class="navbar py-4 px-lg-3 shadow-sm bg-white sticky-lg-top ">
             <div class="container-fluid">
                 <div>
                     <span ref="btnClose" class="navbar-toggler-icon cursor-pointer" data-bs-toggle="offcanvas"
@@ -9,7 +9,7 @@
                 </div>
                 <div class="dropdown d-none d-md-block">
                     <button class=" bg-transparent border-0 dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        {{ account.state.firstame ?? account.state.email }}
+                        {{ data.firstame ?? data.email }}
                     </button>
                     <ul class="dropdown-menu">
                         <li @click="logOut"><a class="dropdown-item" href="#">Logout</a></li>
@@ -39,7 +39,7 @@
                     <li class="list-group-item">
                         <RouterLink to="/user/dashboard"><i class="bi bi-view-stacked"></i> Dashboard</RouterLink>
                     </li>
-                    <li v-if="account.state.role == 'admin'" class="list-group-item">
+                    <li v-if="data.role == 'admin'" class="list-group-item">
                         <RouterLink to="/user/teams"><i class="bi bi-people"></i> Teams</RouterLink>
                     </li>
                     <li class="list-group-item">
@@ -52,7 +52,7 @@
                         <RouterLink to="/user/live"><i class="bi bi-circle"></i> Live Update</RouterLink>
                     </li>
 
-                    <li v-if="account.state.role == 'admin'" class="list-group-item">
+                    <li v-if="data.role == 'admin'" class="list-group-item">
                         <RouterLink to="/user/predictions"><i class="bi bi-command"></i> Predictions</RouterLink>
                     </li>
 
@@ -70,9 +70,12 @@
 import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/store/axiosManager'
-import { useAccount } from '@/store/accountStore';
+import { useAuthStore } from '@/store/authStore';
 
-const account = useAccount()
+const authStore = useAuthStore()
+
+const data: any = authStore.getUserData()
+
 const route = useRoute()
 const router = useRouter()
 const btnClose = ref<any>()
@@ -89,7 +92,7 @@ function logOut() {
         // 
     }
     finally {
-        account.state = account.nullState;
+        authStore.logout()
         router.replace({ path: '/user' })
     }
 
@@ -135,7 +138,7 @@ function logOut() {
 }
 
 .bg-admin {
-    /* background-color: var(--bs-secondary-bg-subtle); */
-    background-color: var(--bs-light);
+    /* background-color: var(--bs-light); */
+    background-color: #f5f6f8;
 }
 </style>

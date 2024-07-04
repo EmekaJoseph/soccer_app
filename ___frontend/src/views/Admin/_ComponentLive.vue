@@ -91,7 +91,7 @@
 
                 <div class="col-9 mt-4">
                     <button :disabled="!liveData.statusChanged" @click.prevent="updateLive"
-                        class="hover-tilt-X btn btn-primary w-100">
+                        class="hover-tilt-X btn btn-primary-theme w-100">
                         <i class="bi bi-check-circle-fill"></i> UPDATE
                     </button>
                 </div>

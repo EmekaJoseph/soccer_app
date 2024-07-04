@@ -12,19 +12,28 @@ button:focus,
   /* background-color: none; */
 }
 
-.btn-primary {
+.btn-primary-theme {
   background-color: #27566d !important;
   outline: none !important;
   border: none !important;
+  color: #fff !important;
 }
 
-.bg-primary {
+.bg-primary-theme {
   background-color: #27566d !important;
 }
 
-.btn-primary:hover {
+.btn-primary-theme:hover {
   background-color: #193f52 !important;
 }
+
+.text-primary-theme {
+  color: var(--theme-color-1);
+}
+
+/* option:hover {
+  background-color: yellow !important;
+} */
 
 .bouncing {
   animation: up-down 2s ease-in-out infinite alternate-reverse both;

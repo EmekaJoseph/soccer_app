@@ -1,10 +1,15 @@
 import axios from 'axios'
+// @ts-ignore
+import Cookies from 'js-cookie';
 
-const hostURL = 'http://127.0.0.1:8000' //dev
-// const hostURL = '' //build
+// const hostURL = 'http://127.0.0.1:8000' //dev
+// // const hostURL = '' //build
+
+const hostURL = import.meta.env.VITE_API_URL;
+const apiURL = `${hostURL}/api/`;
 
 const $instance = axios.create({
-    baseURL: `${hostURL}/api/`,
+    baseURL: apiURL,
     headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json;charset=UTF-8;text/json',
@@ -15,7 +20,7 @@ const $instance = axios.create({
 // create interceptor for renewing token
 $instance.interceptors.request.use(
     (config: any) => {
-        const token = localStorage.getItem('dlam_cup_T');
+        const token = Cookies.get(import.meta.env.VITE_TOKEN_NAME);
         if (token) config.headers.Authorization = `Bearer ${token}`;
         return config;
     }
@@ -24,7 +29,7 @@ $instance.interceptors.request.use(
 export default {
 
     webSocketHost() { return '127.0.0.1' }, //or window.location.hostname
-    webSocketKey() { return '6ec0771b744a66d007f3' },
+    webSocketKey() { return import.meta.env.VITE_WEBSOCKET_KEY },
 
     standings(tour_id: string) {
         return $instance.get(`view/standings/${tour_id}`,)

@@ -18,6 +18,9 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 app.component('VueDatePicker', VueDatePicker);
 
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
+
 // https://primevue.org/installation/
 // import PrimeVue from 'primevue/config';
 // import 'primevue/resources/themes/lara-light-teal/theme.css'
@@ -25,7 +28,7 @@ app.component('VueDatePicker', VueDatePicker);
 
 
 // https://swiperjs.com/element
-import 'swiper/css';
+// import 'swiper/css';
 
 // npm install vue-toast-notification@^3.0
 import 'vue-toast-notification/dist/theme-sugar.css';
@@ -46,6 +49,8 @@ app.component('EasyDataTable', Vue3EasyDataTable);
 
 // @ts-ignore
 import VueWriter from "vue-writer";
+// @ts-ignore
+import Cookies from 'js-cookie';
 
 import Echo from "laravel-echo"
 import Pusher from 'pusher-js';
@@ -67,7 +72,7 @@ window.Echo = new Echo({
 
     auth: {
         headers: {
-            Authorization: 'Bearer ' + localStorage.getItem('dlam_cup_T'),
+            Authorization: 'Bearer ' + Cookies.get(import.meta.env.VITE_TOKEN_NAME),
         }
     },
 
@@ -76,6 +81,7 @@ window.Echo = new Echo({
 
 app.use(createPinia())
 app.use(router)
+app.use(VueSweetalert2)
 // app.use(PrimeVue);
 app.use(VueWriter)
 

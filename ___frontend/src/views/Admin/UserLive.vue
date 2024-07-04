@@ -20,7 +20,7 @@
                         <!-- <div class="col-12 mb-5">
                             <div class="float-lg-en">
                                 <button data-bs-toggle="modal" data-bs-target="#addLiveMatchModal"
-                                    class="btn btn-primary btn-sm">
+                                    class="btn btn-primary-theme btn-sm">
                                     ADD LIVE MATCH <i class="bi bi-plus-lg"></i>
                                 </button>
                             </div>
@@ -64,7 +64,7 @@
         <addLiveMatchModal :tour="selectedTournament" />
         <otherLiveMatchesModal :tour="selectedTournament" :clicker="clicker" />
 
-        <div v-if="account.state.role == 'admin'" class="fixed-bottom-btn" @click="clicker = !clicker">
+        <div v-if="authStore.getUserData().role == 'admin'" class="fixed-bottom-btn" @click="clicker = !clicker">
             <div class="justify-content-end floatPanel floatPanel-2 hover-tilt-Y">
                 <div class="card newLiveCard otherLiveCard shadow" data-bs-toggle="modal"
                     data-bs-target="#otherLiveMatchesModal">
@@ -89,12 +89,13 @@ import { useUserDataStore } from '@/store/userDataStore';
 import ComponentLive from './_ComponentLive.vue'
 import addLiveMatchModal from '@/components/modals/addLiveMatchModal.vue';
 import otherLiveMatchesModal from '@/components/modals/otherLiveMatchesModal.vue';
-import { useAccount } from '@/store/accountStore';
+import { useAuthStore } from '@/store/authStore';
 
 const userData = useUserDataStore()
-const selectedTournament = ref<any>({})
+const selectedTournament = ref<any>('')
 const clicker = ref<boolean>(false)
-const account = useAccount()
+
+const authStore = useAuthStore()
 
 onMounted(async () => {
     await userData.getTournaments()

@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAccount } from '@/store/accountStore';
+import { useAuthStore } from '@/store/authStore';
 
 
 import HomeView from '../views/HomeView.vue'
@@ -40,8 +40,8 @@ const router = createRouter({
     {
       path: '/user',
       beforeEnter: (to, from, next) => {
-        const account = useAccount()
-        if (account.state.id) {
+        const authStore = useAuthStore()
+        if (authStore.isLoggedIn) {
           next({ path: '/user/dashboard' });
         }
         else {
@@ -56,8 +56,8 @@ const router = createRouter({
     {
       path: '/user',
       beforeEnter: (to, from, next) => {
-        const account = useAccount()
-        if (!account.state.id) {
+        const authStore = useAuthStore()
+        if (!authStore.isLoggedIn) {
           next({ path: '/user' });
         }
         else {

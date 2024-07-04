@@ -4,23 +4,28 @@
             <internetErrorComponent />
         </div>
         <div v-else>
-
             <div class="row justify-content-center gy-4">
                 <div class="col-lg-8">
                     <div class="card shadow-sm border-0">
                         <div class="card-header text-muted fw-bold bg-transparent border-0">
                             TOURNAMENTS
+                            <span v-if="authStore.getUserData().role == 'admin'" @click="newTournModal = true"
+                                class="float-end  hover-tilt-Y text-primary-theme cursor-pointer fw-bold">
+                                <span class="">
+                                    Create <i class="bi bi-plus-circle"></i>
+                                </span>
+                            </span>
                         </div>
                         <div class="card-body">
                             <!-- <fieldset class="border rounded-3 p-3  h-100"> -->
                             <!-- <legend class="text-muted float-none  small p-0 px-2 w-auto fw-bold">TOURNAMENTS
                             </legend> -->
-                            <div v-if="account.state.role == 'admin'"
+                            <!-- <div v-if="account.state.role == 'admin'"
                                 class="d-flex justify-content-end col-12 mb-3  hover-tilt-Y">
                                 <span @click="newTournModal = true" class="text-primary cursor-pointer">
                                     New Tournament <i class="bi bi-plus-circle"></i>
                                 </span>
-                            </div>
+                            </div> -->
                             <div class="content-panel">
                                 <div class="col-md-12 mt-3">
                                     <div class="card">
@@ -39,7 +44,7 @@
 
                                                     <template #item-link="item">
                                                         <button @click="openTournamentLinkModal(item.id)"
-                                                            class="btn btn-link btn-sm text-decoration-none border-0 p-0 m-0">
+                                                            class="btn btn-link text-primary-theme btn-sm text-decoration-none border-0 p-0 m-0">
                                                             Open
                                                         </button>
                                                     </template>
@@ -95,7 +100,7 @@
                                         </div>
                                         <div class="col-lg-12 ">
                                             <button @click="submitUser" :disabled="usersForm.isSaving"
-                                                class="btn btn-primary float-end w-100">
+                                                class="btn btn-primary-theme float-end w-100">
                                                 Click to Add
                                             </button>
                                         </div>
@@ -137,7 +142,7 @@
                     </div>
                 </div>
 
-                <div v-if="account.state.role == 'admin'" class="col-12">
+                <div v-if="authStore.getUserData().role == 'admin'" class="col-12">
                     <div class="card  shadow-sm border-0">
                         <div class="card-header text-muted fw-bold bg-transparent border-0">
                             FEEDBACKS
@@ -205,12 +210,12 @@ import { onMounted, reactive, ref } from 'vue';
 import { useUserDataStore } from '@/store/userDataStore';
 import type { Header } from "vue3-easy-data-table";
 import api from '@/store/axiosManager'
-import { useAccount } from '@/store/accountStore';
 import copyLinkModal from '@/components/modals/userModals/copyLinkModal.vue';
 import newTournamentModal from '@/components/modals/userModals/newTournamentModal.vue';
 import { useToast } from 'vue-toast-notification';
+import { useAuthStore } from '@/store/authStore';
 
-const account = useAccount()
+const authStore = useAuthStore()
 const userData = useUserDataStore()
 
 const $toast = useToast();

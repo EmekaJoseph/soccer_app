@@ -137,7 +137,7 @@
 
                                         <div v-if="userData.tournamentTeams.length" class="col-md-12 mt-3">
                                             <button v-if="!form.isSaving" @click.prevent="save"
-                                                class="btn btn-primary btn w-100">Save</button>
+                                                class="btn btn-primary-theme btn w-100">Save</button>
                                             <button v-else class="float-end theme-btn btn w-100"
                                                 disabled>Saving...</button>
                                         </div>

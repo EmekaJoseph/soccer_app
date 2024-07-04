@@ -22,8 +22,8 @@
                             </div>
 
                             <div class="col-12">
-                                <textarea v-model="form.feedbackText" placeholder="oya type here..." class="form-control"
-                                    rows="4"></textarea>
+                                <textarea v-model="form.feedbackText" placeholder="oya type here..."
+                                    class="form-control" rows="4"></textarea>
                             </div>
 
                             <div v-if="!name.length" class="col-12">
@@ -33,8 +33,8 @@
 
                             <div class="col-12">
                                 <button @click="sendFeedBack" v-if="!form.isSending"
-                                    class="btn btn-lg btn-primary w-100">Send am</button>
-                                <button disabled v-else class="btn btn-lg btn-primary w-100">Abeg wait..</button>
+                                    class="btn btn-lg btn-primary-theme w-100">Send am</button>
+                                <button disabled v-else class="btn btn-lg btn-primary-theme w-100">Abeg wait..</button>
                             </div>
 
                             <div class="col-12">
