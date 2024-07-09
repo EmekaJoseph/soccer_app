@@ -1,4 +1,3 @@
-
 <template>
     <div class="footer container-fluid">
         <!-- <footer class="d-flex flex-wrap justify-content-center align-items-center"> -->
@@ -17,7 +16,7 @@
         <div class="text-center mt-2 text-proffix"><span class="text-mute fst-italic">designed by </span>
             ProfficTech - 08139590011
         </div>
-        <router-link to="/user" class="float-end small text-danger">
+        <router-link to="/login" class="float-end small text-danger">
             <i class="bi bi-person"></i>
         </router-link>
     </div>

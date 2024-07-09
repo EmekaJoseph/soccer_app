@@ -93,7 +93,7 @@ function logOut() {
     }
     finally {
         authStore.logout()
-        router.replace({ path: '/user' })
+        router.replace({ path: '/' })
     }
 
 }

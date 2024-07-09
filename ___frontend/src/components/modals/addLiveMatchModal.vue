@@ -5,10 +5,7 @@
                 <div class="modal-content">
                     <div class="modal-header border-0 bg-light">
                         <span class="fw-bold">New Live Match:</span>
-                        <span class="float-end">
-                            <button ref="btnX" class="btn btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </span>
+                        <button ref="btnX" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body p-sm-4">
                         <div class="row justify-content-center gy-3">
@@ -19,8 +16,8 @@
                                         <select class="form-select form-select-lg" v-model="form.home_team">
                                             <option value="" selected disabled></option>
                                             <option v-for="i in userData.tournamentTeams" :key="i" :value="i.team_id">{{
-                                            i.team_name
-                                        }}
+                                                i.team_name
+                                            }}
                                             </option>
                                         </select>
                                     </div>
@@ -30,8 +27,8 @@
                                         <select class="form-select form-select-lg  " v-model="form.away_team">
                                             <option value="" selected disabled></option>
                                             <option v-for="i in awayDropdown" :key="i" :value="i.team_id">{{
-                                            i.team_name
-                                        }}
+                                                i.team_name
+                                            }}
                                             </option>
                                         </select>
                                     </div>
@@ -41,8 +38,8 @@
                                         <select class="form-select form-select-lg" v-model="form.match_stage">
                                             <option value="" selected disabled></option>
                                             <option v-for="i in userData.match_stages" :key="i" :value="i">{{
-                                            i
-                                        }}
+                                                i
+                                            }}
                                             </option>
                                         </select>
                                     </div>
@@ -72,15 +69,17 @@ import { useUserDataStore } from '@/store/userDataStore';
 import api from '@/store/axiosManager'
 import { useToast } from 'vue-toast-notification';
 
-watch(() => prop.tour, () => {
-    form.tour_id = prop.tour.id
-})
+
 
 const prop = defineProps({
     tour: {
         type: Object,
         required: true
     }
+})
+
+watch(() => prop.tour, () => {
+    form.tour_id = prop.tour.id
 })
 
 const $toast = useToast();

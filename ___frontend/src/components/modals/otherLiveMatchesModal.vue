@@ -5,14 +5,13 @@
                 <div class="modal-content">
                     <div class="modal-header border-0 bg-light">
                         <span class="fw-bold">Other Live Matches:</span>
-                        <span class="float-end">
-                            <button ref="btnX" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </span>
+                        <button ref="btnX" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
 
                         <div v-if="isLoading" class="d-flex justify-content-center align-items-center my-5">
-                            <div style="width: 3rem; height: 3rem;" class="text-secondary spinner-border spinner-border-sm">
+                            <div style="width: 3rem; height: 3rem;"
+                                class="text-secondary spinner-border spinner-border-sm">
                             </div>
                         </div>
                         <div v-else>
@@ -52,15 +51,6 @@ import { onBeforeRouteLeave } from 'vue-router';
 import { useUserDataStore } from '@/store/userDataStore';
 import api from '@/store/axiosManager'
 
-watch(() => prop.clicker, () => {
-    tour_id.value = prop.tour.id
-    isLoading.value = true
-    liveMatchesList.value = []
-    getLiveMatchesForAdmin()
-    console.log(prop.clicker);
-
-})
-
 const prop = defineProps({
     tour: {
         type: Object,
@@ -70,7 +60,15 @@ const prop = defineProps({
         type: Boolean,
         required: true
     }
+})
 
+
+watch(() => prop.clicker, () => {
+    tour_id.value = prop.tour.id
+    isLoading.value = true
+    liveMatchesList.value = []
+    getLiveMatchesForAdmin()
+    console.log(prop.clicker);
 
 })
 

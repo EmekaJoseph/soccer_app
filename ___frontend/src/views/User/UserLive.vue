@@ -86,7 +86,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useUserDataStore } from '@/store/userDataStore';
-import ComponentLive from './_ComponentLive.vue'
+import ComponentLive from './ComponentLive.vue'
 import addLiveMatchModal from '@/components/modals/addLiveMatchModal.vue';
 import otherLiveMatchesModal from '@/components/modals/otherLiveMatchesModal.vue';
 import { useAuthStore } from '@/store/authStore';
