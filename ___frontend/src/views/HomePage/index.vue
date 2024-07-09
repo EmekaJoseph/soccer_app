@@ -1,7 +1,7 @@
 <template>
     <main class="main general-body">
         <ComponentHero />
-        <ComponentInfo />
+        <!-- <ComponentInfo /> -->
         <ComponentFeatures />
     </main>
 </template>

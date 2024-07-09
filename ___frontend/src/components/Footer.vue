@@ -5,7 +5,7 @@
             <div class="col-lg-4">
                 <div class="row justify-content-center align-items-center">
                     <div class="col-md-6  text-center">
-                        <span class="text-white my-2">&copy; {{ (new Date()).getFullYear() }} | DLAMFA
+                        <span class="text-white my-2">&copy; {{ (new Date()).getFullYear() }} | TORNAZONE
                         </span>
                     </div>
 

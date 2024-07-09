@@ -5,9 +5,11 @@
             <section class="col-6 bg-primary-theme d-none d-lg-flex">
                 <div class="container position-relative p-5 text-white">
                     <h1>Tournament Manager</h1>
-                    <div>
+                    <div class="px-5">
                         Manage live scores, team standings, and match updates for all your favorite tournaments in one
-                        place.
+                        place. Stay ahead of the
+                        curve, analyze team performance, and never miss a close call with real-time
+                        notifications.
                     </div>
                 </div>
             </section>
