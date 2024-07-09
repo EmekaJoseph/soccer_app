@@ -14,16 +14,16 @@
                 </div>
             </section>
             <section class="col-lg-6  form-section">
-                <UserLogin v-if="route.path != '/register'" />
-                <UserRegister v-else />
+                <LoginComponent v-if="route.path != '/register'" />
+                <RegisterComponent v-else />
             </section>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import UserLogin from '../User/UserLogin.vue';
-import UserRegister from '../User/UserRegister.vue';
+import LoginComponent from '../User/LoginComponent.vue';
+import RegisterComponent from '../User/RegisterComponent.vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute()
