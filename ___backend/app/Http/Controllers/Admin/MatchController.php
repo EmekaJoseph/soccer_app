@@ -68,7 +68,6 @@ class MatchController extends BaseController
     }
 
 
-
     public function update(Request $req, $match_id)
     {
         $rules = [

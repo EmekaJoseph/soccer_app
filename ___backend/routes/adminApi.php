@@ -8,18 +8,19 @@ use App\Http\Controllers\Admin\MatchController;
 use App\Http\Controllers\Admin\Results_CupController;
 use App\Http\Controllers\Admin\Results_LeagueController;
 use App\Http\Controllers\Admin\LiveUpdateController;
-
+use App\Http\Controllers\Admin\TournamentController;
 
 Route::controller(AccountController::class)->group(function () {
-    Route::post('createTournament',  'createTournament');
-    Route::get('getTournaments',  'getTournaments');
-    Route::post('updateTournament/{tour_id}',  'updateTournament');
-    Route::get('deleteTournament/{tour_id}',  'deleteTournament');
     Route::get('userLogout',  'userLogout');
     Route::post('createSubUser',  'createSubUser');
     Route::get('deleteSubUser/{subuser_id}',  'deleteSubUser');
     Route::get('subUsersList',  'subUsersList');
 });
+
+Route::post('createTournament',  [TournamentController::class, 'createTournament']);
+Route::get('getTournaments',  [TournamentController::class, 'getTournaments']);
+Route::post('updateTournament/{tour_id}',  [TournamentController::class, 'updateTournament']);
+Route::post('deleteTournament/{tour_id}',  [TournamentController::class, 'deleteTournament']);
 
 Route::resource('team', TeamsController::class)->except(['index']);;
 
