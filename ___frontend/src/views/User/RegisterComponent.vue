@@ -4,9 +4,9 @@
     <div class="min-vh-100 d-flex justify-content-center align-items-center">
         <div class="col-md-10">
             <div class="card shadow-sm border-0">
-                <!-- <div class="card-header bg-transparent fs-4 text-center fw-bold border-0 py-3">
-                    LOGO
-                </div> -->
+                <div class="card-header bg-transparent fs-5 text-center fw-bolder border-0">
+                    Create New Account
+                </div>
                 <div class="card-body">
                     <!-- <div class="text-center">Create Account</div> -->
                     <form @submit.prevent="login" class="row g-4 mt-1">

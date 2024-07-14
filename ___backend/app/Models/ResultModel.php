@@ -22,4 +22,9 @@ class ResultModel extends Authenticatable
     {
         return $this->belongsTo(TournamentModel::class, 'tour_id');
     }
+
+    public function relatedSchedule()
+    {
+        return $this->hasOne(MatchModel::class, 'match_id');
+    }
 }

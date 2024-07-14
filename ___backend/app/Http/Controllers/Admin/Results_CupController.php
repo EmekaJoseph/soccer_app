@@ -14,7 +14,7 @@ use App\Models\TournamentModel;
 use App\Models\TeamModel;
 use App\Models\Standings_CupModel;
 use App\Models\ResultModel;
-
+use App\Models\MatchModel;
 use stdClass;
 
 class Results_CupController extends BaseController
@@ -25,43 +25,51 @@ class Results_CupController extends BaseController
     {
         // validate required varibles
         $rules = [
-            'homeTeam' => 'required',
-            'awayTeam' => 'required',
+            // 'homeTeam' => 'required',
+            // 'awayTeam' => 'required',
             'homeTeam_score' => 'required',
             'awayTeam_score' => 'required',
-            'tour_id' => 'required',
-            'match_stage' => 'required',
-            'date_played' => 'required'
+            // 'tour_id' => 'required',
+            // 'match_stage' => 'required',
+            // 'date_played' => 'required',
+            'match_id' => 'required'
         ];
+
         $validator = Validator::make($req->all(),  $rules);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        // get the teams scores
-        $homeTeam = $req->input('homeTeam');
-        $awayTeam = $req->input('awayTeam');
+
+        $match_id = $req->input('match_id');
+        $match = MatchModel::find($match_id);
+
+        $homeTeam = $match->home_team;
+        $awayTeam = $match->away_team;
         $homeTeam_score = $req->input('homeTeam_score');
         $awayTeam_score = $req->input('awayTeam_score');
-        $tour_id = $req->input('tour_id');
-        $match_stage = $req->input('match_stage');
-        $date_played = $req->input('date_played');
+        // $tour_id = $req->input('tour_id');
+        // $match_stage = $req->input('match_stage');
+        // $date_played = $req->input('date_played');
         $group_in = $req->input('group_in');
 
         // check if tournament exists
-        $thisTournament = TournamentModel::find($tour_id);
-        if (!$thisTournament) {
-            return response()->json('invalid tournament', 203);
-        }
+        // $thisTournament = TournamentModel::find($tour_id);
+        // if (!$thisTournament) {
+        //     return response()->json('invalid tournament', 203);
+        // }
 
         // check teams are valid
-        if (sizeof(TeamModel::find([$homeTeam,  $awayTeam])) < 2) {
-            return response()->json('Team(s) not found', 404);
-        }
+        // if (sizeof(TeamModel::find([$homeTeam,  $awayTeam])) < 2) {
+        //     return response()->json('Team(s) not found', 404);
+        // }
+
+
+
 
         // if result is in groupstage, update to standings
-        if ($match_stage == 'Group_Stage') {
+        if ($match->match_stage == 'Group_Stage') {
 
             // get teams already in the standings list
             $team1InStanding = Standings_CupModel::where('team_id', $homeTeam)->first();
@@ -107,7 +115,7 @@ class Results_CupController extends BaseController
 
 
             // update tournament id
-            $team1->tour_id = $team2->tour_id =  $tour_id;
+            $team1->tour_id = $team2->tour_id =  $match->tour_id;
 
             // update team_group
             $team1->group_in = $team2->group_in =  $group_in;
@@ -125,9 +133,10 @@ class Results_CupController extends BaseController
             'away_score' => $awayTeam_score,
             'home_score_pen' => $req->input('home_score_pen', null),
             'away_score_pen' => $req->input('away_score_pen', null),
-            'tour_id' => $tour_id,
-            'match_stage' => $match_stage,
-            'date_played' => (Carbon::parse($date_played))->toDateString()
+            'match_id' => $match_id,
+            // 'tour_id' => $tour_id,
+            // 'match_stage' => $match_stage,
+            // 'date_played' => (Carbon::parse($date_played))->toDateString()
         ]);
 
         return response()->json($newReult, 200);

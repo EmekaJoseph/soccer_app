@@ -24,7 +24,7 @@ class TournamentModel extends Authenticatable
 
     // public function relatedSchedules()
     // {
-    //     return $this->hasMany(ScheduleModel::class, 'tour_id');
+    //     return $this->hasMany(MatchModel::class, 'tour_id');
     // }
 
     // public function relatedStandings()

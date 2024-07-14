@@ -11,10 +11,10 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 use App\Models\TeamModel;
-use App\Models\ScheduleModel;
+use App\Models\MatchModel;
 use App\Models\TournamentModel;
 
-class ScheduleController extends BaseController
+class MatchController extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
@@ -44,7 +44,7 @@ class ScheduleController extends BaseController
             return response()->json('Team(s) not found', 404);
         }
 
-        if (ScheduleModel::where([
+        if (MatchModel::where([
             'home_team' =>  $homeTeam,
             'away_team' =>  $awayTeam,
             'kick_off' => $kick_off
@@ -52,7 +52,7 @@ class ScheduleController extends BaseController
             return response()->json('Duplicate entries', 203);
         }
 
-        $newSchedule = ScheduleModel::create(
+        $newSchedule = MatchModel::create(
             [
                 'tour_id' => $req->input('tour_id'),
                 'venue' => $req->input('venue'),
@@ -69,7 +69,7 @@ class ScheduleController extends BaseController
 
 
 
-    public function update(Request $req, $schedule_id)
+    public function update(Request $req, $match_id)
     {
         $rules = [
             'kick_off' => 'required',
@@ -82,12 +82,12 @@ class ScheduleController extends BaseController
             return response()->json($validator->errors(), 422);
         }
 
-        $schedule = ScheduleModel::find($schedule_id);
-        $schedule->venue = $req->input('venue');
-        $schedule->kick_off = $req->input('kick_off');
+        $match = MatchModel::find($match_id);
+        $match->venue = $req->input('venue');
+        $match->kick_off = $req->input('kick_off');
         if ($req->input('match_stage'))
-            $schedule->match_stage = $req->input('match_stage');
-        $schedule->save();
+            $match->match_stage = $req->input('match_stage');
+        $match->save();
 
         return response()->json('updated', 200);
     }
@@ -101,25 +101,25 @@ class ScheduleController extends BaseController
             return response()->json('invalid tournament', 203);
         }
 
-        $schedules = ScheduleModel::where('tour_id', $req->tour_id)->get();
+        $matchs = MatchModel::where('tour_id', $req->tour_id)->get();
 
-        if (sizeof($schedules) > 0) {
-            foreach ($schedules as $schedule) {
-                $schedule->home_team = (TeamModel::find($schedule->home_team))->team_name;
-                $schedule->away_team = (TeamModel::find($schedule->away_team))->team_name;
+        if (sizeof($matchs) > 0) {
+            foreach ($matchs as $match) {
+                $match->home_team = (TeamModel::find($match->home_team))->team_name;
+                $match->away_team = (TeamModel::find($match->away_team))->team_name;
             }
         }
 
-        return response()->json($schedules, 200);
+        return response()->json($matchs, 200);
     }
 
 
 
 
-    public function destroy(Request $req, $schedule_id)
+    public function destroy(Request $req, $match_id)
     {
-        $schedule = ScheduleModel::find($schedule_id);
-        $schedule->delete();
+        $match = MatchModel::find($match_id);
+        $match->delete();
 
         return response()->json('deleted', 200);
     }

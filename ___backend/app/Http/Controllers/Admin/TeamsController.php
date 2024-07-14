@@ -14,7 +14,7 @@ use App\Models\TournamentModel;
 use App\Models\Standings_LeagueModel;
 use App\Models\Standings_CupModel;
 use App\Models\ResultModel;
-use App\Models\ScheduleModel;
+use App\Models\MatchModel;
 use Illuminate\Support\Facades\DB;
 use Intervention\Image\ImageManagerStatic as Image;
 
@@ -116,7 +116,7 @@ class TeamsController extends BaseController
         Standings_CupModel::where('team_id', $team_id)->delete();
         Standings_LeagueModel::where('team_id', $team_id)->delete();
         ResultModel::where('away_team', $team_id)->orWhere('home_team', $team_id)->delete();
-        ScheduleModel::where('away_team', $team_id)->orWhere('home_team', $team_id)->delete();
+        MatchModel::where('away_team', $team_id)->orWhere('home_team', $team_id)->delete();
         DB::table('tbl_live')->where('away_team', $team_id)->orWhere('home_team', $team_id)->delete();
     }
 

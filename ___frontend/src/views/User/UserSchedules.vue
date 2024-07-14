@@ -196,7 +196,7 @@ const tableHeaders: Header[] = [
 async function deleteSchedule(schedule: any) {
     if (confirm('Delete this scheduled match ?')) {
         try {
-            let resp = await api.deleteSchedule(schedule.schedule_id)
+            let resp = await api.deleteSchedule(schedule.match_id)
             if (resp.status == 200) {
                 loadTournamentSchedules()
                 $toast.default('Match deleted successfuly', { position: 'top-right' });

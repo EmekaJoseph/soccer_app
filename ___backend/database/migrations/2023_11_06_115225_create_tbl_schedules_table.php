@@ -14,7 +14,7 @@ class CreateTblSchedulesTable extends Migration
     public function up()
     {
         Schema::create('tbl_schedules', function (Blueprint $table) {
-            $table->string('schedule_id', 100)->primary();
+            $table->string('match_id', 100)->primary();
             $table->string('tour_id', 100);
             $table->string('venue');
             $table->string('kick_off', 100);

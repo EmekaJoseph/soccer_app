@@ -13,7 +13,7 @@
                     </div>
                 </div>
             </section>
-            <section class="col-lg-6  form-section">
+            <section class="col-lg-6  bg-image">
                 <LoginComponent v-if="route.path != '/register'" />
                 <RegisterComponent v-else />
             </section>
@@ -42,7 +42,7 @@ const route = useRoute()
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to bottom, #060e128d 100%, rgba(0, 0, 0, 0) 100%);
+    background: linear-gradient(to bottom, #060e12b8 100%, rgba(0, 0, 0, 0) 100%);
 }
 
 section {
@@ -53,7 +53,7 @@ section {
     text-align: center;
 }
 
-.form-section {
+.bg-image {
     background: url('@/assets/img/hero-bg.jpg') no-repeat center center;
     background-size: cover;
 }

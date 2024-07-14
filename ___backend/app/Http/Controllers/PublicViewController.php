@@ -15,8 +15,8 @@ use App\Models\Standings_LeagueModel;
 use App\Models\Standings_CupModel;
 use App\Models\ResultModel;
 use App\Models\TeamModel;
-use App\Models\ScheduleModel;
 use App\Models\FeedbackModel;
+use App\Models\MatchModel;
 
 class PublicViewController extends BaseController
 {
@@ -102,7 +102,8 @@ class PublicViewController extends BaseController
             'match_stage',
             'date_played',
             'away_score_pen',
-            'home_score_pen'
+            'home_score_pen',
+            'match_id'
         )->where('tour_id', $tour_id)->orderByDesc('date_played')->get();
         if (sizeof($results) > 0) {
             foreach ($results as $result) {
@@ -121,25 +122,37 @@ class PublicViewController extends BaseController
     }
 
 
-    // function to get schedules
-    public function schedules(Request $req, $tour_id)
+    // function to get matches
+    public function matches(Request $req, $tour_id)
     {
-        $today = Carbon::now()->toDateString();
-        $results = ScheduleModel::select(
+        $matches = MatchModel::with(['result', 'awayTeam', 'homeTeam'])->select(
             'home_team',
             'away_team',
             'match_stage',
             'venue',
             'kick_off',
-        )->where('tour_id', $tour_id)->where('kick_off', '>=', $today)->orderBy('kick_off')->get();
-        if (sizeof($results) > 0) {
-            foreach ($results as $result) {
-                $result->home_team = (TeamModel::find($result->home_team));
-                $result->away_team = (TeamModel::find($result->away_team));
+            'match_id'
+        )->where('tour_id', $tour_id)->orderBy('kick_off', 'DESC')->get();
+
+        // determine winner
+        if (sizeof($matches) > 0) {
+            foreach ($matches as $match) {
+                if ($match->result) {
+                    $result = $match->result;
+                    if ($result->away_score < $result->home_score) {
+                        $result->winner =  $result->home_team;
+                    } else if ($result->away_score > $result->home_score) {
+                        $result->winner =  $result->away_team;
+                    } else {
+                        $result->winner =  '';
+                    }
+                }
             }
         }
-        return response()->json($results, 200);
+        return response()->json($matches, 200);
     }
+
+
 
     public function showLiveMatches(Request $req, $tour_id)
     {

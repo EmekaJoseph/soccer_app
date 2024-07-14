@@ -320,7 +320,7 @@ INSERT INTO `tbl_results` (`result_id`, `away_team`, `home_team`, `home_score`, 
 --
 
 CREATE TABLE `tbl_schedules` (
-  `schedule_id` varchar(100) NOT NULL,
+  `match_id` varchar(100) NOT NULL,
   `tour_id` varchar(100) NOT NULL,
   `venue` varchar(255) NOT NULL,
   `kick_off` varchar(100) NOT NULL,
@@ -572,7 +572,7 @@ ALTER TABLE `tbl_results`
 -- Indexes for table `tbl_schedules`
 --
 ALTER TABLE `tbl_schedules`
-  ADD PRIMARY KEY (`schedule_id`);
+  ADD PRIMARY KEY (`match_id`);
 
 --
 -- Indexes for table `tbl_standings_cup`

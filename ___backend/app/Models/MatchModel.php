@@ -9,13 +9,13 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 
-class ScheduleModel extends Authenticatable
+class MatchModel extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     use HasUlids;
 
-    protected $table = 'tbl_schedules';
-    protected $primaryKey = 'schedule_id';
+    protected $table = 'tbl_matches';
+    protected $primaryKey = 'match_id';
     protected $guarded = [];
 
     public $timestamps = false;
@@ -23,5 +23,20 @@ class ScheduleModel extends Authenticatable
     public function relatedTournament()
     {
         return $this->belongsTo(TournamentModel::class, 'tour_id');
+    }
+
+    public function awayTeam()
+    {
+        return $this->belongsTo(TeamModel::class, 'away_team');
+    }
+
+    public function homeTeam()
+    {
+        return $this->belongsTo(TeamModel::class, 'home_team');
+    }
+
+    public function result()
+    {
+        return $this->hasOne(ResultModel::class, 'match_id');
     }
 }

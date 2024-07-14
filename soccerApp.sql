@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `personal_access_tokens` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
   KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=98 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=112 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data exporting was unselected.
 
@@ -89,7 +89,22 @@ CREATE TABLE IF NOT EXISTS `tbl_live` (
   `match_stage` varchar(100) DEFAULT NULL,
   `curr_time` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`live_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table soccer_app.tbl_matches
+CREATE TABLE IF NOT EXISTS `tbl_matches` (
+  `match_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `tour_id` varchar(100) NOT NULL,
+  `venue` varchar(255) NOT NULL,
+  `kick_off` varchar(100) NOT NULL,
+  `home_team` varchar(100) NOT NULL,
+  `away_team` varchar(100) NOT NULL,
+  `match_stage` varchar(100) DEFAULT NULL,
+  `created` varchar(100) NOT NULL,
+  PRIMARY KEY (`match_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Data exporting was unselected.
 
@@ -119,27 +134,13 @@ CREATE TABLE IF NOT EXISTS `tbl_results` (
   `away_score_pen` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `home_score_pen` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `away_score` varchar(100) NOT NULL,
-  `match_stage` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `match_stage` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `created_at` varchar(100) NOT NULL,
   `updated_at` varchar(100) NOT NULL,
-  `tour_id` varchar(100) NOT NULL,
-  `date_played` varchar(100) NOT NULL,
+  `tour_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `date_played` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `match_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_vi_0900_ai_ci DEFAULT NULL,
   PRIMARY KEY (`result_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Data exporting was unselected.
-
--- Dumping structure for table soccer_app.tbl_schedules
-CREATE TABLE IF NOT EXISTS `tbl_schedules` (
-  `schedule_id` varchar(100) NOT NULL,
-  `tour_id` varchar(100) NOT NULL,
-  `venue` varchar(255) NOT NULL,
-  `kick_off` varchar(100) NOT NULL,
-  `home_team` varchar(100) NOT NULL,
-  `away_team` varchar(100) NOT NULL,
-  `match_stage` varchar(100) DEFAULT NULL,
-  `created` varchar(100) NOT NULL,
-  PRIMARY KEY (`schedule_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Data exporting was unselected.
@@ -243,7 +244,7 @@ CREATE TABLE IF NOT EXISTS `tbl_users` (
   `no_of_cups` int DEFAULT '0',
   `role` varchar(100) NOT NULL DEFAULT 'admin',
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Data exporting was unselected.
 

@@ -1,15 +1,14 @@
 <template>
     <div class="min-vh-100 d-flex justify-content-center align-items-center">
         <div class="col-md-8">
-            <div class="card shadow-sm border-0">
-                <!-- <div class="card-header bg-transparent fs-4 text-center fw-bold border-0 py-3">
-                    LOGO
-                </div> -->
+            <div class="card border-0">
+                <div class="card-header bg-transparent fs-5 text-center fw-bolder border-0">
+                    Login to your Account
+                </div>
                 <div class="card-body">
-                    <!-- <div class="text-center">Login to your Account</div> -->
-                    <div v-show="form.formError" class="alert alert-danger border-0 text-center mt-3 py-2" role="alert">
+                    <div v-show="form.formError" class="alert alert-danger border-0 text-center py-2" role="alert">
                         <strong>
-                            <i class="bi bi-exclamation-circle-fill"></i> Invalid Credentials
+                            <i class="bi bi-exclamation-circle-fill"></i> Incorrect Email/Password
                         </strong>
                     </div>
 

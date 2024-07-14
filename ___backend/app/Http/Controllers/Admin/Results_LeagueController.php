@@ -15,8 +15,7 @@ use App\Models\TournamentModel;
 use App\Models\Standings_LeagueModel;
 use App\Models\TeamModel;
 use App\Models\ResultModel;
-
-
+use App\Models\MatchModel;
 
 class Results_LeagueController extends BaseController
 {
@@ -26,12 +25,13 @@ class Results_LeagueController extends BaseController
     {
         // validate required varibles
         $rules = [
-            'homeTeam' => 'required',
-            'awayTeam' => 'required',
+            // 'homeTeam' => 'required',
+            // 'awayTeam' => 'required',
+            // 'tour_id' => 'required',
+            // 'date_played' => 'required',
             'homeTeam_score' => 'required',
             'awayTeam_score' => 'required',
-            'tour_id' => 'required',
-            'date_played' => 'required'
+            'match_id' => 'required'
         ];
         $validator = Validator::make($req->all(),  $rules);
 
@@ -39,9 +39,12 @@ class Results_LeagueController extends BaseController
             return response()->json($validator->errors(), 422);
         }
 
-        // get the teams scores
-        $homeTeam = $req->input('homeTeam');
-        $awayTeam = $req->input('awayTeam');
+
+        $match_id = $req->input('match_id');
+        $match = MatchModel::find($match_id);
+
+        $homeTeam = $match->home_team;
+        $awayTeam = $match->away_team;
         $homeTeam_score = $req->input('homeTeam_score');
         $awayTeam_score = $req->input('awayTeam_score');
         $tour_id = $req->input('tour_id');
