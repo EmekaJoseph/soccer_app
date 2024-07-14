@@ -22,6 +22,8 @@ class TeamsController extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
+    private $folder_name = 'team_badges';
+
     // add a team
     public function store(Request $req)
     {
@@ -44,16 +46,21 @@ class TeamsController extends BaseController
         $group_in = $req->input('group_in', null);
         $address = $req->input('address', null);
         $manager = $req->input('manager', null);
+        $team_badge = null;
 
         // check if tournament is valid
         $thisTournament = TournamentModel::find($tour_id);
-        if (!$tour_id) {
-            return response()->json('invalid tournament', 203);
-        }
+        if (!$tour_id) return response()->json('invalid tournament', 203);
+
 
         // check if team exists
-        if (TeamModel::where(['tour_id' => $tour_id, 'team_name' => $team_name])->exists()) {
+        if (TeamModel::where(['tour_id' => $tour_id, 'team_name' => $team_name])->exists())
             return response()->json('already exists', 203);
+
+
+        if ($req->hasFile("team_badge")) {
+            $image = $req->file("team_badge");
+            $team_badge = HelperUploadImageAndResize($this->folder_name, $image, 50, 50, 'badge_');
         }
 
         // add to database
@@ -64,6 +71,7 @@ class TeamsController extends BaseController
             'group_in' => $group_in,
             'address' => $address,
             'manager' => $manager,
+            'team_badge' => $team_badge,
         ]);
 
         if ($thisTournament->tour_type == 'cup') {

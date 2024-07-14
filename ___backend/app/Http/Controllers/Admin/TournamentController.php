@@ -15,11 +15,14 @@ use Illuminate\Support\Facades\DB;
 use App\Models\TournamentModel;
 use App\Models\UserModel;
 use App\Models\TeamModel;
+use Illuminate\Support\Facades\Auth;
 use stdClass;
 
 class TournamentController extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
+
+    private $folder_name = 'tour_logos';
 
     // create Tournament
     public function createTournament(Request $req)
@@ -32,26 +35,33 @@ class TournamentController extends BaseController
 
         $validator = Validator::make($req->all(),  $rules);
 
-        if ($validator->fails()) {
+        if ($validator->fails())
             return response()->json($validator->errors(), 422);
-        }
+
 
         $tour_title = $req->input('tour_title');
         $tour_type = $req->input('tour_type');
+        $tour_desc = $req->input('tour_type', null);
+        $tour_logo = null;
 
-        if (TournamentModel::where(
-            ['user_id' => $req->user()->user_id, 'tour_title' => $tour_title]
-        )->exists()) {
+        if (TournamentModel::where(['user_id' => Auth::id(), 'tour_title' => $tour_title])->exists())
             return response()->json('exists', 203);
+
+
+        if ($req->hasFile("tour_logo")) {
+            $image = $req->file("tour_logo");
+            $tour_logo = HelperUploadImageAndResize($this->folder_name, $image, 50, 50, 'logo_');
         }
 
         TournamentModel::create([
             'tour_title' => $tour_title,
-            'user_id' => $req->user()->user_id,
+            'user_id' => Auth::id(),
             'tour_type' =>   $tour_type,
+            'tour_logo' =>   $tour_logo,
+            'tour_desc' =>   $tour_desc,
         ]);
 
-        $user = UserModel::find($req->user()->user_id);
+        $user = UserModel::find(Auth::id());
 
         if ($tour_type == 'league')
             $user->increment('no_of_leagues');
@@ -67,7 +77,7 @@ class TournamentController extends BaseController
     {
         $data = array();
 
-        $tournments = UserModel::find($req->user()->user_id)->relatedTournaments;
+        $tournments = UserModel::find(Auth::id())->relatedTournaments;
 
         if ($tournments) {
             foreach ($tournments as $list) {
@@ -90,7 +100,7 @@ class TournamentController extends BaseController
     {
         $tour_title = $req->input('tour_title');
 
-        if (TournamentModel::where('user_id', $req->user()->user_id)
+        if (TournamentModel::where('user_id', Auth::id())
             ->whereNot('tour_id', $tour_id)->where('tour_title', $tour_title)->exists()
         ) {
             return response()->json('exists', 203);
@@ -110,7 +120,12 @@ class TournamentController extends BaseController
         if (TeamModel::where('tour_id', $tour_id)->exists()) {
             return response()->json('exists', 203);
         }
-        TournamentModel::find($tour_id)->delete();
+        $tour = TournamentModel::find($tour_id);
+
+        if ($tour->tour_logo)
+            HelperUnlinkFile($this->folder_name, $tour->tour_logo);
+        $tour->delete();
+
         return response()->json('deleted', 200);
     }
 
