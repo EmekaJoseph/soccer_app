@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `personal_access_tokens` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
   KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=112 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=113 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data exporting was unselected.
 
@@ -108,6 +108,23 @@ CREATE TABLE IF NOT EXISTS `tbl_matches` (
 
 -- Data exporting was unselected.
 
+-- Dumping structure for table soccer_app.tbl_players
+CREATE TABLE IF NOT EXISTS `tbl_players` (
+  `player_id` varchar(50) NOT NULL,
+  `first_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `last_name` varchar(255) DEFAULT NULL,
+  `image` varchar(50) DEFAULT NULL,
+  `info` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `dob` varchar(50) DEFAULT NULL,
+  `tour_id` varchar(50) DEFAULT NULL,
+  `team_id` varchar(50) DEFAULT NULL,
+  `created_at` varchar(50) DEFAULT NULL,
+  `updated_at` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`player_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Data exporting was unselected.
+
 -- Dumping structure for table soccer_app.tbl_prediction
 CREATE TABLE IF NOT EXISTS `tbl_prediction` (
   `prediction_id` varchar(100) NOT NULL,
@@ -128,18 +145,18 @@ CREATE TABLE IF NOT EXISTS `tbl_prediction` (
 -- Dumping structure for table soccer_app.tbl_results
 CREATE TABLE IF NOT EXISTS `tbl_results` (
   `result_id` varchar(100) NOT NULL,
+  `match_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_vi_0900_ai_ci DEFAULT NULL,
   `away_team` varchar(100) NOT NULL,
   `home_team` varchar(100) NOT NULL,
   `home_score` varchar(100) NOT NULL,
+  `away_score` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `away_score_pen` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `home_score_pen` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `away_score` varchar(100) NOT NULL,
   `match_stage` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `created_at` varchar(100) NOT NULL,
   `updated_at` varchar(100) NOT NULL,
   `tour_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `date_played` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `match_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_vi_0900_ai_ci DEFAULT NULL,
   PRIMARY KEY (`result_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -226,6 +243,8 @@ CREATE TABLE IF NOT EXISTS `tbl_tournament` (
   `tour_title` varchar(255) NOT NULL,
   `user_id` int NOT NULL,
   `tour_type` varchar(100) NOT NULL,
+  `tour_logo` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `tour_desc` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `created_at` varchar(100) NOT NULL,
   `updated_at` varchar(100) NOT NULL,
   PRIMARY KEY (`tour_id`)

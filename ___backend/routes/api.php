@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AccountController;
+use App\Http\Controllers\Admin\PlayersContoller;
 use App\Http\Controllers\Admin\TeamsController;
 use App\Http\Controllers\Admin\PredictionsController;
 
@@ -19,6 +20,7 @@ Route::controller(AccountController::class)->group(function () {
 
 
 Route::prefix('view')->group(function () {
+    Route::get('players/{tour_id}', [PlayersContoller::class, 'players']);
     Route::get('tour_data/{tour_id}', [PublicViewController::class, 'tourData']);
     Route::get('standings/{tour_id}',   [PublicViewController::class, 'standings']);
     Route::get('results/{tour_id}',   [PublicViewController::class, 'results']);
@@ -39,7 +41,8 @@ Route::get('getFeedbacks', [PublicViewController::class, 'getFeedbacks']);
 
 Route::resource('team', TeamsController::class)->only(['index']);
 
-
+// players
+Route::get('getFeedbacks', [PublicViewController::class, 'getFeedbacks']);
 
 
 //  ######################## PROTECTED WITH SANCTUM ########################## //

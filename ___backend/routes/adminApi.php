@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\MatchController;
 use App\Http\Controllers\Admin\Results_CupController;
 use App\Http\Controllers\Admin\Results_LeagueController;
 use App\Http\Controllers\Admin\LiveUpdateController;
+use App\Http\Controllers\Admin\PlayersContoller;
 use App\Http\Controllers\Admin\TournamentController;
 
 Route::controller(AccountController::class)->group(function () {
@@ -41,6 +42,12 @@ Route::controller(LiveUpdateController::class)->group(function () {
     Route::get('getLiveMatchesByUser/{tour_id}',  'getLiveMatchesByUser');
     Route::get('getLiveMatchesForAdmin/{tour_id}',  'getLiveMatchesForAdmin');
 });
+
+
+Route::post('player', [PlayersContoller::class, 'store']);
+Route::patch('player/{player_id}', [PlayersContoller::class, 'update']);
+Route::delete('player/{player_id}', [PlayersContoller::class, 'destroy']);
+Route::post('player/image', [PlayersContoller::class, 'updateImage']);
 
 
 //  ########################################################################### //

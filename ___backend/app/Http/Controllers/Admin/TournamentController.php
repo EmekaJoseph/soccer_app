@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\Validator;
 
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
 
 use App\Models\TournamentModel;
 use App\Models\UserModel;
@@ -94,9 +92,25 @@ class TournamentController extends BaseController
     }
 
 
+    public function updateImage(Request $req, $tour_id)
+    {
+        $tournament = TournamentModel::find($tour_id);
+        $tour_logo = null;
+        if ($tournament->tour_logo)
+            HelperUnlinkFile($this->folder_name, $tournament->tour_logo);
+
+        if ($req->hasFile("tour_logo")) {
+            $image = $req->file("tour_logo");
+            $tour_logo = HelperUploadImageAndResize($this->folder_name, $image, 50, 50, 'logo_');
+        }
+
+        $tournament->tour_logo = $tour_logo;
+        $tournament->save();
+    }
+
 
     // update Tournament
-    public function updateTournament(Request $req, $tour_id)
+    public function update(Request $req, $tour_id)
     {
         $tour_title = $req->input('tour_title');
 
@@ -127,18 +141,5 @@ class TournamentController extends BaseController
         $tour->delete();
 
         return response()->json('deleted', 200);
-    }
-
-    // reset all tables
-    public function resetApp()
-    {
-        DB::table('tbl_results')->truncate();
-        DB::table('tbl_schedules')->truncate();
-        DB::table('tbl_standings_cup')->truncate();
-        DB::table('tbl_standings_league')->truncate();
-        DB::table('tbl_live')->truncate();
-        DB::table('tbl_teams')->truncate();
-
-        return response()->json('done', 200);
     }
 }
