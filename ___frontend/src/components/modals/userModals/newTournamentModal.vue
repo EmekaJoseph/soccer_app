@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade bg-faint show d-block " id="newTournamentModal" tabindex="-1" data-bs-backdrop="static"
+    <div class="modal fade bg-faint show d-block" id="newTournamentModal" tabindex="-1" data-bs-backdrop="static"
         data-bs-keyboard="false" role="dialog" aria-hidden="true">
         <div class="modal-dialog  modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -11,19 +11,70 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form @submit.prevent="saveNewTournament" class="row justify-content-center gy-3">
-                        <div class="col-12">
-                            <input v-model="form.tour_title" type="text" class="form-control" placeholder="title..">
+                    <form @submit.prevent="saveNewTournament" class="row justify-content-center g-3">
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    v-model="form.tour_title"
+                                    id="titleT"
+                                    placeholder=""
+                                />
+                                <label for="titleT">Name of Tournament</label>
+                            </div>
                         </div>
                         <div class="col-12">
-                            <select v-model="form.tour_type" class="form-select">
-                                <option value="cup" selected>type: CUP</option>
-                                <option value="league">type: LEAGUE</option>
+                            <div class="form-floating">
+                            <select id="Ttype" v-model="form.tour_type" class="form-select">
+                                <option value="cup" selected>CUP</option>
+                                <option value="league">LEAGUE</option>
                             </select>
+                                <label for="Ttype">Tounament Type</label>
+                            </div>
+                            
+                           
                         </div>
+
+                        <div class="col-12">
+                            <div class="form-floating">
+                            <textarea v-model="form.tour_desc" id="Tdesc" placeholder=""  class="form-control" style="height: 100px"></textarea>
+                                <label for="Tdesc">Tounament Type</label>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="">
+                                <div class="mb-3">Tournament Logo:</div>
+                                <div class="row g-1">
+                                    <div class="col-md-8">
+                            <div class="dropzone" v-bind="getRootProps()">
+                                <div class="text-center small">
+                                    <div><i class="bi bi-image color-theme"></i></div>
+                                    <div><span class="color-theme">Click to replace</span> or drag and
+                                        drop
+                                    </div>
+                                    <!-- <div class="fw-light">SVG, PNG, JPG or GIF (max. 400 x 400px)</div> -->
+                                </div>
+                                <input v-bind="getInputProps()" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-4  d-flex justify-content-center">
+                                        <div class="image-circle"
+                                            :style="{ backgroundImage: `url(${form.photo_path})` }">
+                                        </div>
+                                        <!-- <div class="image-circle"></div> -->
+
+                        </div>
+                                </div>
+                            </div>
+                        </div>
+
+
                         <div class="col-12">
                             <button :disabled="form.isSaving" type="submit" class="btn btn-primary-theme w-100">
-                                Create
+                                Create New Tounament
                             </button>
                         </div>
                     </form>
@@ -49,11 +100,38 @@
 import { reactive } from 'vue';
 import { useToast } from 'vue-toast-notification';
 import api from '@/store/axiosManager'
+import { useDropzone } from "vue3-dropzone";
+import useFxn from '@/store/useFunctions';
+
+
+const { getRootProps, getInputProps, ...rest } = useDropzone({
+    onDrop: (acceptedFiles) => {
+        const requiredFormats = ['png', 'jpg', 'jpeg']
+        if (!useFxn.isExtension(acceptedFiles[0].name, requiredFormats)) {
+            useFxn.toast('Please upload an image', 'warning');
+            return;
+        }
+
+        const file = acceptedFiles[0];
+        form.photo_path = file;
+
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+            form.photo_path = e.target.result; // Set preview to DataURL
+        };
+        reader.readAsDataURL(file);
+
+        form.tour_logo = acceptedFiles[0]
+    }
+});
 
 const $toast = useToast();
 
 const form = reactive({
     tour_title: '',
+    photo_path: '',
+    tour_desc: '',
+    tour_logo: '',
     tour_type: 'cup',
     isSaving: false
 })
@@ -71,8 +149,14 @@ async function saveNewTournament() {
 
     form.isSaving = true;
 
+    const newForm = new FormData();
+    newForm.append('tour_title', form.tour_title)
+    newForm.append('tour_logo', form.tour_logo)
+    newForm.append('tour_desc', form.tour_desc?? '')
+    newForm.append('tour_type', form.tour_type?? '')
+
     try {
-        let resp = await api.createTournament(form)
+        let resp = await api.createTournament(newForm)
         if (resp.status == 203) {
             $toast.warning('Title already exists', { position: 'top-right' });
             form.isSaving = false;
@@ -96,3 +180,43 @@ async function saveNewTournament() {
 
 const emit = defineEmits(['close', 'done'])
 </script>
+
+<style lang="css" scoped>
+    .image-circle {
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+    background-color: var(--bs-light-bg-subtle);
+    border: 1px solid #e8e5e5;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+
+.dropzone {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    row-gap: 5px;
+    border: 2px dashed var(--bs-dark-bg-subtle);
+    background-color: var(--bs-light);
+    transition: 0.3s ease all;
+    color: rgb(170, 164, 164);
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+/* .dropzone input {
+    display: none;
+} */
+
+.active-dropzone {
+    color: #fff;
+    border-color: #fff;
+    background-color: #41b883;
+}
+</style>

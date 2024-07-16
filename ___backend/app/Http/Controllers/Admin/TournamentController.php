@@ -39,7 +39,7 @@ class TournamentController extends BaseController
 
         $tour_title = $req->input('tour_title');
         $tour_type = $req->input('tour_type');
-        $tour_desc = $req->input('tour_type', null);
+        $tour_desc = $req->input('tour_desc', null);
         $tour_logo = null;
 
         if (TournamentModel::where(['user_id' => Auth::id(), 'tour_title' => $tour_title])->exists())
@@ -73,22 +73,15 @@ class TournamentController extends BaseController
     // get Tournaments
     public function getTournaments(Request $req)
     {
-        $data = array();
+        $tournaments = UserModel::find(Auth::id())->relatedTournaments;
 
-        $tournments = UserModel::find(Auth::id())->relatedTournaments;
-
-        if ($tournments) {
-            foreach ($tournments as $list) {
-                $newData = new stdClass();
-                $newData->title = $list->tour_title;
-                $newData->id = $list->tour_id;
-                $newData->type = $list->tour_type;
-                $newData->created = Carbon::parse($list->created_at)->diffForHumans();
-                array_push($data, $newData);
+        if ($tournaments) {
+            foreach ($tournaments as  $list) {
+                $list->created = Carbon::parse($list->created_at)->diffForHumans();
             }
         }
 
-        return response()->json($data, 200);
+        return response()->json($tournaments, 200);
     }
 
 
@@ -131,13 +124,15 @@ class TournamentController extends BaseController
 
     public function deleteTournament($tour_id)
     {
-        if (TeamModel::where('tour_id', $tour_id)->exists()) {
-            return response()->json('exists', 203);
-        }
+        $tournamentHasTeams = TeamModel::where('tour_id', $tour_id)->first();
+        if ($tournamentHasTeams)
+            return response()->json('tournament has teams', 203);
+
         $tour = TournamentModel::find($tour_id);
 
         if ($tour->tour_logo)
             HelperUnlinkFile($this->folder_name, $tour->tour_logo);
+
         $tour->delete();
 
         return response()->json('deleted', 200);

@@ -17,8 +17,25 @@ const $instance = axios.create({
     },
 })
 
+const $instanceForm = axios.create({
+    baseURL: apiURL,
+    headers: {
+        Accept: 'application/json',
+        withCredentials: true,
+        'Content-Type': 'multipart/form-data',
+    },
+})
+
 // create interceptor for renewing token
 $instance.interceptors.request.use(
+    (config: any) => {
+        const token = Cookies.get(import.meta.env.VITE_TOKEN_NAME);
+        if (token) config.headers.Authorization = `Bearer ${token}`;
+        return config;
+    }
+);
+
+$instanceForm.interceptors.request.use(
     (config: any) => {
         const token = Cookies.get(import.meta.env.VITE_TOKEN_NAME);
         if (token) config.headers.Authorization = `Bearer ${token}`;
@@ -55,8 +72,6 @@ export default {
         return $instance.get(`view/infomationCenter/${tour_id}`)
     },
 
-
-
     savePrediction(data: any) {
         return $instance.post(`save_prediction`, JSON.stringify(data))
     },
@@ -90,8 +105,8 @@ export default {
     },
 
 
-    createTournament(data: object) {
-        return $instance.post(`createTournament`, JSON.stringify(data))
+    createTournament(data: FormData) {
+        return $instanceForm.post(`createTournament`, data)
     },
 
     deleteTournament(id: any) {
