@@ -42,6 +42,12 @@
                                                             {{ header.text == '#' ? 'S/N' : header.text }}</div>
                                                     </template>
 
+                                                    <template #item-tour_logo="item">
+                                                        <div class="image-circle"
+                                                            :style="{ backgroundImage: `url(${hostURL}/${item.tour_logo??''})` }">
+                                                        </div>
+                                                    </template>
+
                                                     <template #item-link="item">
                                                         <button @click="openTournamentLinkModal(item.tour_id)"
                                                             class="btn btn-link text-primary-theme btn-sm text-decoration-none border-0 p-0 m-0">
@@ -171,6 +177,7 @@ function openTournamentLinkModal(tour_id: string) {
 }
 
 
+const hostURL = import.meta.env.VITE_API_URL;
 
 const feedBackArray = ref<any[]>([])
 
@@ -186,6 +193,7 @@ async function getFeedbacks() {
 }
 
 const headers: Header[] = [
+    { text: "", value: "tour_logo" },
     { text: "Name", value: "tour_title" },
     { text: "TYPE", value: "tour_type" },
     { text: "DATED CREATED", value: "created" },
@@ -216,7 +224,19 @@ async function deleteTournament(tour_id: string | number) {
 </script>
 
 <style scoped>
+
 .bg-faint {
     background-color: rgba(17, 15, 15, 0.183);
+}
+
+.image-circle {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    background-color: var(--bs-light-bg-subtle);
+    border: 1px solid #e8e5e5;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
 }
 </style>

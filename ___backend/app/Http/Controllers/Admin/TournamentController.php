@@ -55,7 +55,7 @@ class TournamentController extends BaseController
             'tour_title' => $tour_title,
             'user_id' => Auth::id(),
             'tour_type' =>   $tour_type,
-            'tour_logo' =>   $tour_logo,
+            'tour_logo' =>   $this->folder_name . '/' . $tour_logo,
             'tour_desc' =>   $tour_desc,
         ]);
 
@@ -97,7 +97,7 @@ class TournamentController extends BaseController
             $tour_logo = HelperUploadImageAndResize($this->folder_name, $image, 50, 50, 'logo_');
         }
 
-        $tournament->tour_logo = $tour_logo;
+        $tournament->tour_logo = $this->folder_name . '/' . $tour_logo;
         $tournament->save();
     }
 
