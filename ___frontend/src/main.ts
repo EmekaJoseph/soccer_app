@@ -26,6 +26,7 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 // import 'primevue/resources/themes/lara-light-teal/theme.css'
 
 
+// https://vue3paystack.netlify.app/guide/
 
 // https://swiperjs.com/element
 // import 'swiper/css';

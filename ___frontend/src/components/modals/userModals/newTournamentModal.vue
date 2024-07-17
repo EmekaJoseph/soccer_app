@@ -11,6 +11,19 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+
+                    <!-- <paystack
+                buttonClass="'button-class btn btn-primary'"
+                buttonText="Pay Online"
+                :publicKey="publicKey"
+                :email="email"
+                :amount="amount"
+                :reference="''"
+                :onSuccess="onSuccessfulPayment"
+                :onCanel="onCancelledPayment"
+              ></paystack> -->
+
+
                     <form @submit.prevent="saveNewTournament" class="row justify-content-center g-3">
                         <div class="col-md-12">
                             <div class="form-floating">
@@ -102,6 +115,8 @@ import { useToast } from 'vue-toast-notification';
 import api from '@/store/axiosManager'
 import { useDropzone } from "vue3-dropzone";
 import useFxn from '@/store/useFunctions';
+// @ts-ignore
+// import paystack from "vue3-paystack";
 
 
 const { getRootProps, getInputProps, ...rest } = useDropzone({
@@ -179,6 +194,26 @@ async function saveNewTournament() {
 }
 
 const emit = defineEmits(['close', 'done'])
+
+
+
+
+// const publicKey='pk_test_0000';
+//         const amount=1000; 
+//         const email='somteacodes@gmail.com';
+//         const firstname='Somtea'; 
+//         const lastname='Codes' 
+
+//  function onCancelledPayment()  {
+//       console.log("Payment cancelled by user");
+//     }
+
+
+//    const  onSuccessfulPayment = (response:any)=> {
+//       console.log(response);
+//     }
+
+
 </script>
 
 <style lang="css" scoped>
