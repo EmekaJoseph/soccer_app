@@ -162,3 +162,8 @@ button:focus,
 .card-header {
   padding-block: 20px;
 }
+
+.card-fixed-height {
+  height: 550px;
+  overflow-y: auto;
+}

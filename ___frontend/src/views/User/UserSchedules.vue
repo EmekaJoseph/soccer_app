@@ -12,7 +12,7 @@
                 <div class="col-lg-12">
                     <div class="row gy-3">
                         <div class="col-lg-5">
-                            <div class="card shadow- h-100">
+                            <div class="card shadow-">
                                 <div class="card-header text-muted fw-bold bg-transparent border-0">
                                     ADD MATCH:
                                 </div>
@@ -26,10 +26,10 @@
 
                                         <div class="col-md-">
                                             <label>Home Team: </label>
-                                            <select v-model="form.homeTeam" class="form-select  text-uppercase">
-                                                <option value="" selected disabled></option>
-                                                <option v-for="i in userData.tournamentTeams" :key="i.team_id"
-                                                    :value="i.team_id">{{
+                                            <select v-model="form.homeTeam" class="form-select  ">
+                                                <option value="" selected disabled>--select--</option>
+                                                <option class="text-uppercase" v-for="i in userData.tournamentTeams"
+                                                    :key="i.team_id" :value="i.team_id">{{
                                                         i.team_name }}
                                                 </option>
                                             </select>
@@ -40,10 +40,11 @@
 
                                         <div class="col-md-">
                                             <label>Away Team: </label>
-                                            <select v-model="form.awayTeam" class="form-select  text-uppercase">
-                                                <option value="" selected disabled></option>
-                                                <option v-for="i in awayTeamDrop" :key="i.team_id" :value="i.team_id">{{
-                                                    i.team_name }}
+                                            <select v-model="form.awayTeam" class="form-select  ">
+                                                <option value="" selected disabled>--select--</option>
+                                                <option class="text-uppercase" v-for="i in awayTeamDrop"
+                                                    :key="i.team_id" :value="i.team_id">{{
+                                                        i.team_name }}
                                                 </option>
                                             </select>
                                         </div>
@@ -94,14 +95,15 @@
                             <!-- <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">LIST
                                 </legend> -->
 
-                            <div class="card shadow-sm h-100">
+                            <div class="card shadow-sm card-fixed-height">
                                 <div class="card-header text-muted fw-bold bg-transparent border-0">
                                     MATCHES LIST:
                                 </div>
                                 <div class="card-body">
                                     <div class="col-md-12 mt-3">
                                         <div class="card border-0 p-0">
-                                            <div class="card-body p-1 m-1 text-nowrap">
+                                            <loadingSpinner v-if="dataIsLoading" />
+                                            <div v-else class="card-body p-1 m-1 text-nowrap">
                                                 <div v-if="userData.tournamentMatches">
                                                     <EasyDataTable class="border-0" :headers="tableHeaders"
                                                         :items="userData.tournamentMatches">
@@ -162,6 +164,7 @@ const format = (date: Date) => `${date.getDate()}/${date.getMonth() + 1}/${date.
 
 const userData = useUserDataStore()
 const selectedTournament = ref<any>({})
+const dataIsLoading = ref<any>(true)
 
 onMounted(async () => {
     await userData.getTournaments()
@@ -172,14 +175,16 @@ onMounted(async () => {
 
 })
 
-function loadMatchData() {
+async function loadMatchData() {
     userData.getTournamentTeams(selectedTournament.value.id)
     loadTournamentMatches()
+
 }
 
 
-function loadTournamentMatches() {
-    userData.getTournamentMatches(selectedTournament.value.id)
+async function loadTournamentMatches() {
+    await userData.getTournamentMatches(selectedTournament.value.id)
+    dataIsLoading.value = false
 }
 
 // TABLE #####################################

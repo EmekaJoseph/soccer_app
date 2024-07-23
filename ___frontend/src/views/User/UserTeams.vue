@@ -12,7 +12,7 @@
                 <div class="col-lg-12">
                     <div class="row gy-3">
                         <div class="col-lg-5">
-                            <div class="card shadow-sm h-100">
+                            <div class="card shadow-sm">
                                 <div class="card-header text-muted fw-bold bg-transparent border-0">
                                     CREATE A TEAM
                                 </div>
@@ -25,7 +25,7 @@
                                         <div v-if="selectedTournament.type == 'cup'" class="col-md-12">
                                             <label>Group: </label>
                                             <select v-model="form.group_in" class="form-select  text-uppercase">
-                                                <option value="" selected disabled></option>
+                                                <option value="" selected disabled>--select--</option>
                                                 <option v-for="i in userData.valid_groups" :key="i" :value="i">
                                                     {{ i }}
                                                 </option>
@@ -55,7 +55,7 @@
                         </div>
 
                         <div class="col-lg-7">
-                            <div class="card border- shadow-sm h-100">
+                            <div class="card border- shadow-sm card-fixed-height">
                                 <div class="card-header text-muted fw-bold bg-transparent border-0">
                                     TEAMS LIST
                                 </div>
@@ -75,7 +75,8 @@
 
                                     <div class="col-md-12 mt-3">
                                         <div class="card border-0">
-                                            <div class="card-body p-1 m-1">
+                                            <loadingSpinner v-if="dataIsLoading" />
+                                            <div v-else class="card-body p-1 m-1">
                                                 <div v-if="userData.tournamentTeams">
                                                     <EasyDataTable class="border-0"
                                                         :headers="selectedTournament.type == 'cup' ? headersCUP : headersLeague"
@@ -138,17 +139,20 @@ const $toast = useToast();
 
 const userData = useUserDataStore()
 const selectedTournament = ref<any>({})
+const dataIsLoading = ref<boolean>(true)
 
 onMounted(async () => {
     await userData.getTournaments()
     if (userData.tournaments.length) {
         selectedTournament.value = userData.tournaments[0]
         loadTournamentTeams()
+
     }
 })
 
-function loadTournamentTeams() {
-    userData.getTournamentTeams(selectedTournament.value.id)
+async function loadTournamentTeams() {
+    await userData.getTournamentTeams(selectedTournament.value.id)
+    dataIsLoading.value = false
 }
 
 

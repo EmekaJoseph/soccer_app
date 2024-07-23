@@ -12,7 +12,7 @@
                 <div class="col-lg-12">
                     <div class="row gy-3">
                         <div class="col-lg-5">
-                            <div class="card shadow-sm h-100">
+                            <div class="card shadow-sm">
                                 <div class="card-header text-muted fw-bold bg-transparent border-0">
                                     NEW RESULT:
                                 </div>
@@ -35,19 +35,6 @@
                                             </select>
                                         </div>
 
-                                        <!-- <div v-if="selectedTournament.type == 'cup' && form.match_stage == 'Group_Stage'"
-                                            class="col-md-12">
-                                            <label>Group: </label>
-                                            <select v-model="form.group_in" class="form-select  text-uppercase">
-                                                <option value="" selected disabled></option>
-                                                <option v-for="group in userData.valid_groups" :key="group"
-                                                    :value="group">
-                                                    {{ group }}
-                                                </option>
-                                            </select>
-
-                                        </div> -->
-
                                         <div class="col-md-12">
                                             <!-- <div class="card shadow-sm border-0"> -->
                                             <!-- <div class="card-body"> -->
@@ -60,7 +47,7 @@
 
                                                 <div class="col-3">
                                                     <label class="small">score:</label>
-                                                    <input class="form-control" v-maska data-maska="##"
+                                                    <input type="text" class="form-control" v-maska data-maska="##"
                                                         v-model="form.homeTeam_score">
                                                 </div>
                                                 <!-- </div> -->
@@ -80,7 +67,7 @@
 
                                                 <div class="col-3">
                                                     <label class="small">score:</label>
-                                                    <input class="form-control" v-maska data-maska="##"
+                                                    <input class="form-control" type="text" v-maska data-maska="##"
                                                         v-model="form.awayTeam_score">
                                                 </div>
 
@@ -100,12 +87,14 @@
                                                 <div class="card-body small">
                                                     <div class="row mt-2">
                                                         <div class="col-6">
-                                                            <input v-model="form.home_score_pen" type="number"
-                                                                class="form-control" placeholder="home_score">
+                                                            <label class="small">{{ form.homeTeam }}:</label>
+                                                            <input class="form-control" type="text" v-maska
+                                                                data-maska="##" v-model="form.home_score_pen">
                                                         </div>
                                                         <div class="col-6">
-                                                            <input v-model="form.away_score_pen" type="number"
-                                                                class="form-control" placeholder="away_score">
+                                                            <label class="small">{{ form.awayTeam }}:</label>
+                                                            <input class="form-control" type="text" v-maska
+                                                                data-maska="##" v-model="form.away_score_pen">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -129,7 +118,7 @@
                         </div>
 
                         <div class="col-lg-7">
-                            <div class="card shadow-sm h-100">
+                            <div class="card shadow-sm card-fixed-height">
                                 <div class="card-header text-muted fw-bold bg-transparent border-0">
                                     RESULTS LIST:
                                 </div>
@@ -142,7 +131,8 @@
 
                                     <div class="col-md-12 mt-3">
                                         <div class="card border-0">
-                                            <div class="card-body p-1 m-1">
+                                            <loadingSpinner v-if="dataIsLoading" />
+                                            <div v-else class="card-body p-1 m-1">
                                                 <div v-if="userData.tournamentResults">
                                                     <EasyDataTable class="border-0 text-nowrap" :headers="tableHeaders"
                                                         :items="userData.tournamentResults" show-index>
@@ -201,6 +191,7 @@ import { vMaska } from "maska"
 const userData = useUserDataStore()
 const selectedTournament = ref<any>({})
 const selectedMatch = ref<any>('')
+const dataIsLoading = ref<any>(true)
 
 const $toast = useToast();
 
@@ -208,18 +199,19 @@ onMounted(async () => {
     await userData.getTournaments()
     if (userData.tournaments.length) {
         selectedTournament.value = userData.tournaments[0]
-        loadTournamentMatches()
         loadResultsData();
+        userData.getTournamentMatches(selectedTournament.value.id)
     }
 })
 
-function loadResultsData() {
-    userData.getTournamentTeams(selectedTournament.value.id)
-    userData.getTournamentResults(selectedTournament.value.id)
+async function loadResultsData() {
+    await userData.getTournamentResults(selectedTournament.value.id)
+    dataIsLoading.value = false
 }
 
 function loadTournamentMatches() {
     userData.getTournamentMatches(selectedTournament.value.id)
+
 }
 
 // TABLE #####################################

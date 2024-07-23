@@ -43,6 +43,9 @@ app.component('emptyDataComponent', emptyDataComponent);
 import tourDropdownSelect from '@/components/tourDropdownSelect.vue';
 app.component('tourDropdownSelect', tourDropdownSelect);
 
+import loadingSpinner from '@/components/loadingSpinner.vue';
+app.component('loadingSpinner', loadingSpinner);
+
 // import shareSite from '@/components/share.vue'
 // app.component('shareSite', shareSite);
 

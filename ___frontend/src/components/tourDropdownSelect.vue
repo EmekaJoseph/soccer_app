@@ -6,8 +6,14 @@ const selectedTournament = defineModel()
 </script>
 
 <template>
-    <select v-model="selectedTournament" class="form-select text-uppercase cursor-pointer">
-        <option v-for="i in userData.tournaments" :key="i" :value="i">{{ i.title }}
-        </option>
-    </select>
+    <fieldset class="border rounded-3 p-3 bg-light-subtle  h-100">
+        <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">
+            SELECT TOURNAMENT:
+        </legend>
+        <select v-model="selectedTournament" class="form-select text-uppercase cursor-pointer">
+            <option v-for="i in userData.tournaments" :key="i" :value="i">{{ i.title }}
+            </option>
+        </select>
+    </fieldset>
+
 </template>

@@ -1,17 +1,18 @@
 <template>
     <div class="container">
+
         <div v-if="userData.apiError">
             <internetErrorComponent />
         </div>
         <div v-else>
             <div class="row justify-content-center gy-4">
                 <div class="col-lg-8">
-                    <div class="card shadow-sm border-0 h-100">
+                    <div class="card shadow-sm border-0 card-fixed-height">
                         <div class="card-header text-muted fw-bold bg-transparent border-0">
                             TOURNAMENTS <span class="badge rounded-pill text-bg-secondary ">
                                 {{ userData.tournaments.length }}</span>
 
-                            <span v-if="authStore.isAdmin" @click="openTourModal()"
+                            <span v-if="!dataIsLoading && authStore.isAdmin" @click="openTourModal()"
                                 class="float-end  hover-tilt-Y text-primary-theme cursor-pointer fw-bold">
                                 <span class="">
                                     New <i class="bi bi-plus-circle-fill"></i>
@@ -22,16 +23,11 @@
                             <!-- <fieldset class="border rounded-3 p-3  h-100"> -->
                             <!-- <legend class="text-muted float-none  small p-0 px-2 w-auto fw-bold">TOURNAMENTS
                             </legend> -->
-                            <!-- <div v-if="account.state.role == 'admin'"
-                                class="d-flex justify-content-end col-12 mb-3  hover-tilt-Y">
-                                <span @click="newTournModal = true" class="text-primary cursor-pointer">
-                                    New Tournament <i class="bi bi-plus-circle"></i>
-                                </span>
-                            </div> -->
                             <div class="content-panel">
                                 <div class="col-md-12 mt-3">
                                     <div class="card border-0">
-                                        <div class="card-body">
+                                        <loadingSpinner v-if="dataIsLoading" />
+                                        <div v-else class="card-body">
                                             <div v-if="!userData.tournaments.length"
                                                 class="card-body text-center text-muted fs-4 mt-5">
                                                 You dont have any Tournaments, create One.
@@ -88,10 +84,10 @@
                     </div>
                 </div>
                 <div class="col-lg-4">
-                    <ComponentOtherUsers />
+                    <ComponentOtherUsers v-if="!dataIsLoading" />
                 </div>
 
-                <div v-if="authStore.getUserData().role == 'admin'" class="col-12">
+                <div v-if="authStore.getUserData().role == 'admin'" class="col-12 d-none">
                     <div class="card  shadow-sm border-0">
                         <div class="card-header text-muted fw-bold bg-transparent border-0">
                             FEEDBACKS
@@ -171,6 +167,7 @@ const $toast = useToast();
 
 const newTournModal = ref<boolean>(false)
 const isEditing = ref<boolean>(false)
+const dataIsLoading = ref<boolean>(true)
 const editingData = ref<any>(null)
 
 
@@ -200,8 +197,9 @@ function closeTourModal() {
 
 const hostURL = import.meta.env.VITE_API_URL;
 
-onMounted(() => {
-    userData.getTournaments()
+onMounted(async () => {
+    await userData.getTournaments()
+    dataIsLoading.value = false
     userData.getSubUsers()
     getFeedbacks()
 })
