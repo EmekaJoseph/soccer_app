@@ -52,7 +52,7 @@ class MatchController extends BaseController
             return response()->json('Duplicate entries', 203);
         }
 
-        $newSchedule = MatchModel::create(
+        $newMatch = MatchModel::create(
             [
                 'tour_id' => $req->input('tour_id'),
                 'venue' => $req->input('venue'),
@@ -64,7 +64,7 @@ class MatchController extends BaseController
             ]
         );
 
-        return response()->json($newSchedule, 200);
+        return response()->json($newMatch, 200);
     }
 
 
@@ -100,14 +100,7 @@ class MatchController extends BaseController
             return response()->json('invalid tournament', 203);
         }
 
-        $matchs = MatchModel::where('tour_id', $req->tour_id)->get();
-
-        if (sizeof($matchs) > 0) {
-            foreach ($matchs as $match) {
-                $match->home_team = (TeamModel::find($match->home_team))->team_name;
-                $match->away_team = (TeamModel::find($match->away_team))->team_name;
-            }
-        }
+        $matchs = MatchModel::with(['awayTeam', 'homeTeam'])->where('tour_id', $req->tour_id)->get();
 
         return response()->json($matchs, 200);
     }

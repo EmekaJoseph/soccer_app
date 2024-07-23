@@ -142,7 +142,7 @@ function gotoInfoPage() {
 
 async function loadAllData() {
     await stats.getStandings()
-    await stats.getSchedules()
+    await stats.getMatches()
     await stats.getResults()
 }
 

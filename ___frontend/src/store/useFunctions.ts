@@ -32,7 +32,7 @@ export default {
             toast: true,
             icon: `${icon}`,
             iconColor: icon == 'error' ? '#dc3545' : (icon == 'success' ? '#198754 ' : '#ffc107'),
-            text: `${text}`,
+            title: `${text}`,
             position: 'top-right',
             // background: icon == 'error' ? '#f8d7da' : (icon == 'success' ? '#d1e7dd' : '#fff3cd'),
             showConfirmButton: false,

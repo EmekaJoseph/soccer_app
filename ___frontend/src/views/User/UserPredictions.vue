@@ -7,11 +7,7 @@
             <div class="row gy-4">
                 <div class="col-lg-4 mb-3">
                     <!-- <label>Tournament: </label> -->
-                    <select v-model="selectedTournament"
-                        class="form-select text-uppercase rounded-0 border-end-0 border-start-0 border-top-0  border-bottom-3 cursor-pointer"
-                        @change="loadPredictionsData">
-                        <option v-for="i in userData.tournaments" :key="i" :value="i">{{ i.title }}</option>
-                    </select>
+                    <tourDropdownSelect @change="loadPredictionsData" v-model="selectedTournament" />
                 </div>
 
                 <div class="col-lg-12">

@@ -8,11 +8,13 @@
                 <div class="col-lg-8">
                     <div class="card shadow-sm border-0 h-100">
                         <div class="card-header text-muted fw-bold bg-transparent border-0">
-                            TOURNAMENTS
-                            <span v-if="authStore.getUserData().role == 'admin'" @click="newTournModal = true"
+                            TOURNAMENTS <span class="badge rounded-pill text-bg-secondary ">
+                                {{ userData.tournaments.length }}</span>
+
+                            <span v-if="authStore.isAdmin" @click="openTourModal()"
                                 class="float-end  hover-tilt-Y text-primary-theme cursor-pointer fw-bold">
                                 <span class="">
-                                    Create <i class="bi bi-plus-circle"></i>
+                                    New <i class="bi bi-plus-circle-fill"></i>
                                 </span>
                             </span>
                         </div>
@@ -28,9 +30,10 @@
                             </div> -->
                             <div class="content-panel">
                                 <div class="col-md-12 mt-3">
-                                    <div class="card">
+                                    <div class="card border-0">
                                         <div class="card-body">
-                                            <div v-if="!userData.tournaments.length" class="card-body text-center">
+                                            <div v-if="!userData.tournaments.length"
+                                                class="card-body text-center text-muted fs-4 mt-5">
                                                 You dont have any Tournaments, create One.
                                             </div>
                                             <div v-else class="card-body p-0">
@@ -44,7 +47,7 @@
 
                                                     <template #item-tour_logo="item">
                                                         <div class="image-circle"
-                                                            :style="{ backgroundImage: `url(${hostURL}/${item.tour_logo??''})` }">
+                                                            :style="{ backgroundImage: `url(${hostURL}/${item.tour_logo ?? ''})` }">
                                                         </div>
                                                     </template>
 
@@ -58,8 +61,8 @@
 
                                                     <template #item-edit="item">
                                                         <div class="operation-wrapper">
-                                                            <span data-bs-toggle="modal" data-bs-target="#editMaterial"
-                                                                @click="" class="me-4 operation-icon cursor-pointer">
+                                                            <span @click="openTourModal(true, item)"
+                                                                class="me-4 operation-icon cursor-pointer">
                                                                 <i class="bi bi-pencil"></i>
                                                             </span>
                                                         </div>
@@ -85,7 +88,7 @@
                     </div>
                 </div>
                 <div class="col-lg-4">
-                    <ComponentOtherUsers/>
+                    <ComponentOtherUsers />
                 </div>
 
                 <div v-if="authStore.getUserData().role == 'admin'" class="col-12">
@@ -123,7 +126,7 @@
                                                                 <td>{{ feedback.name ?? '-' }}</td>
                                                                 <td>{{ feedback.feedbackText }}</td>
                                                                 <td>{{ new
-            Date(feedback.created_at).toLocaleString() }}
+                                                                    Date(feedback.created_at).toLocaleString() }}
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -143,16 +146,15 @@
         </div>
     </div>
 
-
-
     <!-- linkModal -->
     <copyLinkModal v-if="copyModal" :link-to-copy="linkToCopy" @close="copyModal = false" />
-    <newTournamentModal v-if="newTournModal" @close="newTournModal = false" @done="userData.getTournaments()" />
+    <newTournamentModal v-if="newTournModal" :isEditing :editingData @close="closeTourModal"
+        @done="userData.getTournaments()" />
 
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useUserDataStore } from '@/store/userDataStore';
 import type { Header } from "vue3-easy-data-table";
 import api from '@/store/axiosManager'
@@ -167,8 +169,12 @@ const userData = useUserDataStore()
 
 const $toast = useToast();
 
-const copyModal = ref<boolean>(false)
 const newTournModal = ref<boolean>(false)
+const isEditing = ref<boolean>(false)
+const editingData = ref<any>(null)
+
+
+const copyModal = ref<boolean>(false)
 const linkToCopy = ref<string>('')
 
 function openTournamentLinkModal(tour_id: string) {
@@ -176,10 +182,23 @@ function openTournamentLinkModal(tour_id: string) {
     copyModal.value = true
 }
 
+function openTourModal(editing = false, editData = null) {
+    isEditing.value = editing
+    newTournModal.value = true
+    editingData.value = editData
+
+    console.log(isEditing.value);
+    console.log(editingData.value);
+
+}
+
+function closeTourModal() {
+    isEditing.value = false
+    newTournModal.value = false
+    editingData.value = null
+}
 
 const hostURL = import.meta.env.VITE_API_URL;
-
-const feedBackArray = ref<any[]>([])
 
 onMounted(() => {
     userData.getTournaments()
@@ -187,10 +206,6 @@ onMounted(() => {
     getFeedbacks()
 })
 
-async function getFeedbacks() {
-    let resp = await api.getFeedbacks()
-    feedBackArray.value = resp.data
-}
 
 const headers: Header[] = [
     { text: "", value: "tour_logo" },
@@ -198,7 +213,7 @@ const headers: Header[] = [
     { text: "TYPE", value: "tour_type" },
     { text: "DATED CREATED", value: "created" },
     { text: "Link", value: "link" },
-    // { text: "", value: "edit" },
+    { text: "", value: "edit" },
     { text: "", value: "delete" },
 ];
 
@@ -221,10 +236,17 @@ async function deleteTournament(tour_id: string | number) {
     }
 }
 
+
+// feedbacks
+const feedBackArray = ref<any[]>([])
+async function getFeedbacks() {
+    let resp = await api.getFeedbacks()
+    feedBackArray.value = resp.data
+}
+
 </script>
 
 <style scoped>
-
 .bg-faint {
     background-color: rgba(17, 15, 15, 0.183);
 }

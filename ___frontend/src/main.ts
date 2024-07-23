@@ -40,6 +40,9 @@ app.component('internetErrorComponent', internetErrorComponent);
 import emptyDataComponent from '@/components/emptyData.vue'
 app.component('emptyDataComponent', emptyDataComponent);
 
+import tourDropdownSelect from '@/components/tourDropdownSelect.vue';
+app.component('tourDropdownSelect', tourDropdownSelect);
+
 // import shareSite from '@/components/share.vue'
 // app.component('shareSite', shareSite);
 

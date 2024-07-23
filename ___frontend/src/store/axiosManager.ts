@@ -56,8 +56,8 @@ export default {
         return $instance.get(`view/results/${tour_id}`,)
     },
 
-    schedules(tour_id: string) {
-        return $instance.get(`view/schedules/${tour_id}`,)
+    matches(tour_id: string) {
+        return $instance.get(`view/matches/${tour_id}`,)
     },
 
     tour_data(tour_id: string) {
@@ -130,16 +130,16 @@ export default {
         return $instance.delete(`team/${team_id}`)
     },
 
-    getTournamentSchedules(tour_id: string) {
-        return $instance.get(`schedule?tour_id=${tour_id}`)
+    getTournamentMatches(tour_id: string) {
+        return $instance.get(`match?tour_id=${tour_id}`)
     },
 
-    createSchedule(data: object) {
-        return $instance.post(`schedule`, JSON.stringify(data))
+    createMatch(data: object) {
+        return $instance.post(`match`, JSON.stringify(data))
     },
 
-    deleteSchedule(team_id: any) {
-        return $instance.delete(`schedule/${team_id}`)
+    deleteMatch(team_id: any) {
+        return $instance.delete(`match/${team_id}`)
     },
 
 

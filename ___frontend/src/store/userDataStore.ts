@@ -7,7 +7,7 @@ export const useUserDataStore = defineStore('dataStore', () => {
   const apiLoading = ref<boolean>(true)
   const tournaments = ref<any>([])
   const tournamentTeams = ref<any>([])
-  const tournamentShedules = ref<any>([])
+  const tournamentMatches = ref<any>([])
   const tournamentResults = ref<any>([])
   const tournamentLive = ref<any>([])
   const subUsers = ref<any>([])
@@ -33,10 +33,10 @@ export const useUserDataStore = defineStore('dataStore', () => {
     }
   }
 
-  async function getTournamentSchedules(id: string) {
+  async function getTournamentMatches(id: string) {
     try {
-      let resp = await api.getTournamentSchedules(id)
-      tournamentShedules.value = (resp.status == 200) ? resp.data : [];
+      let resp = await api.getTournamentMatches(id)
+      tournamentMatches.value = (resp.status == 200) ? resp.data : [];
     } catch (error) {
       // console.log(error);
     }
@@ -86,14 +86,14 @@ export const useUserDataStore = defineStore('dataStore', () => {
     apiError,
     getTournaments,
     getTournamentTeams,
-    getTournamentSchedules,
+    getTournamentMatches,
     getTournamentResults,
     getLiveMatchesByUser,
     getPredictions,
     getSubUsers,
     tournaments,
     tournamentTeams,
-    tournamentShedules,
+    tournamentMatches,
     tournamentResults,
     tournamentLive,
     match_stages,

@@ -1,64 +1,61 @@
 <template>
     <div class="card shadow-sm  h-100 border-0">
-    <div class="card-header text-muted fw-bold bg-transparent border-0">
-       USERS
-    </div>
-    <div class="card-body" >
-        <!-- <fieldset v-if="account.state.role == 'admin'" class="border rounded-3 p-3"> -->
-        <!-- <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bold">OTHER USERS
+        <div class="card-header text-muted fw-bold bg-transparent border-0">
+            USERS
+        </div>
+        <div class="card-body">
+            <!-- <fieldset v-if="account.state.role == 'admin'" class="border rounded-3 p-3"> -->
+            <!-- <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bold">OTHER USERS
         </legend> -->
-        <div class="content-panel">
-            <form @submit.prevent="">
-                <div class="row g-3">
-                    <div class="col-lg-12">
-                        <input v-model="usersForm.email" type="email" class="form-control"
-                            placeholder="valid email">
-                    </div>
-                    <div class="col-lg-12">
-                        <input v-model="usersForm.password" type="text" class="form-control"
-                            placeholder="password">
-                    </div>
-                    <div class="col-lg-12 ">
-                        <button @click="submitUser" :disabled="usersForm.isSaving"
-                            class="btn btn-primary-theme float-end w-100">
-                            Click to Add
-                        </button>
-                    </div>
+            <div class="content-panel">
+                <form @submit.prevent="">
+                    <div class="row g-3">
+                        <div class="col-lg-12">
+                            <input v-model="usersForm.email" type="email" class="form-control"
+                                placeholder="valid email">
+                        </div>
+                        <div class="col-lg-12">
+                            <input v-model="usersForm.password" type="text" class="form-control" placeholder="password">
+                        </div>
+                        <div class="col-lg-12 ">
+                            <button @click="submitUser" :disabled="usersForm.isSaving"
+                                class="btn btn-primary-theme float-end w-100">
+                                Click to Add
+                            </button>
+                        </div>
 
-                    <div class="col-12 mt-4">
-                        <div class="card" style="height: 200px; overflow-y: auto;">
-                            <div class="card-body">
-                                <div v-if="userData.subUsers.length" class="table-responsive">
-                                    <table class="table table-sm">
-                                        <thead class="bg-light">
-                                            <tr>
-                                                <th>S/N</th>
-                                                <th>Email</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="(user, i) in userData.subUsers"
-                                                :key="user.user_id">
-                                                <th>{{ (i + 1) }}</th>
-                                                <td>{{ user.email }}</td>
-                                                <td @click="deleteUser(user.subuser_id)">
-                                                    <i
-                                                        class="cursor-pointer text-danger bi bi-x-lg"></i>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                        <div class="col-12 mt-4">
+                            <div class="card" style="height: 200px; overflow-y: auto;">
+                                <div class="card-body">
+                                    <div v-if="userData.subUsers.length" class="table-responsive">
+                                        <table class="table table-sm">
+                                            <thead class="bg-light">
+                                                <tr>
+                                                    <th>S/N</th>
+                                                    <th>Email</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="(user, i) in userData.subUsers" :key="user.user_id">
+                                                    <th>{{ (i + 1) }}</th>
+                                                    <td>{{ user.email }}</td>
+                                                    <td @click="deleteUser(user.subuser_id)">
+                                                        <i class="cursor-pointer text-danger bi bi-x-lg"></i>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div v-else class="text-center small">No users</div>
                                 </div>
-                                <div v-else class="text-center small">No users</div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
+            <!-- </fieldset> -->
         </div>
-        <!-- </fieldset> -->
-    </div>
     </div>
 </template>
 

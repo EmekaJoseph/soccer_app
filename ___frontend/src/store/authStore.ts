@@ -25,6 +25,7 @@ export const useAuthStore = defineStore('authStore', () => {
 
     // const getUserToken = () => Cookies.get(tokenName)
     const getUserData = () => JSON.parse(socc_user.value)
+    const isAdmin = computed(() => { return getUserData().role == 'admin' })
 
 
 
@@ -34,6 +35,7 @@ export const useAuthStore = defineStore('authStore', () => {
         login,
         logout,
         getUserData,
+        isAdmin,
         // getUserToken
     }
 

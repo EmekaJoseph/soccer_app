@@ -13,7 +13,7 @@ class CreateTblSchedulesTable extends Migration
      */
     public function up()
     {
-        Schema::create('tbl_schedules', function (Blueprint $table) {
+        Schema::create('tbl_matches', function (Blueprint $table) {
             $table->string('match_id', 100)->primary();
             $table->string('tour_id', 100);
             $table->string('venue');
@@ -32,6 +32,6 @@ class CreateTblSchedulesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tbl_schedules');
+        Schema::dropIfExists('tbl_matches');
     }
 }

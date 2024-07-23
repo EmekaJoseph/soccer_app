@@ -137,7 +137,7 @@ class AccountController extends BaseController
     public function resetApp()
     {
         DB::table('tbl_results')->truncate();
-        DB::table('tbl_schedules')->truncate();
+        DB::table('tbl_matches')->truncate();
         DB::table('tbl_standings_cup')->truncate();
         DB::table('tbl_standings_league')->truncate();
         DB::table('tbl_live')->truncate();

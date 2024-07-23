@@ -12,74 +12,63 @@
                 </div>
                 <div class="modal-body">
 
-                    <!-- <paystack
-                buttonClass="'button-class btn btn-primary'"
-                buttonText="Pay Online"
-                :publicKey="publicKey"
-                :email="email"
-                :amount="amount"
-                :reference="''"
-                :onSuccess="onSuccessfulPayment"
-                :onCanel="onCancelledPayment"
-              ></paystack> -->
+                    <!-- <paystack buttonClass="'button-class btn btn-primary'" buttonText="Pay Online"
+                        :publicKey="publicKey" :email="email" :amount="amount" :reference="''"
+                        :onSuccess="onSuccessfulPayment" :onCanel="onCancelledPayment"></paystack> -->
 
 
                     <form @submit.prevent="saveNewTournament" class="row justify-content-center g-3">
                         <div class="col-md-12">
                             <div class="form-floating">
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    v-model="form.tour_title"
-                                    id="titleT"
-                                    placeholder=""
-                                />
+                                <input type="text" class="form-control" v-model="form.tour_title" id="titleT"
+                                    placeholder="" />
                                 <label for="titleT">Name of Tournament</label>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="form-floating">
-                            <select id="Ttype" v-model="form.tour_type" class="form-select">
-                                <option value="cup" selected>CUP</option>
-                                <option value="league">LEAGUE</option>
-                            </select>
+                                <select id="Ttype" v-model="form.tour_type" class="form-select">
+                                    <option value="cup" selected>CUP</option>
+                                    <option value="league">LEAGUE</option>
+                                </select>
                                 <label for="Ttype">Tounament Type</label>
                             </div>
-                            
-                           
+
+
                         </div>
 
                         <div class="col-12">
                             <div class="form-floating">
-                            <textarea v-model="form.tour_desc" id="Tdesc" placeholder=""  class="form-control" style="height: 100px"></textarea>
-                                <label for="Tdesc">Tounament Type</label>
+                                <textarea v-model="form.tour_desc" id="Tdesc" placeholder="" class="form-control"
+                                    style="height: 85px"></textarea>
+                                <label for="Tdesc">Tounament Description</label>
                             </div>
                         </div>
 
-                        <div class="col-12">
+                        <div class="col-12" v-if="!props.isEditing">
                             <div class="">
                                 <div class="mb-3">Tournament Logo:</div>
                                 <div class="row g-1">
                                     <div class="col-md-8">
-                            <div class="dropzone" v-bind="getRootProps()">
-                                <div class="text-center small">
-                                    <div><i class="bi bi-image color-theme"></i></div>
-                                    <div><span class="color-theme">Click to replace</span> or drag and
-                                        drop
+                                        <div class="dropzone" v-bind="getRootProps()">
+                                            <div class="text-center small">
+                                                <div><i class="bi bi-image color-theme"></i></div>
+                                                <div><span class="color-theme">Click to replace</span> or drag and
+                                                    drop
+                                                </div>
+                                                <!-- <div class="fw-light">SVG, PNG, JPG or GIF (max. 400 x 400px)</div> -->
+                                            </div>
+                                            <input v-bind="getInputProps()" />
+                                        </div>
                                     </div>
-                                    <!-- <div class="fw-light">SVG, PNG, JPG or GIF (max. 400 x 400px)</div> -->
-                                </div>
-                                <input v-bind="getInputProps()" />
-                            </div>
-                        </div>
 
-                        <div class="col-md-4  d-flex justify-content-center">
+                                    <div class="col-md-4  d-flex justify-content-center">
                                         <div class="image-circle"
                                             :style="{ backgroundImage: `url(${form.photo_path})` }">
                                         </div>
                                         <!-- <div class="image-circle"></div> -->
 
-                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -87,7 +76,7 @@
 
                         <div class="col-12">
                             <button :disabled="form.isSaving" type="submit" class="btn btn-primary-theme w-100">
-                                Create New Tounament
+                                {{ !props.isEditing ? 'Create New Tounament' : 'Update Details' }}
                             </button>
                         </div>
                     </form>
@@ -110,13 +99,26 @@
 
 
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { reactive, watchEffect } from 'vue';
 import { useToast } from 'vue-toast-notification';
 import api from '@/store/axiosManager'
 import { useDropzone } from "vue3-dropzone";
 import useFxn from '@/store/useFunctions';
 // @ts-ignore
 // import paystack from "vue3-paystack";
+
+const props = defineProps({
+    isEditing: {
+        required: true,
+        type: Boolean
+    },
+    editingData: {
+        required: false,
+        type: Object
+    }
+})
+
+
 
 
 const { getRootProps, getInputProps, ...rest } = useDropzone({
@@ -151,6 +153,14 @@ const form = reactive({
     isSaving: false
 })
 
+watchEffect(() => {
+    if (props.isEditing) {
+        form.tour_title = props.editingData?.tour_title
+        form.tour_type = props.editingData?.tour_type
+        form.tour_desc = props.editingData?.tour_desc
+    }
+})
+
 async function saveNewTournament() {
     if (!form.tour_title) {
         $toast.default('Enter Tournament Title', { position: 'top-right' });
@@ -167,8 +177,8 @@ async function saveNewTournament() {
     const newForm = new FormData();
     newForm.append('tour_title', form.tour_title)
     newForm.append('tour_logo', form.tour_logo)
-    newForm.append('tour_desc', form.tour_desc?? '')
-    newForm.append('tour_type', form.tour_type?? '')
+    newForm.append('tour_desc', form.tour_desc ?? '')
+    newForm.append('tour_type', form.tour_type ?? '')
 
     try {
         let resp = await api.createTournament(newForm)
@@ -196,28 +206,26 @@ async function saveNewTournament() {
 const emit = defineEmits(['close', 'done'])
 
 
+// const publicKey = 'pk_test_bc8eb248cabce660866f611519d07ce8f27a513c';
+// const amount = 1000;
+// const email = 'somteacodes@gmail.com';
+// const firstname = 'Somtea';
+// const lastname = 'Codes'
+
+// function onCancelledPayment() {
+//     console.log("Payment cancelled by user");
+// }
 
 
-// const publicKey='pk_test_0000';
-//         const amount=1000; 
-//         const email='somteacodes@gmail.com';
-//         const firstname='Somtea'; 
-//         const lastname='Codes' 
-
-//  function onCancelledPayment()  {
-//       console.log("Payment cancelled by user");
-//     }
-
-
-//    const  onSuccessfulPayment = (response:any)=> {
-//       console.log(response);
-//     }
+// const onSuccessfulPayment = (response: any) => {
+//     console.log(response);
+// }
 
 
 </script>
 
 <style lang="css" scoped>
-    .image-circle {
+.image-circle {
     height: 100px;
     width: 100px;
     border-radius: 50%;

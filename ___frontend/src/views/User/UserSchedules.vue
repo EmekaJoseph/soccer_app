@@ -7,17 +7,14 @@
             <div class="row gy-4">
                 <div class="col-lg-5 mb-3">
                     <!-- <label>Tournament: </label> -->
-                    <select v-model="selectedTournament" class="form-select text-uppercase  cursor-pointer"
-                        @change="loadScheduleData">
-                        <option v-for="i in userData.tournaments" :key="i" :value="i">{{ i.title }}</option>
-                    </select>
+                    <tourDropdownSelect @change="loadMatchData" v-model="selectedTournament" />
                 </div>
                 <div class="col-lg-12">
                     <div class="row gy-3">
                         <div class="col-lg-5">
                             <div class="card shadow- h-100">
                                 <div class="card-header text-muted fw-bold bg-transparent border-0">
-                                    SCHEDULE:
+                                    ADD MATCH:
                                 </div>
                                 <div class="card-body">
                                     <!-- <fieldset class="border rounded-3 p-3 bg-white shadow"> -->
@@ -33,7 +30,7 @@
                                                 <option value="" selected disabled></option>
                                                 <option v-for="i in userData.tournamentTeams" :key="i.team_id"
                                                     :value="i.team_id">{{
-            i.team_name }}
+                                                        i.team_name }}
                                                 </option>
                                             </select>
                                         </div>
@@ -46,7 +43,7 @@
                                             <select v-model="form.awayTeam" class="form-select  text-uppercase">
                                                 <option value="" selected disabled></option>
                                                 <option v-for="i in awayTeamDrop" :key="i.team_id" :value="i.team_id">{{
-            i.team_name }}
+                                                    i.team_name }}
                                                 </option>
                                             </select>
                                         </div>
@@ -99,27 +96,27 @@
 
                             <div class="card shadow-sm h-100">
                                 <div class="card-header text-muted fw-bold bg-transparent border-0">
-                                    SCHEDULE LIST:
+                                    MATCHES LIST:
                                 </div>
                                 <div class="card-body">
                                     <div class="col-md-12 mt-3">
                                         <div class="card border-0 p-0">
-                                            <div class="card-body p-1 m-1">
-                                                <div v-if="userData.tournamentShedules">
+                                            <div class="card-body p-1 m-1 text-nowrap">
+                                                <div v-if="userData.tournamentMatches">
                                                     <EasyDataTable class="border-0" :headers="tableHeaders"
-                                                        :items="userData.tournamentShedules">
+                                                        :items="userData.tournamentMatches">
 
                                                         <template #item-homeVsAway="item">
                                                             <div>
-                                                                {{ item.home_team }}
+                                                                {{ item?.home_team?.team_name ?? '-' }}
                                                                 <span class=" fw-bolder"> VS </span>
-                                                                {{ item.away_team }}
+                                                                {{ item?.away_team?.team_name ?? '-' }}
                                                             </div>
                                                         </template>
 
-                                                        <template #item-kick_="item">
+                                                        <template #item-kick_off="item">
                                                             <div class=" fw-bolder"> {{ (new
-            Date(item.kick_off)).toDateString()
+                                                                Date(item.kick_off)).toDateString()
                                                                 }} </div>
                                                         </template>
 
@@ -127,7 +124,7 @@
 
                                                         <template #item-delete="item">
                                                             <div class="operation-wrapper">
-                                                                <span @click="deleteSchedule(item)"
+                                                                <span @click="deleteMatch(item)"
                                                                     class="operation-icon cursor-pointer">
                                                                     <i class="bi bi-trash3 text-danger"></i>
                                                                 </span>
@@ -170,35 +167,35 @@ onMounted(async () => {
     await userData.getTournaments()
     if (userData.tournaments.length) {
         selectedTournament.value = userData.tournaments[0]
-        loadScheduleData()
+        loadMatchData()
     }
 
 })
 
-function loadScheduleData() {
+function loadMatchData() {
     userData.getTournamentTeams(selectedTournament.value.id)
-    loadTournamentSchedules()
+    loadTournamentMatches()
 }
 
 
-function loadTournamentSchedules() {
-    userData.getTournamentSchedules(selectedTournament.value.id)
+function loadTournamentMatches() {
+    userData.getTournamentMatches(selectedTournament.value.id)
 }
 
 // TABLE #####################################
 const tableHeaders: Header[] = [
-    { text: "", value: "homeVsAway" },
-    { text: "", value: "match_stage" },
-    { text: "", value: "kick_" },
+    { text: "MATCH", value: "homeVsAway" },
+    { text: "TYPE", value: "match_stage" },
+    { text: "KICK OFF", value: "kick_off" },
     { text: "", value: "delete" },
 ];
 
-async function deleteSchedule(schedule: any) {
+async function deleteMatch(match: any) {
     if (confirm('Delete this scheduled match ?')) {
         try {
-            let resp = await api.deleteSchedule(schedule.match_id)
+            let resp = await api.deleteMatch(match.match_id)
             if (resp.status == 200) {
-                loadTournamentSchedules()
+                loadTournamentMatches()
                 $toast.default('Match deleted successfuly', { position: 'top-right' });
             }
         } catch (error) {
@@ -259,14 +256,14 @@ async function save() {
     form.isSaving = true
 
     try {
-        let resp = await api.createSchedule(obj)
+        let resp = await api.createMatch(obj)
         if (resp.status == 203) {
             $toast.error('Duplicate entry', { position: 'top-right' });
             form.isSaving = false
             return;
         }
         $toast.default('New match added', { position: 'top-right' });
-        userData.getTournamentSchedules(selectedTournament.value.id)
+        userData.getTournamentMatches(selectedTournament.value.id)
         form.isSaving = false
 
         form.awayTeam = "";

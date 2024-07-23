@@ -77,6 +77,9 @@ class TournamentController extends BaseController
 
         if ($tournaments) {
             foreach ($tournaments as  $list) {
+                $list->id = $list->tour_id;
+                $list->title = $list->tour_title;
+                $list->type = $list->tour_type;
                 $list->created = Carbon::parse($list->created_at)->diffForHumans();
             }
         }

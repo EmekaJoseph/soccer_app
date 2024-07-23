@@ -10,7 +10,7 @@ export const useStatsStore = defineStore('stats', () => {
   const tour_type = ref<any>('')
   const tourStandings = ref<any[]>([])
   const tourResults = ref<any[]>([])
-  const tourSchedules = ref<any[]>([])
+  const tourMatches = ref<any[]>([])
   const tourTeamsInfo = ref<any[]>([])
   const tourLives = ref<any[]>([])
   const apiError = ref<boolean>(false)
@@ -65,11 +65,11 @@ export const useStatsStore = defineStore('stats', () => {
     }
   }
 
-  async function getSchedules() {
+  async function getMatches() {
     try {
       apiError.value = false
-      let resp = await api.schedules(tour_id.value)
-      tourSchedules.value = resp.data
+      let resp = await api.matches(tour_id.value)
+      tourMatches.value = resp.data
       apiLoading.value = false
       // console.log(resp);
     } catch (error) {
@@ -114,14 +114,14 @@ export const useStatsStore = defineStore('stats', () => {
     tour_id,
     tourStandings,
     tourResults,
-    tourSchedules,
+    tourMatches,
     tourTeamsInfo,
     tourLives,
     statsLoaded,
     isOnline,
     getStandings,
     getResults,
-    getSchedules,
+    getMatches,
     getTourDetails,
     getLiveMatches,
     getTourTeamsInfo

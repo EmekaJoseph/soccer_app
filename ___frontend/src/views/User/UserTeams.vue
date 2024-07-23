@@ -6,11 +6,8 @@
         <div v-else>
             <div class="row gy-4">
                 <div class="col-lg-5 mb-3">
-                    <label>Tournament: </label>
-                    <select v-model="selectedTournament" class="form-select text-uppercase cursor-pointer"
-                        @change="loadTournamentTeams">
-                        <option v-for="i in userData.tournaments" :key="i" :value="i">{{ i.title }}</option>
-                    </select>
+                    <!-- <label>Tournament: </label> -->
+                    <tourDropdownSelect @change="loadTournamentTeams" v-model="selectedTournament" />
                 </div>
                 <div class="col-lg-12">
                     <div class="row gy-3">
@@ -134,6 +131,8 @@ import type { Header, Item, SortType } from "vue3-easy-data-table";
 import api from '@/store/axiosManager'
 import { useToast } from 'vue-toast-notification';
 
+const comRef = ref()
+
 
 const $toast = useToast();
 
@@ -143,7 +142,7 @@ const selectedTournament = ref<any>({})
 onMounted(async () => {
     await userData.getTournaments()
     if (userData.tournaments.length) {
-        // selectedTournament.value = userData.tournaments[0]
+        selectedTournament.value = userData.tournaments[0]
         loadTournamentTeams()
     }
 })
