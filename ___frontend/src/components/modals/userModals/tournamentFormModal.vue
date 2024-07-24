@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade bg-faint show d-block" id="newTournamentModal" tabindex="-1" data-bs-backdrop="static"
+    <div class="modal fade bg-faint show d-block" id="TournamentFormModal" tabindex="-1" data-bs-backdrop="static"
         data-bs-keyboard="false" role="dialog" aria-hidden="true">
         <div class="modal-dialog  modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -17,7 +17,7 @@
                         :onSuccess="onSuccessfulPayment" :onCanel="onCancelledPayment"></paystack> -->
 
 
-                    <form @submit.prevent="saveNewTournament" class="row justify-content-center g-3">
+                    <form @submit.prevent="saveTournament" class="row justify-content-center g-3">
                         <div class="col-md-12">
                             <div class="form-floating">
                                 <input type="text" class="form-control" v-model="form.tour_title" id="titleT"
@@ -25,7 +25,7 @@
                                 <label for="titleT">Name of Tournament</label>
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-12" v-if="!props.isEditing">
                             <div class="form-floating">
                                 <select id="Ttype" v-model="form.tour_type" class="form-select">
                                     <option value="cup" selected>CUP</option>
@@ -75,14 +75,20 @@
 
 
                         <div class="col-12">
-                            <button :disabled="form.isSaving" type="submit" class="btn btn-primary-theme w-100">
+                            <button v-if="!form.isSaving" type="submit" class="btn btn-primary-theme w-100">
                                 {{ !props.isEditing ? 'Create New Tounament' : 'Update Details' }}
                             </button>
+                            <button v-else class="btn btn-primary-theme w-100" type="button" disabled>
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Saving...
+                            </button>
+
                         </div>
                     </form>
 
                 </div>
                 <div class="modal-footer border-0">
+
                     <!-- <button @click="copy(linkToCopy)" v-if="!copied" type="button" class="btn btn-primary-theme w-100">
                         <i class="bi bi-clipboard"></i> Copy
                     </button>
@@ -146,6 +152,7 @@ const $toast = useToast();
 
 const form = reactive({
     tour_title: '',
+    tour_id: '',
     photo_path: '',
     tour_desc: '',
     tour_logo: '',
@@ -161,7 +168,7 @@ watchEffect(() => {
     }
 })
 
-async function saveNewTournament() {
+async function saveTournament() {
     if (!form.tour_title) {
         $toast.default('Enter Tournament Title', { position: 'top-right' });
         return;
@@ -179,9 +186,10 @@ async function saveNewTournament() {
     newForm.append('tour_logo', form.tour_logo)
     newForm.append('tour_desc', form.tour_desc ?? '')
     newForm.append('tour_type', form.tour_type ?? '')
+    newForm.append('tour_id', props.editingData?.tour_id ?? '')
 
     try {
-        let resp = await api.createTournament(newForm)
+        const resp = props.isEditing ? await api.updateTournament(newForm) : await api.createTournament(newForm)
         if (resp.status == 203) {
             $toast.warning('Title already exists', { position: 'top-right' });
             form.isSaving = false;

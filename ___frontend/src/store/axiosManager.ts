@@ -109,6 +109,10 @@ export default {
         return $instanceForm.post(`createTournament`, data)
     },
 
+    updateTournament(data: FormData) {
+        return $instanceForm.post(`updateTournament`, data)
+    },
+
     deleteTournament(id: any) {
         return $instance.get(`deleteTournament/${id}`)
     },

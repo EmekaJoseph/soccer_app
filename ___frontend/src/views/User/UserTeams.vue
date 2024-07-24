@@ -14,7 +14,7 @@
                         <div class="col-lg-5">
                             <div class="card shadow-sm">
                                 <div class="card-header text-muted fw-bold bg-transparent border-0">
-                                    CREATE A TEAM
+                                    ADD A TEAM
                                 </div>
                                 <div class="card-body">
                                     <!-- <fieldset class="border rounded-3 p-3  "> -->
@@ -23,30 +23,44 @@
                                         </legend> -->
                                     <div class="row g-3">
                                         <div v-if="selectedTournament.type == 'cup'" class="col-md-12">
-                                            <label>Group: </label>
-                                            <select v-model="form.group_in" class="form-select  text-uppercase">
-                                                <option value="" selected disabled>--select--</option>
-                                                <option v-for="i in userData.valid_groups" :key="i" :value="i">
-                                                    {{ i }}
-                                                </option>
-                                            </select>
+                                            <div class="form-floating">
+                                                <select id="fo4444" v-model="form.group_in"
+                                                    class="form-select  text-uppercase">
+                                                    <option value="" selected disabled>--select--</option>
+                                                    <option v-for="i in userData.valid_groups" :key="i" :value="i">
+                                                        {{ i }}
+                                                    </option>
+                                                </select>
+                                                <label for="fo4444">Group</label>
+                                            </div>
+
                                         </div>
 
                                         <div class="col-md-12">
-                                            <label>Team Name:</label>
-                                            <input v-model="form.team_name" type="text" class="form-control">
+                                            <div class="form-floating">
+                                                <input v-model="form.team_name" type="text" class="form-control"
+                                                    id="formId1xaxa" placeholder="" />
+                                                <label for="formId1xaxa">Team Name</label>
+                                            </div>
+
                                         </div>
                                         <div class="col-md-12">
-                                            <label>About Team (optional):</label>
-                                            <textarea v-model="form.team_brief" rows="4"
-                                                class="form-control"></textarea>
+                                            <div class="form-floating">
+                                                <textarea id="team_brief" v-model="form.team_brief"
+                                                    style="height: 100px;" class="form-control"
+                                                    placeholder=""></textarea>
+                                                <label for="team_brief">About Team (optional):</label>
+                                            </div>
                                         </div>
 
                                         <div v-if="userData.tournaments.length" class="col-md-12 mt-3">
                                             <button v-if="!form.isSaving" @click.prevent="save"
                                                 class="btn btn-primary-theme btn w-100">Save</button>
-                                            <button v-else class="float-end theme-btn btn w-100"
-                                                disabled>Saving...</button>
+                                            <button v-else class="btn btn-primary-theme w-100" type="button" disabled>
+                                                <span class="spinner-border spinner-border-sm" role="status"
+                                                    aria-hidden="true"></span>
+                                                Saving...
+                                            </button>
                                         </div>
                                     </div>
                                     <!-- </fieldset> -->

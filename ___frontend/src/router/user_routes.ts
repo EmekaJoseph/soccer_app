@@ -3,6 +3,7 @@ import userLayout from '../views/User/UserLayout.vue'
 
 // @ts-ignore
 const GUARD = (to, from, next) => {
+
     const authStore = useAuthStore()
     if (!authStore.isLoggedIn) {
         next({ path: '/login' });
@@ -27,8 +28,8 @@ export default [
                 component: () => import('../views/User/UserTeams.vue'),
             },
             {
-                path: 'schedules', name: 'Schedules',
-                component: () => import('../views/User/UserSchedules.vue'),
+                path: 'matches', name: 'Matches',
+                component: () => import('../views/User/UserMatches.vue'),
             },
             {
                 path: 'results', name: 'Results',

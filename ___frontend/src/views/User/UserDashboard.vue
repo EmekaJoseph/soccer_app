@@ -50,7 +50,7 @@
                                                     <template #item-link="item">
                                                         <button @click="openTournamentLinkModal(item.tour_id)"
                                                             class="btn btn-link text-primary-theme btn-sm text-decoration-none border-0 p-0 m-0">
-                                                            Open
+                                                            <i class="bi bi-box-arrow-up-right"></i> open link
                                                         </button>
                                                     </template>
 
@@ -144,7 +144,7 @@
 
     <!-- linkModal -->
     <copyLinkModal v-if="copyModal" :link-to-copy="linkToCopy" @close="copyModal = false" />
-    <newTournamentModal v-if="newTournModal" :isEditing :editingData @close="closeTourModal"
+    <tournamentFormModal v-if="newTournModal" :isEditing :editingData @close="closeTourModal"
         @done="userData.getTournaments()" />
 
 </template>
@@ -155,7 +155,7 @@ import { useUserDataStore } from '@/store/userDataStore';
 import type { Header } from "vue3-easy-data-table";
 import api from '@/store/axiosManager'
 import copyLinkModal from '@/components/modals/userModals/copyLinkModal.vue';
-import newTournamentModal from '@/components/modals/userModals/newTournamentModal.vue';
+import tournamentFormModal from '@/components/modals/userModals/tournamentFormModal.vue';
 import { useToast } from 'vue-toast-notification';
 import { useAuthStore } from '@/store/authStore';
 import ComponentOtherUsers from './ComponentOtherUsers.vue'
@@ -183,10 +183,6 @@ function openTourModal(editing = false, editData = null) {
     isEditing.value = editing
     newTournModal.value = true
     editingData.value = editData
-
-    console.log(isEditing.value);
-    console.log(editingData.value);
-
 }
 
 function closeTourModal() {
@@ -209,8 +205,8 @@ const headers: Header[] = [
     { text: "", value: "tour_logo" },
     { text: "Name", value: "tour_title" },
     { text: "TYPE", value: "tour_type" },
-    { text: "DATED CREATED", value: "created" },
-    { text: "Link", value: "link" },
+    { text: "CREATED", value: "created" },
+    { text: "", value: "link" },
     { text: "", value: "edit" },
     { text: "", value: "delete" },
 ];

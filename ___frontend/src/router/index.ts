@@ -21,6 +21,7 @@ const router = createRouter({
   ],
 })
 
+
 router.afterEach((to, from) => {
   document.title = "SOCC | " + to.name?.toString()
 })

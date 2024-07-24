@@ -18,9 +18,9 @@ Route::controller(AccountController::class)->group(function () {
     Route::get('subUsersList',  'subUsersList');
 });
 
-Route::post('createTournament',  [TournamentController::class, 'createTournament']);
 Route::get('getTournaments',  [TournamentController::class, 'getTournaments']);
-Route::get('updateTournament/{tour_id}',  [TournamentController::class, 'updateTournament']);
+Route::post('createTournament',  [TournamentController::class, 'createTournament']);
+Route::post('updateTournament',  [TournamentController::class, 'update']);
 Route::get('deleteTournament/{tour_id}',  [TournamentController::class, 'deleteTournament']);
 
 Route::resource('team', TeamsController::class)->except(['index']);;

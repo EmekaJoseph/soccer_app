@@ -106,24 +106,31 @@ class TournamentController extends BaseController
 
 
     // update Tournament
-    public function update(Request $req, $tour_id)
+    public function update(Request $req)
     {
         $tour_title = $req->input('tour_title');
+        $tour_desc = $req->input('tour_desc', null);
+        $tour_type = $req->input('tour_type', null);
+        $tour_id = $req->tour_id;
 
         if (TournamentModel::where('user_id', Auth::id())
-            ->whereNot('tour_id', $tour_id)->where('tour_title', $tour_title)->exists()
+            ->whereNot('tour_id', $tour_id)
+            ->where('tour_title', $tour_title)
+            ->exists()
         ) {
             return response()->json('exists', 203);
         }
 
-        $tournment = TournamentModel::find($tour_id);
-
-        $tournment->tour_title = $tour_title;
-
-        $tournment->save();
+        $tournament = TournamentModel::find($tour_id);
+        $tournament->update([
+            'tour_title' => $tour_title,
+            'tour_desc' => $tour_desc,
+            'tour_type' => $tour_type,
+        ]);
 
         return response()->json('updated', 200);
     }
+
 
     public function deleteTournament($tour_id)
     {

@@ -40,7 +40,7 @@
                         <RouterLink to="/user/teams"><i class="bi bi-people"></i> Teams</RouterLink>
                     </li>
                     <li class="list-group-item">
-                        <RouterLink to="/user/schedules"><i class="bi bi-calendar2-event"></i> Schedules</RouterLink>
+                        <RouterLink to="/user/matches"><i class="bi bi-calendar2-event"></i> Matches</RouterLink>
                     </li>
                     <li class="list-group-item">
                         <RouterLink to="/user/results"><i class="bi bi-list-check"></i> Results</RouterLink>
