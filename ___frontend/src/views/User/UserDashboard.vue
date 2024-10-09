@@ -8,14 +8,14 @@
             <div class="row justify-content-center gy-4">
                 <div class="col-lg-8">
                     <div class="card shadow-sm border-0 card-fixed-height">
-                        <div class="card-header text-muted fw-bold bg-transparent border-0">
+                        <div v-if="userData.tournaments.length" class="card-header text-muted  bg-transparent border-0">
                             TOURNAMENTS <span class="badge rounded-pill text-bg-secondary ">
                                 {{ userData.tournaments.length }}</span>
 
                             <span v-if="!dataIsLoading && authStore.isAdmin" @click="openTourModal()"
                                 class="float-end  hover-tilt-Y text-primary-theme cursor-pointer fw-bold">
                                 <span class="">
-                                    New <i class="bi bi-plus-circle-fill"></i>
+                                    click to add new <i class="bi bi-plus-lg"></i>
                                 </span>
                             </span>
                         </div>
@@ -25,13 +25,28 @@
                             </legend> -->
                             <div class="content-panel">
                                 <div class="col-md-12 mt-3">
-                                    <div class="card border-0">
+                                    <div class="card border-0 h-100 ">
                                         <loadingSpinner v-if="dataIsLoading" />
                                         <div v-else class="card-body">
-                                            <div v-if="!userData.tournaments.length"
-                                                class="card-body text-center text-muted fs-4 mt-5">
-                                                You dont have any Tournaments, create One.
+                                            <div class="d-flex justify-content-center align-items-center"
+                                                v-if="!userData.tournaments.length">
+                                                <div>
+                                                    <div class="text-center">
+                                                        <i style="font-size: 5rem;"
+                                                            class="bi bi-database-fill-exclamation text-dim"></i>
+                                                    </div>
+                                                    <div class=" text-center text-dim fs-5">
+                                                        You dont have any Tournaments,
+                                                        <div v-if="!dataIsLoading && authStore.isAdmin"
+                                                            @click="openTourModal()"
+                                                            class="  hover-tilt-Y text-primary-theme cursor-pointer">
+
+                                                            Click here create one
+                                                        </div>.
+                                                    </div>
+                                                </div>
                                             </div>
+
                                             <div v-else class="card-body p-0">
                                                 <EasyDataTable class="border-0" :headers="headers"
                                                     :items="userData.tournaments" show-index>
@@ -50,7 +65,7 @@
                                                     <template #item-link="item">
                                                         <button @click="openTournamentLinkModal(item.tour_id)"
                                                             class="btn btn-link text-primary-theme btn-sm text-decoration-none border-0 p-0 m-0">
-                                                            <i class="bi bi-box-arrow-up-right"></i> open link
+                                                            <i class="bi bi-box-arrow-up-right"></i> open
                                                         </button>
                                                     </template>
 
@@ -206,9 +221,9 @@ const headers: Header[] = [
     { text: "Name", value: "tour_title" },
     { text: "TYPE", value: "tour_type" },
     { text: "CREATED", value: "created" },
-    { text: "", value: "link" },
-    { text: "", value: "edit" },
-    { text: "", value: "delete" },
+    { text: "Link", value: "link" },
+    { text: "Edit", value: "edit" },
+    { text: "Delete", value: "delete" },
 ];
 
 async function deleteTournament(tour_id: string | number) {

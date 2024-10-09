@@ -167,3 +167,18 @@ button:focus,
   height: 550px;
   overflow-y: auto;
 }
+
+
+/* .vue3-easy-data-table START */
+.vue3-easy-data-table__body td, 
+.vue3-easy-data-table__main.fixed-header th , 
+.vue3-easy-data-table__footer{
+  border: none !important;
+  padding-block: 25px !important;
+}
+
+.vue3-easy-data-table__main.fixed-header th {
+  text-transform: uppercase;
+  background-color: #f8f8fd98 !important;
+}
+/* .vue3-easy-data-table END */

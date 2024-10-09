@@ -1,11 +1,11 @@
 <template>
     <div class="modal fade bg-faint show d-block" id="TournamentFormModal" tabindex="-1" data-bs-backdrop="static"
         data-bs-keyboard="false" role="dialog" aria-hidden="true">
-        <div class="modal-dialog  modal-dialog-centered" role="document">
+        <div class="modal-dialog  modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header border-0">
                     <h5 class="modal-title">
-
+                        NEW TOURNAMENT
                     </h5>
                     <button @click="emit('close')" type="button" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Close"></button>
@@ -17,86 +17,93 @@
                         :onSuccess="onSuccessfulPayment" :onCanel="onCancelledPayment"></paystack> -->
 
 
-                    <form @submit.prevent="saveTournament" class="row justify-content-center g-3">
-                        <div class="col-md-12">
+                    <form @submit.prevent="saveTournament" class="row  g-3">
+                        <div class="col-md-6">
                             <div class="form-floating">
                                 <input type="text" class="form-control" v-model="form.tour_title" id="titleT"
                                     placeholder="" />
-                                <label for="titleT">Name of Tournament</label>
+                                <label for="titleT">Name:</label>
                             </div>
                         </div>
-                        <div class="col-12" v-if="!props.isEditing">
+                        <div class="col-md-6" v-if="!props.isEditing">
                             <div class="form-floating">
                                 <select id="Ttype" v-model="form.tour_type" class="form-select">
                                     <option value="cup" selected>CUP</option>
                                     <option value="league">LEAGUE</option>
                                 </select>
-                                <label for="Ttype">Tounament Type</label>
+                                <label for="Ttype">Type:</label>
                             </div>
 
-
+                        </div>
+                        <div class="col-12">
+                            <span v-html="tourTypeInfomation" class="small text-muted"> </span>
                         </div>
 
                         <div class="col-12">
                             <div class="form-floating">
                                 <textarea v-model="form.tour_desc" id="Tdesc" placeholder="" class="form-control"
                                     style="height: 85px"></textarea>
-                                <label for="Tdesc">Tounament Description</label>
+                                <label for="Tdesc">Description:</label>
                             </div>
                         </div>
 
                         <div class="col-12" v-if="!props.isEditing">
                             <div class="">
-                                <div class="mb-3">Tournament Logo:</div>
+
                                 <div class="row g-1">
-                                    <div class="col-md-8">
+                                    <!-- <div class="col-md-8">
                                         <div class="dropzone" v-bind="getRootProps()">
                                             <div class="text-center small">
                                                 <div><i class="bi bi-image color-theme"></i></div>
                                                 <div><span class="color-theme">Click to replace</span> or drag and
                                                     drop
                                                 </div>
-                                                <!-- <div class="fw-light">SVG, PNG, JPG or GIF (max. 400 x 400px)</div> -->
+                                                <div class="fw-light">SVG, PNG, JPG or GIF (max. 400 x 400px)</div>
                                             </div>
                                             <input v-bind="getInputProps()" />
                                         </div>
-                                    </div>
+                                    </div> -->
 
-                                    <div class="col-md-4  d-flex justify-content-center">
-                                        <div class="image-circle"
-                                            :style="{ backgroundImage: `url(${form.photo_path})` }">
-                                        </div>
-                                        <!-- <div class="image-circle"></div> -->
 
-                                    </div>
                                 </div>
                             </div>
                         </div>
 
+                        <div class="col-md-3  cursor-pointer">
+                            <div class="mb-1"> Logo:</div>
+                            <div class="image-circle" v-bind="getRootProps()"
+                                :style="{ backgroundImage: `url(${form.photo_path})` }">
+                                <input v-bind="getInputProps()" />
+                            </div>
+                            <!-- <div class="image-circle"></div> -->
 
-                        <div class="col-12">
-                            <button v-if="!form.isSaving" type="submit" class="btn btn-primary-theme w-100">
-                                {{ !props.isEditing ? 'Create New Tounament' : 'Update Details' }}
+                        </div>
+
+                        <div class="col-md-12">
+                            <button v-if="!form.isSaving" type="submit" class="btn btn-primary-theme float-end btn-lg"
+                                style="width: 200px;">
+                                {{ !props.isEditing ? 'Create ' : 'Update ' }}
                             </button>
-                            <button v-else class="btn btn-primary-theme w-100" type="button" disabled>
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                Saving...
+                            <button v-else class="btn btn-primary-theme float-end btn-lg " style="width: 200px;"
+                                type="button" disabled>
+                                <span class="spinner-border spinner-border-s" role="status" aria-hidden="true"></span>
+
                             </button>
 
                         </div>
                     </form>
 
                 </div>
-                <div class="modal-footer border-0">
+                <!-- <div class="modal-footer border-0">
 
-                    <!-- <button @click="copy(linkToCopy)" v-if="!copied" type="button" class="btn btn-primary-theme w-100">
-                        <i class="bi bi-clipboard"></i> Copy
+                    <button v-if="!form.isSaving" type="submit" class="btn btn-primary-theme btn-lg">
+                        {{ !props.isEditing ? 'Create ' : 'Update ' }}
                     </button>
-
-                    <button v-else type="button" class="btn btn-light bg-success-subtle w-100">
-                        <i class="bi bi-check-lg"></i> Copied
-                    </button> -->
-                </div>
+                    <button v-else class="btn btn-primary-theme " type="button" disabled>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Saving...
+                    </button>
+                </div> -->
             </div>
         </div>
     </div>
@@ -105,7 +112,7 @@
 
 
 <script setup lang="ts">
-import { reactive, watchEffect } from 'vue';
+import { computed, reactive, watchEffect } from 'vue';
 import { useToast } from 'vue-toast-notification';
 import api from '@/store/axiosManager'
 import { useDropzone } from "vue3-dropzone";
@@ -230,6 +237,16 @@ const emit = defineEmits(['close', 'done'])
 // }
 
 
+
+const tourTypeInfomation = computed(() => {
+    return form.tour_type == 'cup' ?
+        ` A <b>Cup</b> competition is typically a knockout tournament. Teams play a single
+         match against each other. The losing team is eliminated, and the winning team advances to
+         the next round.` :
+        `A <b>League</b> is a series of games played over a predetermined period, typically a
+          season. Each team plays a set number of matches against other teams in the league.`
+})
+
 </script>
 
 <style lang="css" scoped>
@@ -242,6 +259,10 @@ const emit = defineEmits(['close', 'done'])
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
+}
+
+.image-circle:hover {
+    border-color: #41b883;
 }
 
 
