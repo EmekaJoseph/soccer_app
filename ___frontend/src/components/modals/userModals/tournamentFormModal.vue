@@ -1,16 +1,16 @@
 <template>
-    <div class="modal fade bg-faint show d-block" id="TournamentFormModal" tabindex="-1" data-bs-backdrop="static"
-        data-bs-keyboard="false" role="dialog" aria-hidden="true">
+    <div class="modal fade bg-faint show d-block animate__animated animate__fadeIn" id="TournamentFormModal"
+        tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-hidden="true">
         <div class="modal-dialog  modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title">
+            <div class="modal-content border-0">
+                <div class="modal-header border-0 ">
+                    <h5 class="modal-title ">
                         NEW TOURNAMENT
                     </h5>
                     <button @click="emit('close')" type="button" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body ">
 
                     <!-- <paystack buttonClass="'button-class btn btn-primary'" buttonText="Pay Online"
                         :publicKey="publicKey" :email="email" :amount="amount" :reference="''"

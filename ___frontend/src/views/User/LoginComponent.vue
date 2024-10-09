@@ -1,5 +1,5 @@
 <template>
-    <div class="min-vh-100 d-flex justify-content-center align-items-center">
+    <div class="min-vh-100 d-flex animate__animated animate__fadeIn justify-content-center align-items-center">
         <div class="col-md-8">
             <div class="card border-0">
                 <div class="card-header bg-transparent fs-5 text-center fw-bolder border-0">

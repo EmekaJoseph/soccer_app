@@ -11,7 +11,7 @@ const app = createApp(App)
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
-
+import 'animate.css';
 import './assets/custom.css'
 
 import VueDatePicker from '@vuepic/vue-datepicker';

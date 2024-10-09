@@ -1,7 +1,7 @@
 <template>
     <!-- <section class="bg-gradient"> -->
     <!-- <div class="container"> -->
-    <div class="min-vh-100 d-flex justify-content-center align-items-center">
+    <div class="min-vh-100 animate__animated animate__fadeIn d-flex justify-content-center align-items-center">
         <div class="col-md-10">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-transparent fs-5 text-center fw-bolder border-0">
