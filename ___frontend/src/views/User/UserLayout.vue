@@ -18,10 +18,11 @@
             </div>
         </nav>
 
-        <div class="py-5 container ">
-
-            <RouterView />
-
+        <div>
+            <ComponentSideBar />
+            <div class="py-5 px-lg-4 main-content ">
+                <RouterView />
+            </div>
         </div>
 
 
@@ -32,7 +33,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body">
-                <ul class="list-group list-group-flush">
+                <ul class="list-group list-group-flush" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample">
                     <li class="list-group-item">
                         <RouterLink to="/user/dashboard"><i class="bi bi-view-stacked"></i> Dashboard</RouterLink>
                     </li>
@@ -68,6 +69,7 @@ import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/store/axiosManager'
 import { useAuthStore } from '@/store/authStore';
+import ComponentSideBar from './ComponentSideBar.vue';
 
 const authStore = useAuthStore()
 
@@ -77,9 +79,9 @@ const route = useRoute()
 const router = useRouter()
 const btnClose = ref<any>()
 
-watch(() => route.path, () => {
-    btnClose.value.click()
-})
+// watch(() => route.path, () => {
+//     btnClose.value.click()
+// })
 
 function logOut() {
     btnClose.value.click()
@@ -138,4 +140,42 @@ function logOut() {
     /* background-color: var(--bs-light); */
     background-color: #f5f6f8;
 }
+
+
+
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 250px !important;
+    /* border-right: 1px solid v-bind('templateStore.borderInDark') !important; */
+    background-color: #ffffff;
+    overflow-y: auto;
+    padding-right: 0px;
+    padding-top: 100px;
+}
+
+.main-content {
+    margin-left: 250px;
+}
+
+@media (max-width: 767px) {
+    .sidebar {
+        display: none;
+    }
+
+    .main-content {
+        margin-left: 0px;
+    }
+}
+
+@media (min-width: 767px) {
+    .navbar-toggler-icon {
+        display: none;
+    }
+}
+
+/*  */
 </style>
