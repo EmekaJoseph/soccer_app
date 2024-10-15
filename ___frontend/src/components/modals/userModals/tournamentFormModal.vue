@@ -5,7 +5,7 @@
             <div class="modal-content border-0 ">
                 <div class="modal-header border-0 ">
                     <h5 class="modal-title ">
-                        NEW TOURNAMENT
+                        {{ !props.isEditing ? 'NEW TOURNAMENT' : 'UPATE TOUNAMENT' }}
                     </h5>
                     <button @click="emit('close')" type="button" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Close"></button>
@@ -125,6 +125,7 @@ const props = defineProps({
         required: true,
         type: Boolean
     },
+
     editingData: {
         required: false,
         type: Object
@@ -160,16 +161,20 @@ const form = reactive({
     tour_id: '',
     photo_path: '',
     tour_desc: '',
-    tour_logo: '',
+    tour_logo: null,
     tour_type: 'cup',
     isSaving: false
 })
+
+const hostURL = import.meta.env.VITE_API_URL;
 
 watchEffect(() => {
     if (props.isEditing) {
         form.tour_title = props.editingData?.tour_title
         form.tour_type = props.editingData?.tour_type
         form.tour_desc = props.editingData?.tour_desc
+        if (props.editingData?.tour_logo)
+            form.photo_path = hostURL + '/' + props.editingData.tour_logo
     }
 })
 
@@ -188,10 +193,11 @@ async function saveTournament() {
 
     const newForm = new FormData();
     newForm.append('tour_title', form.tour_title)
-    newForm.append('tour_logo', form.tour_logo)
     newForm.append('tour_desc', form.tour_desc ?? '')
     newForm.append('tour_type', form.tour_type ?? '')
     newForm.append('tour_id', props.editingData?.tour_id ?? '')
+    if (form.tour_logo)
+        newForm.append('tour_logo', form.tour_logo)
 
     try {
         const resp = props.isEditing ? await api.updateTournament(newForm) : await api.createTournament(newForm)

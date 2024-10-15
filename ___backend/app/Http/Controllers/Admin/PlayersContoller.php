@@ -70,7 +70,7 @@ class PlayersContoller extends BaseController
         $player = PlayerModel::find($player_id);
         $image = null;
         if ($player->tour_logo)
-            HelperUnlinkFile($this->folder_name, $player->tour_logo);
+            HelperUnlinkFile($player->tour_logo);
 
         if ($req->hasFile("image")) {
             $image = $req->file("image");
@@ -94,7 +94,7 @@ class PlayersContoller extends BaseController
         $player = PlayerModel::find($player_id);
 
         if ($player->image)
-            HelperUnlinkFile($this->folder_name, $player->image);
+            HelperUnlinkFile($player->image);
 
         $player->delete();
 

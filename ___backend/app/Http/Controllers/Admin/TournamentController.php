@@ -55,7 +55,7 @@ class TournamentController extends BaseController
             'tour_title' => $tour_title,
             'user_id' => Auth::id(),
             'tour_type' =>   $tour_type,
-            'tour_logo' =>   $this->folder_name . '/' . $tour_logo,
+            'tour_logo' =>   $tour_logo,
             'tour_desc' =>   $tour_desc,
         ]);
 
@@ -93,14 +93,14 @@ class TournamentController extends BaseController
         $tournament = TournamentModel::find($tour_id);
         $tour_logo = null;
         if ($tournament->tour_logo)
-            HelperUnlinkFile($this->folder_name, $tournament->tour_logo);
+            HelperUnlinkFile($tournament->tour_logo);
 
         if ($req->hasFile("tour_logo")) {
             $image = $req->file("tour_logo");
             $tour_logo = HelperUploadImageAndResize($this->folder_name, $image, 50, 50, 'logo_');
         }
 
-        $tournament->tour_logo = $this->folder_name . '/' . $tour_logo;
+        $tournament->tour_logo = $tour_logo;
         $tournament->save();
     }
 
@@ -112,6 +112,7 @@ class TournamentController extends BaseController
         $tour_desc = $req->input('tour_desc', null);
         $tour_type = $req->input('tour_type', null);
         $tour_id = $req->tour_id;
+
 
         if (TournamentModel::where('user_id', Auth::id())
             ->whereNot('tour_id', $tour_id)
@@ -127,6 +128,16 @@ class TournamentController extends BaseController
             'tour_desc' => $tour_desc,
             'tour_type' => $tour_type,
         ]);
+
+        if ($req->hasFile("tour_logo")) {
+            // remove existing file
+            HelperUnlinkFile($tournament->tour_logo);
+
+            // add new file
+            $image = $req->file("tour_logo");
+            $tour_logo = HelperUploadImageAndResize($this->folder_name, $image, 50, 50, 'logo_');
+            $tournament->update(['tour_logo' => $tour_logo]);
+        }
 
         return response()->json('updated', 200);
     }

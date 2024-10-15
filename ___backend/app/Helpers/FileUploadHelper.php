@@ -41,16 +41,17 @@ if (!function_exists('HelperUploadImageAndResize')) {
             File::makeDirectory(public_path($folder));
         }
 
-        $filename = $file->getClientOriginalName();
+        // $filename = $file->getClientOriginalName();
         $extension = $file->getClientOriginalExtension();
         $filename = $name . time() . "." . $extension;
+        $savedName = $folder  . '/' . $filename;
 
         $img = Image::make($file);
         $img->resize($width, $height, function ($constraint) {
             $constraint->aspectRatio();
-        })->save($folder  . '/' . $filename);
+        })->save($savedName);
 
-        return $filename;
+        return $savedName;
     }
 }
 
