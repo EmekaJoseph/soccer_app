@@ -6,16 +6,51 @@
         </div>
         <div v-else>
             <div class="row justify-content-center gy-4">
+                <div class="col-md-4">
+                    <div class="card border-0  hover-tilt-Y">
+                        <div class="card-body">
+                            <div class="large-text">{{ userData.tournaments.length }}
+                                <span class="fs-2 float-end bi bi-card-checklist text-danger-emphasis"></span>
+                            </div>
+                            <div class="small">{{ userData.tournaments.length == 1 ? 'Tournament' : 'Tournaments' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0  hover-tilt-Y">
+                        <div class="card-body">
+                            <div class="large-text">27
+                                <span class="fs-2 float-end bi bi-people text-warning-emphasis"></span>
+                            </div>
+                            <div class="small">Visitors
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 hover-tilt-Y">
+                        <div class="card-body">
+                            <div class="large-text">10
+                                <span class="fs-2 float-end bi bi-activity text-success-emphasis"></span>
+                            </div>
+                            <div class="small">Other Data
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-lg-8">
-                    <div class="card shadow-sm border-0 card-fixed-height">
+                    <div class="card  border-0 ">
                         <div v-if="userData.tournaments.length" class="card-header text-muted  bg-transparent border-0">
-                            TOURNAMENTS <span class="badge rounded-pill text-bg-secondary ">
-                                {{ userData.tournaments.length }}</span>
+                            TOURNAMENTS
+                            <span class="badge rounded-pill text-bg-secondary fw-lighter xsmall ">
+                                {{ userData.tournaments.length }}
+                            </span>
 
                             <span v-if="!dataIsLoading && authStore.isAdmin" @click="openTourModal()"
                                 class="float-end  hover-tilt-Y text-primary-theme cursor-pointer fw-bold">
                                 <span class="">
-                                    click to add new <i class="bi bi-plus-lg"></i>
+                                    Add New Tournament <i class="bi bi-plus-lg"></i>
                                 </span>
                             </span>
                         </div>
@@ -25,8 +60,8 @@
                             </legend> -->
                             <div class="content-panel">
                                 <div class="col-md-12 mt-3">
-                                    <div class="card border-0 h-100 ">
-                                        <loadingSpinner v-if="dataIsLoading" />
+                                    <div class="card  card-fixed-height">
+                                        <componentLoadingSpinner v-if="dataIsLoading" />
                                         <div v-else class="card-body">
                                             <div class="d-flex justify-content-center align-items-center"
                                                 v-if="!userData.tournaments.length">
@@ -269,5 +304,10 @@ async function getFeedbacks() {
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
+}
+
+.large-text {
+    font-size: 2.3rem;
+    font-weight: bolder;
 }
 </style>

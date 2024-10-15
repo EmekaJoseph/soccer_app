@@ -141,7 +141,7 @@ class TournamentController extends BaseController
         $tour = TournamentModel::find($tour_id);
 
         if ($tour->tour_logo)
-            HelperUnlinkFile($this->folder_name, $tour->tour_logo);
+            HelperUnlinkFile($tour->tour_logo);
 
         $tour->delete();
 

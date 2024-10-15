@@ -1,8 +1,9 @@
 <template>
     <div class="modal fade bg-faint show d-block " id="copyLinkModal" tabindex="-1" data-bs-backdrop="static"
         data-bs-keyboard="false" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
-        <div class="modal-dialog  modal-dialog-centered" role="document">
-            <div class="modal-content">
+        <div class="modal-dialog  modal-dialog-centered animate__animated animate__slideInDown animate__faster"
+            role="document">
+            <div class="modal-content border-0">
                 <div class="modal-header border-0">
                     <h5 class="modal-title" id="modalTitleId">
 

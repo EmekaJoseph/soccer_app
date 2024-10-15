@@ -43,7 +43,7 @@ const route = useRoute()
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to bottom, #060e12b8 100%, rgba(0, 0, 0, 0) 100%);
+    background: linear-gradient(to bottom, var(--theme-color-7) 100%, #00000000 100%);
 }
 
 section {

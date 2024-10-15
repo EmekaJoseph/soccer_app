@@ -131,7 +131,7 @@
 
                                     <div class="col-md-12 mt-3">
                                         <div class="card border-0">
-                                            <loadingSpinner v-if="dataIsLoading" />
+                                            <componentLoadingSpinner v-if="dataIsLoading" />
                                             <div v-else class="card-body p-1 m-1">
                                                 <div v-if="userData.tournamentResults">
                                                     <EasyDataTable class="border-0 text-nowrap" :headers="tableHeaders"

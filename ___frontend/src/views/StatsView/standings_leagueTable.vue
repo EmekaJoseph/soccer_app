@@ -7,6 +7,11 @@
             <EasyDataTable table-class-name="easy-table-cup-league" class="border-0" :headers="headers" :items="data"
                 show-index>
 
+                <template #header="header">
+                    <div class="fw-bolde">
+                        {{ header.text == '#' ? '' : header.text }}</div>
+                </template>
+
                 <template #item-team_badge="item">
                     <div v-if="item.badge"> {{ item.badge }} </div>
                     <div v-else>

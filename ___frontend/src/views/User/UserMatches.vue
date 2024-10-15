@@ -105,7 +105,7 @@
                                 <div class="card-body">
                                     <div class="col-md-12 mt-3">
                                         <div class="card border-0 p-0">
-                                            <loadingSpinner v-if="dataIsLoading" />
+                                            <componentLoadingSpinner v-if="dataIsLoading" />
                                             <div v-else class="card-body p-1 m-1 text-nowrap">
                                                 <div v-if="userData.tournamentMatches">
                                                     <EasyDataTable class="border-0" :headers="tableHeaders"

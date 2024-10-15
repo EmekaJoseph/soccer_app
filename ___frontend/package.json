@@ -24,6 +24,7 @@
     "vue-sweetalert2": "^5.0.11",
     "vue-toast-notification": "3.0",
     "vue-writer": "^1.2.0",
+    "vue3-colorpicker": "^2.3.0",
     "vue3-dropzone": "^2.2.1",
     "vue3-easy-data-table": "^1.5.45",
     "vue3-paystack": "^0.0.5"

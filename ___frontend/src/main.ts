@@ -31,6 +31,8 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 // https://swiperjs.com/element
 // import 'swiper/css';
 
+//https://aesoper101.github.io/vue3-colorpicker/?path=/docs/example-introduction--docs
+
 // npm install vue-toast-notification@^3.0
 import 'vue-toast-notification/dist/theme-sugar.css';
 
@@ -43,13 +45,13 @@ app.component('emptyDataComponent', emptyDataComponent);
 import tourDropdownSelect from '@/components/tourDropdownSelect.vue';
 app.component('tourDropdownSelect', tourDropdownSelect);
 
-import loadingSpinner from '@/components/loadingSpinner.vue';
-app.component('loadingSpinner', loadingSpinner);
+import componentLoadingSpinner from '@/components/componentLoadingSpinner.vue';
+app.component('componentLoadingSpinner', componentLoadingSpinner);
 
 // import shareSite from '@/components/share.vue'
 // app.component('shareSite', shareSite);
 
-
+// @ts-ignore
 import Vue3EasyDataTable from 'vue3-easy-data-table';
 import 'vue3-easy-data-table/dist/style.css';
 app.component('EasyDataTable', Vue3EasyDataTable);

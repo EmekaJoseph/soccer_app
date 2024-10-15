@@ -56,12 +56,11 @@ if (!function_exists('HelperUploadImageAndResize')) {
 
 
 if (!function_exists('HelperUnlinkFile')) {
-    function HelperUnlinkFile($folder, $filename = null)
+    function HelperUnlinkFile($file)
     {
-        if ($filename !== null) {
-            $file = $folder . '/' . $filename;
-            if (file_exists($file)) {
-                unlink($file);
+        if ($file !== null) {
+            if (File::exists(public_path($file))) {
+                File::delete(public_path($file));
             }
         }
     }

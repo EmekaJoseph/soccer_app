@@ -43,6 +43,7 @@ class TeamsController extends BaseController
         $team_name = $req->input('team_name');
         $tour_id = $req->input('tour_id');
         $team_brief = $req->input('team_brief');
+        $team_color = $req->input('team_color', null);
         $group_in = $req->input('group_in', null);
         $address = $req->input('address', null);
         $manager = $req->input('manager', null);
@@ -68,6 +69,7 @@ class TeamsController extends BaseController
             'team_name' => $team_name,
             'tour_id' => $tour_id,
             'team_brief' => $team_brief,
+            'team_color' => $team_color,
             'group_in' => $group_in,
             'address' => $address,
             'manager' => $manager,

@@ -88,7 +88,7 @@ button:focus,
 }
 
 
-/* easy table start */
+/* easy table start ######################################################### */
 .easy-table-cup-league .vue3-easy-data-table__footer {
   display: none !important;
   margin: 0px !important;
@@ -119,7 +119,23 @@ button:focus,
 
 }
 
-/* easy table end */
+.vue3-easy-data-table__body td, 
+.vue3-easy-data-table__main.fixed-header th , 
+.vue3-easy-data-table__footer{
+  border: none !important;
+  padding-block: 20px !important;
+}
+
+.vue3-easy-data-table__main.fixed-header th {
+  text-transform: uppercase;
+  background-color: #f8f8fd98 !important;
+}
+
+/* easy table end ######################################################### */
+
+
+
+
 
 .text-dim {
   color: #b3b0b0;
@@ -170,15 +186,5 @@ button:focus,
 
 
 /* .vue3-easy-data-table START */
-.vue3-easy-data-table__body td, 
-.vue3-easy-data-table__main.fixed-header th , 
-.vue3-easy-data-table__footer{
-  border: none !important;
-  padding-block: 25px !important;
-}
 
-.vue3-easy-data-table__main.fixed-header th {
-  text-transform: uppercase;
-  background-color: #f8f8fd98 !important;
-}
 /* .vue3-easy-data-table END */

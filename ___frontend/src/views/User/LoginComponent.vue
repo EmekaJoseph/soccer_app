@@ -55,9 +55,9 @@
                         </div>
 
                         <div class="col-12 mt-5 text-center">
-                            Create account?
+                            Dont have an account?
                             <RouterLink class="text-decoration-none fw-bolder text-primary-theme" to="/register">
-                                Register
+                                Create account
                             </RouterLink>
                         </div>
                     </form>

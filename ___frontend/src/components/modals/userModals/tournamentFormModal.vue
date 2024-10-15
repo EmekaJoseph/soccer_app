@@ -1,8 +1,8 @@
 <template>
-    <div class="modal fade bg-faint show d-block animate__animated animate__fadeIn" id="TournamentFormModal"
-        tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-hidden="true">
-        <div class="modal-dialog  modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content border-0">
+    <div class="modal fade bg-faint show d-block " id="TournamentFormModal" tabindex="-1" data-bs-backdrop="static"
+        data-bs-keyboard="false" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg animate__animated animate__slideInDown animate__faster" role="document">
+            <div class="modal-content border-0 ">
                 <div class="modal-header border-0 ">
                     <h5 class="modal-title ">
                         NEW TOURNAMENT
@@ -130,8 +130,6 @@ const props = defineProps({
         type: Object
     }
 })
-
-
 
 
 const { getRootProps, getInputProps, ...rest } = useDropzone({

@@ -1,7 +1,7 @@
 <template>
     <main class="main general-body">
         <ComponentHero />
-        <!-- <ComponentInfo /> -->
+        <ComponentInfo />
         <ComponentFeatures />
     </main>
 </template>
@@ -13,23 +13,10 @@ import ComponentInfo from './componentInfo.vue';
 </script>
 
 <style lang="css" scoped>
-.light-background {
-    --background-color: #f6fcfe;
-    --surface-color: #ffffff;
-}
-
-.dark-background {
-    --background-color: #17283b;
-    --default-color: #ffffff;
-    --heading-color: #ffffff;
-    --surface-color: #254160;
-    --contrast-color: #ffffff;
-}
-
 section,
 .section {
-    color: var(--default-color);
-    background-color: var(--background-color);
+    /* color: var(--default-color); */
+    /* background-color: var(--background-color); */
     padding: 60px 0;
     scroll-margin-top: 100px;
     overflow: clip;
