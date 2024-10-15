@@ -48,7 +48,7 @@ class TournamentController extends BaseController
 
         if ($req->hasFile("tour_logo")) {
             $image = $req->file("tour_logo");
-            $tour_logo = HelperUploadImageAndResize($this->folder_name, $image, 50, 50, 'logo_');
+            $tour_logo = HelperUploadImageAndResize($this->folder_name, $image, 100, 100, 'logo_');
         }
 
         TournamentModel::create([
@@ -135,7 +135,7 @@ class TournamentController extends BaseController
 
             // add new file
             $image = $req->file("tour_logo");
-            $tour_logo = HelperUploadImageAndResize($this->folder_name, $image, 50, 50, 'logo_');
+            $tour_logo = HelperUploadImageAndResize($this->folder_name, $image, 100, 100, 'logo_');
             $tournament->update(['tour_logo' => $tour_logo]);
         }
 
