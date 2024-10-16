@@ -106,16 +106,16 @@
 
 
                                                     <template #item-edit="item">
-                                                        <div class="operation-wrapper">
+                                                        <div class="operation-wrapper hover-tilt-Y">
                                                             <span @click="openTourModal(true, item)"
-                                                                class="me-4 operation-icon cursor-pointer">
+                                                                class=" operation-icon cursor-pointer">
                                                                 <i class="bi bi-pencil"></i>
                                                             </span>
                                                         </div>
                                                     </template>
 
                                                     <template #item-delete="item">
-                                                        <div class="operation-wrapper">
+                                                        <div class="operation-wrapper hover-tilt-Y">
                                                             <span @click="deleteTournament(item.tour_id)"
                                                                 class="operation-icon cursor-pointer">
                                                                 <i class="bi bi-trash3 text-danger"></i>
