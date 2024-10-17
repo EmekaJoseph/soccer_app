@@ -126,6 +126,10 @@ button:focus,
   padding-block: 20px !important;
 }
 
+.vue3-easy-data-table__main{
+  min-height: 450px !important;
+}
+
 .vue3-easy-data-table__main.fixed-header th {
   text-transform: uppercase;
   background-color: #f8f8fd98 !important;
@@ -183,8 +187,3 @@ button:focus,
   height: 550px;
   overflow-y: auto;
 }
-
-
-/* .vue3-easy-data-table START */
-
-/* .vue3-easy-data-table END */
