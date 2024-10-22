@@ -6,12 +6,7 @@ const getTournaments = async (req, res) => {
         const data = await TournamentModel.findAll();
         res.status(STATUS_CODES.OK).send(data)
     } catch (error) {
-        console.log(error);
-        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send({
-            success: false,
-            message: 'Error connecting',
-            error
-        })
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(error);
 
     }
 }
@@ -23,7 +18,6 @@ const getTournamentByID = async (req, res) => {
         const data = await TournamentModel.findByPk(tour_id);
         return res.status(STATUS_CODES.OK).send(data);
     } catch (error) {
-        console.log(error);
         return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(error);
     }
 }
