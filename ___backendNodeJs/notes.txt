@@ -1,0 +1,16 @@
+Terminal commands init  ##############################################3
+npm init;
+npm i express;
+npm i nodemon;
+npm i dotenv;
+npm i mysql2;
+npm install sequelize sequelize-cli;
+npx sequelize-cli init;
+npm i bcrypt
+
+
+Links #########################################
+https://www.npmjs.com/
+https://sequelize.org/docs/v6/core-concepts/model-instances/
+https://www.npmjs.com/package/bcrypt
+
