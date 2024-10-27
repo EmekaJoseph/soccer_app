@@ -1,1 +1,11 @@
 PORT = 8081
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=soccer_app
+DB_USERNAME=root
+DB_PASSWORD=
+
+JWT_SECRET=jwt-soccerapp-token
+JWT_EXPIRATION=1h # Optional, token expiration time

@@ -9,23 +9,14 @@
 // });
 
 
-
-// require('dotenv').config();
 const { Sequelize } = require('sequelize');
+const { DB_CONNECTION, DB_DATABASE, DB_USERNAME, DB_PASSWORD, DB_HOST } = process.env;
 
-// Initialize Sequelize
-const DB = new Sequelize(
-  process.env.DB_DATABASE,
-  process.env.DB_USERNAME,
-  process.env.DB_PASSWORD,
-  {
-    dialect: process.env.DB_CONNECTION,
-    host: process.env.DB_HOST,
-  }
+const DATABASE = new Sequelize(DB_DATABASE, DB_USERNAME, DB_PASSWORD,
+  { dialect: DB_CONNECTION, host: DB_HOST, }
 );
 
-// Export the sequelize instance for use in other files
-module.exports = DB;
+module.exports = DATABASE;
 
 
 

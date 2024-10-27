@@ -3,6 +3,7 @@ const TournamentModel = require('../models/TournamentModel');
 
 const getTournaments = async (req, res) => {
     try {
+        // const user = req.user
         const data = await TournamentModel.findAll();
         res.status(STATUS_CODES.OK).send(data)
     } catch (error) {

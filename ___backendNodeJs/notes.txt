@@ -7,6 +7,7 @@ npm i mysql2;
 npm install sequelize sequelize-cli;
 npx sequelize-cli init;
 npm i bcrypt
+npm install jsonwebtoken 
 
 
 Links #########################################

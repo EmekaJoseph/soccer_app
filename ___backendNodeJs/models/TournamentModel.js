@@ -1,5 +1,6 @@
-const { DataTypes } = require('sequelize');
-const DB = require('../config/database');
+const { DataTypes, Sequelize } = require('sequelize');
+const DATABASE = require('../config/database');
+
 
 const Table = {
     options: {
@@ -15,6 +16,6 @@ const Table = {
     }
 }
 
-const TournamentModel = DB.define('TournamentModel', Table.columns, Table.options);
+const TournamentModel = DATABASE.define('TournamentModel', Table.columns, Table.options);
 
 module.exports = TournamentModel;
