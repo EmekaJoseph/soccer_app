@@ -1,5 +1,5 @@
-const { DataTypes, Sequelize } = require('sequelize');
-const DATABASE = require('../config/database');
+import { DataTypes } from 'sequelize';
+import DATABASE from '../config/database';
 
 
 const Table = {

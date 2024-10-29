@@ -16,7 +16,7 @@ const DATABASE = new Sequelize(DB_DATABASE, DB_USERNAME, DB_PASSWORD,
   { dialect: DB_CONNECTION, host: DB_HOST, }
 );
 
-module.exports = DATABASE;
+export default DATABASE;
 
 
 

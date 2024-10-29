@@ -8,6 +8,8 @@ npm install sequelize sequelize-cli;
 npx sequelize-cli init;
 npm i bcrypt
 npm install jsonwebtoken 
+npm install typescript @types/node --save-dev
+npx tsc --init
 
 
 Links #########################################

@@ -1,5 +1,5 @@
-const { DataTypes } = require('sequelize');
-const DATABASE = require('../config/database');
+import { DataTypes } from 'sequelize';
+import DATABASE from '../config/database';
 
 
 // class User extends Model {
@@ -9,7 +9,7 @@ const DATABASE = require('../config/database');
 
 
 
-const Table = {
+const userTable = {
     options: {
         tableName: 'tbl_users',
         timestamps: false,
@@ -27,12 +27,6 @@ const Table = {
 }
 
 
-const UserModel = DATABASE.define('UserModel', Table.columns, Table.options);
-
-
-// Hash the password before saving the user
-// UserModel.beforeCreate(async (user) => {
-//     user.password = await User.hashPassword(user.password);
-// });
+const UserModel = DATABASE.define('UserModel', userTable.columns, userTable.options);
 
 module.exports = UserModel;
