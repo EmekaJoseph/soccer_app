@@ -4,7 +4,8 @@ const STATUS_CODES = {
     INVALID_CONTENT: 203,
     BAD_REQUEST: 400,
     NOT_FOUND: 404,
+    CONFLICT: 409,
     INTERNAL_SERVER_ERROR: 500
 };
 
-module.exports = STATUS_CODES
+export default STATUS_CODES

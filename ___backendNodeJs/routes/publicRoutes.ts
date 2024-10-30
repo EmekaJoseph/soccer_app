@@ -1,6 +1,7 @@
 const publicExpress = require('express');
-const TournamentContoller = require('../controllers/TournamentContoller');
-const authMiddleware = require('../middleware/authMiddleware');
+import TournamentContoller from '../controllers/TournamentContoller';
+import authMiddleware from '../middleware/authMiddleware';
+
 
 const publicRouter = publicExpress.Router();
 
@@ -8,4 +9,4 @@ const publicRouter = publicExpress.Router();
 publicRouter.get('/tournaments', authMiddleware, TournamentContoller.getTournaments)
 publicRouter.get('/tournaments/:id', TournamentContoller.getTournamentByID)
 
-module.exports = publicRouter 
+module.exports = publicRouter

@@ -1,14 +1,6 @@
 import { DataTypes } from 'sequelize';
 import DATABASE from '../config/database';
 
-
-// class User extends Model {
-//     static async hashPassword(password) {
-//         return await bcrypt.hash(password, 10);
-//     }
-
-
-
 const userTable = {
     options: {
         tableName: 'tbl_users',
@@ -29,4 +21,4 @@ const userTable = {
 
 const UserModel = DATABASE.define('UserModel', userTable.columns, userTable.options);
 
-module.exports = UserModel;
+export default UserModel;

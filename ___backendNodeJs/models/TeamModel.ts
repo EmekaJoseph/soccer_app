@@ -25,4 +25,4 @@ const Table = {
 
 const TeamModel = DATABASE.define('TeamModel', Table.columns, Table.options);
 
-module.exports = TeamModel;
+export default TeamModel;

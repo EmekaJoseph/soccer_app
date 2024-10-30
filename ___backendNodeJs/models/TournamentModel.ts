@@ -18,4 +18,4 @@ const Table = {
 
 const TournamentModel = DATABASE.define('TournamentModel', Table.columns, Table.options);
 
-module.exports = TournamentModel;
+export default TournamentModel;

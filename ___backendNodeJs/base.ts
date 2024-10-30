@@ -4,12 +4,10 @@ require('dotenv').config();
 
 const publicRoutes = require('./routes/publicRoutes');
 const authRoutes = require('./routes/authRoutes');
-// const protectedRoutes = require('./routes/protected');
+// const protectedRoutes = require('./routes/protectedRoutes');
 
 // rest object
 const api = express();
-
-// env config
 
 // middlewares
 api.use(express.json());
