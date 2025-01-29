@@ -92,6 +92,10 @@ export default {
         return $instance.get(`userLogout`,)
     },
 
+    dashboard() {
+        return $instance.get(`dashboard`,)
+    },
+
     subUsersList() {
         return $instance.get(`subUsersList`,)
     },

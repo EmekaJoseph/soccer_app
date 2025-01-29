@@ -1,15 +1,15 @@
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { useStorage } from '@vueuse/core'
-// @ts-ignore
-import Cookies from 'js-cookie';
 
 export const useTemplateStore = defineStore('templateStore', () => {
+    const appTheme = ref<'dark' | 'light'>('light')
 
-
-    return {
-
-        // getUserToken
+    function toggleTheme() {
+        appTheme.value = appTheme.value == 'dark' ? 'light' : 'dark';
     }
 
+    return {
+        appTheme,
+        toggleTheme
+    }
 })

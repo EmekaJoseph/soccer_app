@@ -4,12 +4,15 @@ npm i express;
 npm i nodemon;
 npm i dotenv;
 npm i mysql2;
+npm i morgan;
 npm install sequelize sequelize-cli;
 npx sequelize-cli init;
 npm i bcrypt
 npm install jsonwebtoken 
 npm install ts-node typescript @types/node --save-dev
 npx tsc --init
+npm install moment
+npm install cors
 
 
 Links #########################################

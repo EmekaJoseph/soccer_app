@@ -135,20 +135,24 @@
                                             <div v-else class="card-body p-1 m-1">
                                                 <div v-if="userData.tournamentResults">
                                                     <EasyDataTable class="border-0 text-nowrap" :headers="tableHeaders"
-                                                        :items="userData.tournamentResults" show-index>
+                                                        :items="userData.tournamentResults">
 
                                                         <template #item-results="item">
                                                             {{ item.home_name }}
-                                                            <span class="fw-bold">{{ item.home_score }}</span>,
+                                                            <span class="fw-bold">
+                                                                {{ item.home_score }}
+                                                            </span>,
                                                             &nbsp;
                                                             {{ item.away_name }}
-                                                            <span class="fw-bold">{{ item.away_score }}</span>
+                                                            <span class="fw-bold">
+                                                                {{ item.away_score }}
+                                                            </span>
                                                         </template>
 
                                                         <template #item-played="item">
-                                                            <div class=" fw-bolder"> {{ (new
-                                                                Date(item.date_played)).toDateString()
-                                                                }} </div>
+                                                            <div class=" fw-bolder">
+                                                                {{ (new Date(item.date_played)).toDateString() }}
+                                                            </div>
                                                         </template>
 
                                                         <template #item-delete="item">
@@ -216,9 +220,9 @@ function loadTournamentMatches() {
 
 // TABLE #####################################
 const tableHeaders: Header[] = [
-    { text: "", value: "results" },
-    { text: "", value: "match_stage" },
-    { text: "", value: "played" },
+    { text: "Results", value: "results" },
+    { text: "Stage", value: "match_stage" },
+    { text: "Date", value: "played" },
     { text: "", value: "delete" },
 ];
 
@@ -274,6 +278,8 @@ async function save() {
     obj.home_score_pen = form.isPenalties ? form.home_score_pen : null;
     obj.away_score_pen = form.isPenalties ? form.away_score_pen : null;
     obj.match_id = selectedMatch.value.match_id;
+    obj.match_stage = selectedMatch.value.match_stage;
+
 
     form.isSaving = true
 

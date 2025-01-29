@@ -1,7 +1,7 @@
 <template>
     <div class="min-vh-100 d-flex animate__animated animate__fadeIn justify-content-center align-items-center">
         <div class="col-md-8">
-            <div class="card border-0">
+            <div class="card border-0 bg-white">
                 <div class="card-header bg-transparent fs-5 text-center fw-bolder border-0">
                     Login to your Account
                 </div>
@@ -16,7 +16,7 @@
                         <div class="col-12">
                             <div class="form-floating">
                                 <input v-model="form.email" :class="{ 'form-error': form.emailError }" type="email"
-                                    class="form-control form-control-lg" id="emailInput" placeholder="email">
+                                    class="form-control form-control-lg bg-white" id="emailInput" placeholder="email">
                                 <label for="emailInput">Email address</label>
                             </div>
                             <div class="small text-danger text-start">{{ form.emailError }}</div>
@@ -25,7 +25,7 @@
                             <div class="input-group">
                                 <div class="form-floating">
                                     <input v-model="form.password" :type="form.pswordType"
-                                        class="form-control  border-end-0 form-control-lg "
+                                        class="form-control  border-end-0 form-control-lg bg-white"
                                         :class="{ 'form-error': form.passwError }" id="passwInput"
                                         placeholder="password">
                                     <label for="passwInput">Password</label>
@@ -54,7 +54,7 @@
                                 password?</span>
                         </div>
 
-                        <div class="col-12 mt-5 text-center">
+                        <div class="col-12 mt-5 text-center text-dark">
                             Dont have an account?
                             <RouterLink class="text-decoration-none fw-bolder text-primary-theme" to="/register">
                                 Create account

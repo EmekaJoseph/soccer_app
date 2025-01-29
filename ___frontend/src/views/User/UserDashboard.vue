@@ -9,10 +9,11 @@
                 <div class="col-md-4">
                     <div class="card border-0  hover-tilt-Y">
                         <div class="card-body">
-                            <div class="large-text">{{ userData.tournaments.length }}
+                            <div class="large-text">{{ userData.dashboardFigures?.tournaments ?? 0 }}
                                 <span class="fs-2 float-end bi bi-card-checklist text-danger-emphasis"></span>
                             </div>
-                            <div class="small">{{ userData.tournaments.length == 1 ? 'Tournament' : 'Tournaments' }}
+                            <div class="small">{{ userData.dashboardFigures?.tournaments == 1 ? 'Tournament' :
+                                'Tournaments' }}
                             </div>
                         </div>
                     </div>
@@ -20,10 +21,11 @@
                 <div class="col-md-4">
                     <div class="card border-0  hover-tilt-Y">
                         <div class="card-body">
-                            <div class="large-text">27
+                            <div class="large-text">{{ userData.dashboardFigures?.teams ?? 0 }}
                                 <span class="fs-2 float-end bi bi-people text-warning-emphasis"></span>
                             </div>
-                            <div class="small">Visitors
+                            <div class="small">
+                                {{ userData.dashboardFigures?.teams == 1 ? 'Team' : 'Teams' }}
                             </div>
                         </div>
                     </div>
@@ -47,12 +49,10 @@
                                 {{ userData.tournaments.length }}
                             </span>
 
-                            <span v-if="!dataIsLoading && authStore.isAdmin" @click="openTourModal()"
-                                class="float-end  hover-tilt-Y text-primary-theme cursor-pointer fw-bold">
-                                <span class="">
-                                    Add New Tournament <i class="bi bi-plus-lg"></i>
-                                </span>
-                            </span>
+                            <button v-if="!dataIsLoading && authStore.isAdmin" @click="openTourModal()"
+                                class="btn btn-theme btn-sm px-3  btn-dark float-end hover-tilt-Y m-0">
+                                Add <i class="bi bi-plus-square-fill"></i>
+                            </button>
                         </div>
                         <div class="card-body">
                             <!-- <fieldset class="border rounded-3 p-3  h-100"> -->
@@ -134,7 +134,10 @@
                     </div>
                 </div>
                 <div class="col-lg-4">
-                    <ComponentOtherUsers v-if="!dataIsLoading" />
+                    <div v-if="dataIsLoading" class="card min-vh-100 border-0">
+                        <componentLoadingSpinner />
+                    </div>
+                    <ComponentOtherUsers v-else />
                 </div>
 
                 <div v-if="authStore.getUserData().role == 'admin'" class="col-12 d-none">
@@ -247,6 +250,7 @@ onMounted(async () => {
     await userData.getTournaments()
     dataIsLoading.value = false
     userData.getSubUsers()
+    userData.getDashboardFigures()
     getFeedbacks()
 })
 
@@ -271,6 +275,7 @@ async function deleteTournament(tour_id: string | number) {
                 return;
             }
             $toast.success('Tournament Deleted Successfuly', { position: 'top-right' });
+            userData.getDashboardFigures()
             userData.getTournaments()
 
         } catch (error) {

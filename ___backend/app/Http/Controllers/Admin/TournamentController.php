@@ -73,16 +73,13 @@ class TournamentController extends BaseController
     // get Tournaments
     public function getTournaments(Request $req)
     {
-        $tournaments = UserModel::find(Auth::id())->relatedTournaments;
-
-        if ($tournaments) {
-            foreach ($tournaments as  $list) {
-                $list->id = $list->tour_id;
-                $list->title = $list->tour_title;
-                $list->type = $list->tour_type;
-                $list->created = Carbon::parse($list->created_at)->diffForHumans();
-            }
-        }
+        $tournaments = UserModel::find(Auth::id())->relatedTournaments->map(function ($list) {
+            $list->id = $list->tour_id;
+            $list->title = $list->tour_title;
+            $list->type = $list->tour_type;
+            $list->created = Carbon::parse($list->created_at)->diffForHumans();
+            return $list;
+        });
 
         return response()->json($tournaments, 200);
     }

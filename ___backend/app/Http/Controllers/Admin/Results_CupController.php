@@ -30,6 +30,7 @@ class Results_CupController extends BaseController
             'awayTeam_score' => 'required',
             'home_score_pen' => 'nullable',
             'away_score_pen' => 'nullable',
+            'match_stage' => 'nullable',
         ];
 
         $validator = Validator::make($req->all(), $rules);
@@ -112,6 +113,7 @@ class Results_CupController extends BaseController
             'home_score_pen' => $req->input('home_score_pen', null),
             'away_score_pen' => $req->input('away_score_pen', null),
             'match_id' => $match_id,
+            'match_stage' => $req->input('match_stage', null),
             'tour_id' => $tour_id,
             'date_played' => $match->kick_off,
         ]);

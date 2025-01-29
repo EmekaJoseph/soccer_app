@@ -95,7 +95,7 @@
                             <div class="col-lg-7">
                                 <div class="card border-0 ">
                                     <div class="card-header text-muted  bg-transparent border-0">
-                                        TEAMS
+                                        TEAMS ({{ userData.tournamentTeams.length }})
                                     </div>
                                     <div class="card-body">
                                         <!-- <fieldset class="border rounded-3 p-3 "> -->
@@ -136,7 +136,7 @@
                                                                 </span>
                                                             </template>
 
-                                                            <template #item-edit="item">
+                                                            <!-- <template #item-edit="item">
                                                                 <div class="operation-wrapper">
                                                                     <span data-bs-toggle="modal"
                                                                         data-bs-target="#editMaterial" @click=""
@@ -145,7 +145,7 @@
                                                                     </span>
 
                                                                 </div>
-                                                            </template>
+                                                            </template> -->
                                                             <template #item-delete="item">
                                                                 <div class="operation-wrapper">
 

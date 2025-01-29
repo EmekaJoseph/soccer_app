@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AccountController;
+use App\Http\Controllers\Admin\DashbordController;
 use App\Http\Controllers\Admin\TeamsController;
 use App\Http\Controllers\Admin\MatchController;
 use App\Http\Controllers\Admin\Results_CupController;
@@ -17,6 +18,8 @@ Route::controller(AccountController::class)->group(function () {
     Route::get('deleteSubUser/{subuser_id}',  'deleteSubUser');
     Route::get('subUsersList',  'subUsersList');
 });
+
+Route::get('dashboard',  [DashbordController::class, 'index']);
 
 Route::get('getTournaments',  [TournamentController::class, 'getTournaments']);
 Route::post('createTournament',  [TournamentController::class, 'createTournament']);

@@ -100,6 +100,21 @@ function logOut() {
     margin: 0px;
 }
 
+
+
+
+
+.navbar {
+    margin-left: 250px;
+}
+
+@media (max-width: 767px) {
+    .navbar {
+        margin-left: 0px;
+    }
+}
+
+
 @media (max-width: 768px) {
     .offcanvas {
         width: 250px !important;
