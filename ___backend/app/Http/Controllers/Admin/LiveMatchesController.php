@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Events\endMatch;
 use App\Events\liveScore;
 use App\Events\startMatch;
+use App\Models\MatchModel;
 use App\Models\TeamModel;
 use App\Models\SubUserModel;
 use App\Models\UserModel;
@@ -17,7 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class LiveUpdateController extends BaseController
+class LiveMatchesController extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
@@ -25,12 +26,11 @@ class LiveUpdateController extends BaseController
     {
         // validate required varibles
         $rules = [
-            'home_team' => 'required',
-            'away_team' => 'required',
-            'match_stage' => 'required',
-            'tour_id' => 'required',
+            'match_id' => 'required',
         ];
+
         $validator = Validator::make($req->all(),  $rules);
+        $match = MatchModel::find($req->input('match_id'));
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -38,10 +38,10 @@ class LiveUpdateController extends BaseController
         $currentUser = ($req->user()->role == 'admin') ? $req->user()->user_id : $req->user()->subuser_id;
 
         DB::table('tbl_live')->insert([
-            'home_team' => $req->input('home_team'),
-            'away_team' => $req->input('away_team'),
-            'tour_id' => $req->input('tour_id'),
-            'match_stage' => $req->input('match_stage'),
+            'home_team' => $match->home_team,
+            'away_team' => $match->away_team,
+            'tour_id' => $match->tour_id,
+            'match_stage' => $match->match_stage,
             'creator' => $currentUser
         ]);
 

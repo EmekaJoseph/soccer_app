@@ -7,14 +7,13 @@
             </div>
             <div v-else>
                 <div class="row gy-4">
-                    <div class="col-lg-5 mb-3">
-                        <!-- <label>Tournament: </label> -->
-                        <tourDropdownSelect @change="loadTournamentTeams" v-model="selectedTournament" />
-                    </div>
+
+                    <tourDropdownSelect @change="loadTournamentTeams" v-model="selectedTournament" />
+
                     <div v-if="selectedTournament?.id" class="col-lg-12">
                         <div class="row gy-3">
                             <div class="col-lg-5">
-                                <div class="card border-0 h-100">
+                                <div class="card border-0">
                                     <div class="card-header text-muted  bg-transparent border-0">
                                         CREATE A TEAM
                                     </div>
@@ -93,7 +92,7 @@
                             </div>
 
                             <div class="col-lg-7">
-                                <div class="card border-0 ">
+                                <div class="card border-0 h-100 ">
                                     <div class="card-header text-muted  bg-transparent border-0">
                                         TEAMS ({{ userData.tournamentTeams.length }})
                                     </div>

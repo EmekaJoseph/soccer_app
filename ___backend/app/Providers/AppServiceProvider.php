@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Interfaces\MatchResultsServiceInterface;
+use App\Services\MatchResultsService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +13,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // $this->app->singleton(MatchResultsService::class, function ($app) {
+        //     return new MatchResultsService();
+        // });
+        app()->bind(MatchResultsServiceInterface::class, MatchResultsService::class);
     }
 
     /**

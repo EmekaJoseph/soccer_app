@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="modal fade" id="addLiveMatchModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable modal-sm">
+            <div class="modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header border-0 bg-light">
                         <span class="fw-bold">New Live Match:</span>
@@ -11,38 +11,17 @@
                         <div class="row justify-content-center gy-3">
                             <div class="col-md-12 ">
                                 <form class="row g-3">
-                                    <div class="col-md-12">
-                                        <label>Home Team: </label>
-                                        <select class="form-select form-select-lg" v-model="form.home_team">
+                                    <div class="col-12">
+                                        <label>Select Match:</label>
+                                        <select v-model="selectedMatch" class="form-select  text-uppercase">
                                             <option value="" selected disabled></option>
-                                            <option v-for="i in userData.tournamentTeams" :key="i" :value="i.team_id">{{
-                                                i.team_name
-                                            }}
+                                            <option v-for="i in userData.tournamentMatches" :key="i" :value="i">
+                                                {{ i.home_team.team_name + ' VS ' + i.away_team.team_name }} ({{
+                                                    i.match_stage }})
                                             </option>
                                         </select>
                                     </div>
 
-                                    <div class="col-md-12">
-                                        <label>Away Team: </label>
-                                        <select class="form-select form-select-lg  " v-model="form.away_team">
-                                            <option value="" selected disabled></option>
-                                            <option v-for="i in awayDropdown" :key="i" :value="i.team_id">{{
-                                                i.team_name
-                                            }}
-                                            </option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <label>Match Stage: </label>
-                                        <select class="form-select form-select-lg" v-model="form.match_stage">
-                                            <option value="" selected disabled></option>
-                                            <option v-for="i in userData.match_stages" :key="i" :value="i">{{
-                                                i
-                                            }}
-                                            </option>
-                                        </select>
-                                    </div>
 
 
                                     <div class="col-md-12 mt-4">
@@ -63,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, watch, computed } from 'vue';
+import { reactive, ref, watch, computed, onMounted } from 'vue';
 import { onBeforeRouteLeave } from 'vue-router';
 import { useUserDataStore } from '@/store/userDataStore';
 import api from '@/store/axiosManager'
@@ -74,59 +53,35 @@ import { useToast } from 'vue-toast-notification';
 const prop = defineProps({
     tour: {
         type: Object,
-        required: true
+        required: true,
+        default: {}
     }
 })
 
+const userData = useUserDataStore()
+const selectedMatch = ref<any>('')
+
+
 watch(() => prop.tour, () => {
-    form.tour_id = prop.tour.id
-})
+    if (prop.tour?.id) userData.getTournamentMatches(prop.tour.id)
+}, { deep: true })
 
 const $toast = useToast();
-const userData = useUserDataStore()
 const isSaving = ref(false)
-
-const form = reactive({
-    home_team: '',
-    away_team: '',
-    match_stage: '',
-    tour_id: prop.tour.id,
-    creator: '',
-})
-
-const awayDropdown = computed(() => {
-    return userData.tournamentTeams.filter((x: any) => x.team_id !== form.home_team)
-})
 
 
 async function start() {
-    if (!form.home_team) {
-        $toast.default('select home team', { position: 'top-right' });
-        return;
-    }
-
-    if (!form.away_team) {
-        $toast.default('select away team', { position: 'top-right' });
-        return;
-    }
-
-    if (!form.match_stage) {
-        $toast.default('select match stage', { position: 'top-right' });
-        return;
-    }
 
     isSaving.value = true
 
     try {
-        let resp = await api.startLiveMatch(form)
+        let resp = await api.startLiveMatch({ match_id: selectedMatch.value.match_id })
         if (resp.status == 200) {
             $toast.default('Live match Started', { position: 'top-right' });
             isSaving.value = false
-            form.home_team = "";
-            form.away_team = "";
-            form.match_stage = "";
+
             btnX.value.click()
-            userData.getLiveMatchesByUser(form.tour_id)
+            userData.getLiveMatchesByUser(prop.tour.id)
         }
     } catch (error) {
         console.log(error);

@@ -5,15 +5,14 @@
         </div>
         <div v-else>
             <div class="row gy-4">
-                <div class="col-lg-5 mb-3">
-                    <!-- <label>Tournament: </label> -->
-                    <tourDropdownSelect @change="loadMatchData" v-model="selectedTournament" />
-                </div>
+
+                <tourDropdownSelect @change="loadMatchData" v-model="selectedTournament" />
+
                 <div class="col-lg-12">
                     <div class="row gy-3">
                         <div class="col-lg-5">
-                            <div class="card shadow-">
-                                <div class="card-header text-muted fw-bold bg-transparent border-0">
+                            <div class="card border-0 h-100">
+                                <div class="card-header text-muted  bg-transparent border-0">
                                     ADD MATCH:
                                 </div>
                                 <div class="card-body">
@@ -98,8 +97,8 @@
                             <!-- <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">LIST
                                 </legend> -->
 
-                            <div class="card shadow-sm card-fixed-height">
-                                <div class="card-header text-muted fw-bold bg-transparent border-0">
+                            <div class="card border-0 card-fixed-height h-100">
+                                <div class="card-header text-muted  bg-transparent border-0">
                                     MATCHES LIST:
                                 </div>
                                 <div class="card-body">

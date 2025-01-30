@@ -39,43 +39,50 @@ class PublicViewController extends BaseController
             return response()->json('invalid tournament', 203);
         }
 
-        $standings = ($thisTournament->tour_type == 'cup') ?
-            Standings_CupModel::where('tour_id', $tour_id)->get()
+        $standings = ($thisTournament->tour_type == 'cup')
+            ? Standings_CupModel::where('tour_id', $tour_id)->get()
             : Standings_LeagueModel::where('tour_id', $tour_id)->get();
-        if (sizeof($standings) > 0) {
+
+        if ($standings->isNotEmpty()) {
+            // Get all unique team IDs from standings
+            $teamIds = $standings->pluck('team_id')->unique();
+
+            // Fetch all teams in one query
+            $teams = TeamModel::whereIn('team_id', $teamIds)->get()->keyBy('team_id');
+
+            // Assign team details to standings
             foreach ($standings as $result) {
-                $result->team_name = (TeamModel::find($result->team_id))->team_name;
-                $result->team_color = (TeamModel::find($result->team_id))->team_color;
-                $result->team_badge = (TeamModel::find($result->team_id))->team_badge;
+                if (isset($teams[$result->team_id])) {
+                    $team = $teams[$result->team_id];
+                    $result->team_name = $team->team_name;
+                    $result->team_color = $team->team_color;
+                    $result->team_badge = $team->team_badge;
+                }
             }
         }
 
         // if tournament is a cup get from group standings table else get from league standings
         if ($thisTournament->tour_type == 'cup') {
 
-            // group by groups
-            $grouped = (collect($standings))->groupBy('group_in');
+            // Group standings by 'group_in'
+            $grouped = collect($standings)->groupBy('group_in');
 
-            // create object according to groups
-            $newObj = array();
-            foreach ($grouped as $key => $value) {
-                // sort by points and goal diff
-                $collection = collect($value);
-                $sorted = $collection->sortBy([
-                    ['points', 'desc'],
-                    ['goal_diff', 'desc'],
-                    ['team_name', 'asc'],
-                ]);
-                array_push($newObj, (object)[
-                    'group' => $key,
-                    'teams' => $sorted->values()->all()
-                ]);
-            }
+            // Create an array of sorted groups
+            $newObj = $grouped->map(function ($teams, $group) {
+                return (object) [
+                    'group' => $group,
+                    'teams' => collect($teams)->sortBy([
+                        ['points', 'desc'],
+                        ['goal_diff', 'desc'],
+                        ['team_name', 'asc'],
+                    ])->values()->all(),
+                ];
+            })->values();
 
-            // sort by their groups
-            $sortedByGroup = (collect($newObj))->sortBy('group');
+            // Sort by group name
+            $sortedByGroup = $newObj->sortBy('group')->values();
 
-            return response()->json($sortedByGroup->values()->all(), 200);
+            return response()->json($sortedByGroup, 200);
         } else {
             // sort by points and goal diff
             $collection = collect($standings);
@@ -83,8 +90,8 @@ class PublicViewController extends BaseController
                 ['points', 'desc'],
                 ['goal_diff', 'desc'],
                 ['team_name', 'asc'],
-            ]);
-            return response()->json($sorted->values()->all(), 200);
+            ])->values()->all();
+            return response()->json($sorted, 200);
         }
     }
 
@@ -105,19 +112,28 @@ class PublicViewController extends BaseController
             'home_score_pen',
             'match_id'
         )->where('tour_id', $tour_id)->orderByDesc('date_played')->get();
-        if (sizeof($results) > 0) {
+        if ($results->isNotEmpty()) {
+            // Get all unique team IDs from results
+            $teamIds = $results->pluck('home_team')->merge($results->pluck('away_team'))->unique();
+
+            // Fetch all teams in one query
+            $teams = TeamModel::whereIn('team_id', $teamIds)->get()->keyBy('team_id');
+
+            // Assign winner and team names
             foreach ($results as $result) {
                 if ($result->away_score < $result->home_score) {
-                    $result->winner =  $result->home_team;
-                } else if ($result->away_score > $result->home_score) {
-                    $result->winner =  $result->away_team;
+                    $result->winner = $result->home_team;
+                } elseif ($result->away_score > $result->home_score) {
+                    $result->winner = $result->away_team;
                 } else {
-                    $result->winner =  '';
+                    $result->winner = '';
                 }
-                $result->home_name = (TeamModel::find($result->home_team))->team_name;
-                $result->away_name = (TeamModel::find($result->away_team))->team_name;
+
+                $result->home_name = $teams[$result->home_team]->team_name ?? null;
+                $result->away_name = $teams[$result->away_team]->team_name ?? null;
             }
         }
+
         return response()->json($results, 200);
     }
 
@@ -157,12 +173,21 @@ class PublicViewController extends BaseController
     public function showLiveMatches(Request $req, $tour_id)
     {
         $liveUpdates = DB::table('tbl_live')->where('tour_id', $tour_id)->get();
-        if (sizeof($liveUpdates) > 0) {
+
+        if ($liveUpdates->isNotEmpty()) {
+            // Get all unique team IDs from live updates
+            $teamIds = $liveUpdates->pluck('home_team')->merge($liveUpdates->pluck('away_team'))->unique();
+
+            // Fetch all teams in one query and store them in an associative array
+            $teams = TeamModel::whereIn('team_id', $teamIds)->get()->keyBy('team_id');
+
+            // Assign team details to live updates
             foreach ($liveUpdates as $result) {
-                $result->home_team = (TeamModel::find($result->home_team));
-                $result->away_team = (TeamModel::find($result->away_team));
+                $result->home_team = $teams[$result->home_team] ?? null;
+                $result->away_team = $teams[$result->away_team] ?? null;
             }
         }
+
 
         return response()->json($liveUpdates, 200);
     }

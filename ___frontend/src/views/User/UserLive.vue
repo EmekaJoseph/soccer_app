@@ -5,12 +5,8 @@
         </div>
         <div v-else>
             <div class="row g-4">
-                <div class="col-12 mb-4">
-                    <div class="col-lg-4">
-                        <!-- <label>Tournament: </label> -->
-                        <tourDropdownSelect @change="loadLiveMatches" v-model="selectedTournament" />
-                    </div>
-                </div>
+
+                <tourDropdownSelect @change="loadLiveMatches" v-model="selectedTournament" />
 
                 <div class="col-lg-12">
                     <div class="row g-5">

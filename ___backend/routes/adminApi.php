@@ -6,10 +6,9 @@ use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\DashbordController;
 use App\Http\Controllers\Admin\TeamsController;
 use App\Http\Controllers\Admin\MatchController;
-use App\Http\Controllers\Admin\Results_CupController;
-use App\Http\Controllers\Admin\Results_LeagueController;
-use App\Http\Controllers\Admin\LiveUpdateController;
+use App\Http\Controllers\Admin\LiveMatchesController;
 use App\Http\Controllers\Admin\PlayersContoller;
+use App\Http\Controllers\Admin\ResultsController;
 use App\Http\Controllers\Admin\TournamentController;
 
 Route::controller(AccountController::class)->group(function () {
@@ -30,15 +29,15 @@ Route::resource('team', TeamsController::class)->except(['index']);;
 
 Route::resource('match', MatchController::class);
 
-Route::post('cup/save_result', [Results_CupController::class, 'saveResult']);
+Route::post('cup/save_result', [ResultsController::class, 'saveCupResult']);
 
-Route::post('cup/undo_save_result/{result_id}', [Results_CupController::class, 'undoSaveResult']);
+Route::post('cup/undo_save_result/{result_id}', [ResultsController::class, 'undoSaveCupResult']);
 
-Route::post('league/save_result', [Results_LeagueController::class, 'saveResult']);
+Route::post('league/save_result', [ResultsController::class, 'saveLeagueResult']);
 
-Route::post('league/undo_save_result/{result_id}', [Results_LeagueController::class, 'undoSaveResult']);
+Route::post('league/undo_save_result/{result_id}', [ResultsController::class, 'undoSaveLeagueResult']);
 
-Route::controller(LiveUpdateController::class)->group(function () {
+Route::controller(LiveMatchesController::class)->group(function () {
     Route::post('startLiveMatch',  'startLiveMatch');
     Route::post('updateLiveMatch/{live_id}',  'updateLiveMatch');
     Route::get('endLiveMatch/{live_id}',  'endLiveMatch');

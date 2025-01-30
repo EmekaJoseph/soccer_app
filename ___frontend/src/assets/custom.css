@@ -183,7 +183,7 @@ button:focus,
   padding-block: 20px;
 }
 
-.card-fixed-height {
-  height: 550px;
+/* .card-fixed-height {
+  max-height: 200px;
   overflow-y: auto;
-}
+} */

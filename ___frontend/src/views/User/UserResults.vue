@@ -5,15 +5,14 @@
         </div>
         <div v-else>
             <div class="row gy-4">
-                <div class="col-lg-5 mb-3">
-                    <!-- <label>Tournament: </label> -->
-                    <tourDropdownSelect @change="loadResultsData" v-model="selectedTournament" />
-                </div>
+
+                <tourDropdownSelect @change="loadResultsData" v-model="selectedTournament" />
+
                 <div class="col-lg-12">
                     <div class="row gy-3">
                         <div class="col-lg-5">
-                            <div class="card shadow-sm">
-                                <div class="card-header text-muted fw-bold bg-transparent border-0">
+                            <div class="card shadow-s border-0">
+                                <div class="card-header text-muted  bg-transparent border-0">
                                     NEW RESULT:
                                 </div>
 
@@ -102,7 +101,7 @@
                                         </div>
 
 
-                                        <div v-if="userData.tournamentTeams.length" class="col-md-12 mt-3">
+                                        <div class="col-md-12 mt-3">
                                             <button :disabled="!selectedMatch" v-if="!form.isSaving"
                                                 @click.prevent="save"
                                                 class="btn btn-primary-theme btn w-100">Save</button>
@@ -118,8 +117,8 @@
                         </div>
 
                         <div class="col-lg-7">
-                            <div class="card shadow-sm card-fixed-height">
-                                <div class="card-header text-muted fw-bold bg-transparent border-0">
+                            <div class="card card-fixed-height border-0 h-100">
+                                <div class="card-header text-muted  bg-transparent border-0">
                                     RESULTS LIST:
                                 </div>
 
