@@ -29,13 +29,13 @@ Route::resource('team', TeamsController::class)->except(['index']);;
 
 Route::resource('match', MatchController::class);
 
-Route::post('cup/save_result', [ResultsController::class, 'saveCupResult']);
+Route::post('save_result', [ResultsController::class, 'saveResult']);
 
-Route::post('cup/undo_save_result/{result_id}', [ResultsController::class, 'undoSaveCupResult']);
+Route::post('undo_result/{result_id}', [ResultsController::class, 'undoResult']);
 
-Route::post('league/save_result', [ResultsController::class, 'saveLeagueResult']);
+// Route::post('league/save_result', [ResultsController::class, 'saveLeagueResult']);
 
-Route::post('league/undo_save_result/{result_id}', [ResultsController::class, 'undoSaveLeagueResult']);
+// Route::post('league/undo_save_result/{result_id}', [ResultsController::class, 'undoSaveLeagueResult']);
 
 Route::controller(LiveMatchesController::class)->group(function () {
     Route::post('startLiveMatch',  'startLiveMatch');

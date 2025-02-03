@@ -151,22 +151,13 @@ export default {
     },
 
 
-    saveCupResult(data: object) {
-        return $instance.post(`cup/save_result`, JSON.stringify(data))
+    saveResult(data: object) {
+        return $instance.post(`save_result`, JSON.stringify(data))
     },
 
-    saveLeagueResult(data: object) {
-        return $instance.post(`league/save_result`, JSON.stringify(data))
+    undoResult(data: any) {
+        return $instance.post(`undo_result/${data.result_id}`, JSON.stringify(data))
     },
-
-    undoSaveCupResult(data: any) {
-        return $instance.post(`cup/undo_save_result/${data.result_id}`, JSON.stringify(data))
-    },
-
-    undoSaveLeagueResult(data: any) {
-        return $instance.post(`league/undo_save_result/${data.result_id}`, JSON.stringify(data))
-    },
-
 
     startLiveMatch(data: any) {
         return $instance.post(`startLiveMatch`, JSON.stringify(data))

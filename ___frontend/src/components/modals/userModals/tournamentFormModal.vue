@@ -196,8 +196,7 @@ async function saveTournament() {
     newForm.append('tour_desc', form.tour_desc ?? '')
     newForm.append('tour_type', form.tour_type ?? '')
     newForm.append('tour_id', props.editingData?.tour_id ?? '')
-    if (form.tour_logo)
-        newForm.append('tour_logo', form.tour_logo)
+    if (form.tour_logo) newForm.append('tour_logo', form.tour_logo)
 
     try {
         const resp = props.isEditing ? await api.updateTournament(newForm) : await api.createTournament(newForm)

@@ -4,6 +4,6 @@ namespace App\Interfaces;
 
 interface MatchResultsServiceInterface
 {
-    public function saveResult($request, $matchType);
-    public function undoResult($request, $matchType);
+    public function saveResult($request);
+    public function undoResult($request);
 }

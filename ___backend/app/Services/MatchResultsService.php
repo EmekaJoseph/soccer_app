@@ -8,22 +8,29 @@ use App\Models\Standings_CupModel;
 use App\Models\ResultModel;
 use App\Models\Standings_LeagueModel;
 use App\Models\TeamModel;
+use App\Models\TournamentModel;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 
 class MatchResultsService implements MatchResultsServiceInterface
 {
 
-    public function saveResult($req, $matchType = 'cup')
+    public function saveResult($req)
     {
+        $match = MatchModel::find($req->match_id);
+        $tour = TournamentModel::find($match->tour_id);
+        $matchType = $tour->tour_type;
         if ($matchType == 'cup')  return $this->saveCupResult($req);
         else return $this->saveLeagueResult($req);
     }
 
-    public function undoResult($req, $matchType = 'cup')
+    public function undoResult($req)
     {
-        if ($matchType == 'cup')  return $this->undoSaveCupResult($req);
-        else return $this->undoSaveLeagueResult($req);
+        $result = ResultModel::find($req->result_id);
+        $tour = TournamentModel::find($result->tour_id);
+        $matchType = $tour->tour_type;
+        if ($matchType == 'cup')  return $this->undoCupResult($req);
+        else return $this->undoLeagueResult($req);
     }
 
 
@@ -111,7 +118,7 @@ class MatchResultsService implements MatchResultsServiceInterface
         }
     }
 
-    protected function undoSaveCupResult($req)
+    protected function undoCupResult($req)
     {
         try {
             // Validate required variables
@@ -272,7 +279,7 @@ class MatchResultsService implements MatchResultsServiceInterface
         return response()->json($newResult, 200);
     }
 
-    protected function undoSaveLeagueResult($req)
+    protected function undoLeagueResult($req)
     {
         // Validate required variables
         $validator = Validator::make($req->all(), [

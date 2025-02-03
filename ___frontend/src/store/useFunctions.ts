@@ -47,14 +47,17 @@ export default {
         return Swal.fire({
             // title: `${title}`,
             text: `${text}`,
-            icon: 'question',
+            // icon: 'question',
             iconColor: '#60148f',
             showCancelButton: true,
             confirmButtonText: `${btnText}`,
             cancelButtonText: 'cancel',
-            confirmButtonColor: '#60148f',
             reverseButtons: true,
             width: '300px',
+            customClass: {
+                confirmButton: 'swal-confirm-button',
+                cancelButton: 'swal-cancel-button',
+            },
         })
     },
 
@@ -62,7 +65,7 @@ export default {
         return Swal.fire({
             // title: `${title}`,
             text: `${text}`,
-            icon: 'warning',
+            // icon: 'warning',
             iconColor: '#dc3545',
             showCancelButton: true,
             confirmButtonText: `${btnText}`,
@@ -70,6 +73,10 @@ export default {
             confirmButtonColor: '#dc3545',
             reverseButtons: true,
             width: '300px',
+            customClass: {
+                confirmButton: 'swal-confirm-button-delete',
+                cancelButton: 'swal-cancel-button',
+            },
         })
     },
 

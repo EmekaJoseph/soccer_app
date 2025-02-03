@@ -24,10 +24,10 @@ class ResultsController extends BaseController
         $this->matchResultService = $matchResultService;
     }
 
-    public function saveCupResult(Request $req)
+    public function saveResult(Request $req)
     {
         try {
-            $result = $this->matchResultService->saveResult($req, 'cup');
+            $result = $this->matchResultService->saveResult($req);
             if (isset($result['status']))
                 return response()->json(['message' => $result['message']], $result['status']);
             return response()->json($result, 200);
@@ -37,36 +37,10 @@ class ResultsController extends BaseController
     }
 
 
-    public function undoSaveCupResult(Request $req)
+    public function undoResult(Request $req)
     {
         try {
-            $result = $this->matchResultService->undoResult($req, 'cup');
-            if (isset($result['status']))
-                return response()->json(['message' => $result['message']], $result['status']);
-            return response()->json($result, 200);
-        } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
-        }
-    }
-
-
-    public function saveLeagueResult(Request $req)
-    {
-        try {
-            $result = $this->matchResultService->saveResult($req, 'league');
-            if (isset($result['status']))
-                return response()->json(['message' => $result['message']], $result['status']);
-            return response()->json($result, 200);
-        } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
-        }
-    }
-
-
-    public function undoSaveLeaugueCupResult(Request $req)
-    {
-        try {
-            $result = $this->matchResultService->undoResult($req, 'league');
+            $result = $this->matchResultService->undoResult($req);
             if (isset($result['status']))
                 return response()->json(['message' => $result['message']], $result['status']);
             return response()->json($result, 200);

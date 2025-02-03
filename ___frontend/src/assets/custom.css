@@ -13,7 +13,7 @@ button:focus,
 }
 
 .btn-primary-theme {
-  background-color: #27566d !important;
+  background-color: var(--btn-color) !important;
   outline: none !important;
   border: none !important;
   color: #fff !important;
@@ -24,7 +24,7 @@ button:focus,
 }
 
 .btn-primary-theme:hover {
-  background-color: #193f52 !important;
+  background-color: var(--btn-color-hover) !important;
 }
 
 .text-primary-theme {
@@ -183,7 +183,57 @@ button:focus,
   padding-block: 20px;
 }
 
+.min-vh-50{
+  min-height: 50vh;
+}
+
 /* .card-fixed-height {
   max-height: 200px;
   overflow-y: auto;
 } */
+
+
+
+
+
+
+
+/* Shared styles for all SweetAlert buttons */
+.swal-confirm-button,
+.swal-confirm-button-delete,
+.swal-cancel-button {
+    background: transparent !important;
+    text-transform: uppercase !important;
+    /* border: none !important; */
+}
+
+/* Specific styles for each button type */
+.swal-confirm-button {
+    color: var(--theme-color-3b) !important;
+}
+
+.swal-confirm-button-delete {  
+    color: var(--bs-danger) !important; 
+}
+
+.swal-cancel-button {
+    color: var(--bs-secondary) !important;
+}
+
+.swal-cancel-button:hover, 
+.swal-confirm-button:hover,
+.swal-confirm-button-delete:hover{
+  background-color: #d4d1d12b !important;
+}
+
+.swal2-actions {
+  display: flex !important;
+  align-items: end !important;
+  justify-content: end !important;
+  margin: unset !important;
+  margin-top: 30px !important;
+}
+
+.swal2-html-container{
+  text-align: start !important;
+}

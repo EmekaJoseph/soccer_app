@@ -172,8 +172,6 @@
                                     <!-- </fieldset> -->
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
 
@@ -190,6 +188,7 @@ import type { Header, Item, SortType } from "vue3-easy-data-table";
 import api from '@/store/axiosManager'
 import { useToast } from 'vue-toast-notification';
 import { vMaska } from "maska"
+import useFunctions from '@/store/useFunctions';
 
 const userData = useUserDataStore()
 const selectedTournament = ref<any>({})
@@ -212,11 +211,6 @@ async function loadResultsData() {
     dataIsLoading.value = false
 }
 
-function loadTournamentMatches() {
-    userData.getTournamentMatches(selectedTournament.value.id)
-
-}
-
 // TABLE #####################################
 const tableHeaders: Header[] = [
     { text: "Results", value: "results" },
@@ -226,26 +220,25 @@ const tableHeaders: Header[] = [
 ];
 
 async function undoResult(result: any) {
-    if (confirm('Undo this a result? this will undo updates.')) {
-
-        let obj = {
-            result_id: result.result_id,
-        }
-
-        try {
-            let resp: any;
-            if (selectedTournament.value.type == 'cup') resp = await api.undoSaveCupResult(obj)
-            else resp = await api.undoSaveLeagueResult(obj)
-
-            if (resp.status == 200) {
-                userData.getTournamentResults(selectedTournament.value.id)
-                $toast.default('Deleted successfuly', { position: 'top-right' });
+    useFunctions.confirmDelete('Undo this a result? this will undo updates.', 'Yes, Undo').then(async (tap) => {
+        if (tap.value) {
+            let obj = {
+                result_id: result.result_id,
             }
-        } catch (error) {
-            console.log(error);
-            $toast.error('Could not delete, Internet Error', { position: 'top-right' });
+
+            try {
+                let resp = await api.undoResult(obj)
+
+                if (resp.status == 200) {
+                    userData.getTournamentResults(selectedTournament.value.id)
+                    $toast.success('Deleted successfuly', { position: 'top-right' });
+                }
+            } catch (error) {
+                console.log(error);
+                $toast.error('Could not delete, Internet Error', { position: 'top-right' });
+            }
         }
-    }
+    })
 }
 
 
@@ -279,33 +272,31 @@ async function save() {
     obj.match_id = selectedMatch.value.match_id;
     obj.match_stage = selectedMatch.value.match_stage;
 
+    useFunctions.confirm('Are you sure you want to save this result?', 'Yes, Save').then(async (userTap) => {
+        if (userTap.value) {
+            try {
+                form.isSaving = true
+                await api.saveResult(obj)
 
-    form.isSaving = true
+                $toast.default('Result updated', { position: 'top-right' });
+                userData.getTournamentResults(selectedTournament.value.id)
 
-    if (confirm('Are you sure you want to update this result?')) {
-        try {
-            let resp: any;
-            if (selectedTournament.value.type == 'cup') resp = await api.saveCupResult(obj)
-            else resp = await api.saveLeagueResult(obj)
+                form.isSaving = false
+                form.awayTeam_score = 0;
+                form.homeTeam_score = 0
+                form.isPenalties = false
+                form.away_score_pen = 0
+                form.home_score_pen = 0
+                form.homeTeam = ''
+                form.awayTeam = ''
+                selectedMatch.value = ''
 
-            $toast.default('Result updated', { position: 'top-right' });
-            userData.getTournamentResults(selectedTournament.value.id)
-
-            form.isSaving = false
-            form.awayTeam_score = 0;
-            form.homeTeam_score = 0
-            form.isPenalties = false
-            form.away_score_pen = 0
-            form.home_score_pen = 0
-            form.homeTeam = ''
-            form.awayTeam = ''
-            selectedMatch.value = ''
-
-        } catch (error) {
-            $toast.error('Network Error', { position: 'top-right' });
-            form.isSaving = false
+            } catch (error) {
+                $toast.error('Network Error', { position: 'top-right' });
+                form.isSaving = false
+            }
         }
-    }
+    })
 }
 
 </script>
