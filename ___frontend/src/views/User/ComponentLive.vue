@@ -1,4 +1,5 @@
 <template>
+    <OverlayLoading v-if="liveLoading" />
     <div class="col-12 col-md-6 col-lg-4">
         <fieldset class="border rounded-3 p-3 bg-white h-100 shadow">
             <!-- <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">LIVE MATCH:
@@ -106,11 +107,13 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, onUnmounted, watch } from 'vue';
+import { reactive, onUnmounted, watch, ref } from 'vue';
 import { useUserDataStore } from '@/store/userDataStore';
 import api from '@/store/axiosManager'
 import { useToast } from 'vue-toast-notification';
 import { vMaska } from "maska"
+import useFunctions from '@/store/useFunctions';
+import OverlayLoading from '@/components/overlayLoading.vue';
 
 const prop = defineProps({
     teamData: {
@@ -127,6 +130,8 @@ const liveData = reactive({
     timeIsPaused: false,
     statusChanged: false
 })
+
+const liveLoading = ref<boolean>(false)
 
 const $toast = useToast();
 // const statusChanged = ref<boolean>(false)
@@ -147,11 +152,15 @@ function adjustTime(val: number) {
 
 
 async function updateLive() {
-    if (confirm('Update LIVE SCORE ?')) {
-        await sendUpdate()
-        liveData.statusChanged = false
-        $toast.default('Updated succesfully', { position: 'top-right' });
-    }
+    useFunctions.confirm('Update Live?', 'Update').then(async (tap) => {
+        if (tap.value) {
+            liveLoading.value = true
+            await sendUpdate()
+            liveData.statusChanged = false
+            liveLoading.value = false
+            $toast.default('Updated succesfully', { position: 'top-right' });
+        }
+    })
 }
 
 async function sendUpdate() {
@@ -167,20 +176,28 @@ async function sendUpdate() {
 }
 
 async function endLive() {
-    if (confirm('Sure you want to end LIVE MATCH ?')) {
+    useFunctions.confirmOptions('This will END and Save Results', 'Save & end', 'End').then(async (tap) => {
         try {
-            let resp = await api.endLiveMatch(prop.teamData.live_id)
-            if (resp.status == 200) {
-                userData.getLiveMatchesByUser(prop.teamData.tour_id)
-                $toast.default('Match ended succesfully', { position: 'top-right' });
+            if (tap.isConfirmed || tap.isDenied) {
+                liveLoading.value = true
+                const resp = tap.isConfirmed
+                    ? await api.endLiveMatchAndSave(prop.teamData.live_id)
+                    : await api.endLiveMatch(prop.teamData.live_id);
+
+                if (resp.status === 200) {
+                    userData.getLiveMatchesByUser(prop.teamData.tour_id);
+                    $toast.default('Match ended successfully', { position: 'top-right' });
+                }
+                clearInterval(liveMatchInterval);
+                liveLoading.value = false
             }
-            // clearInterval(liveUpdater)
-            clearInterval(liveMatchInterval)
         } catch (error) {
-            console.log(error);
-            $toast.error('Operation not successfull, Internet Error', { position: 'top-right' });
+            console.error(error);
+            $toast.error('Operation not successful, Internet Error', { position: 'top-right' });
+            liveLoading.value = false
         }
-    }
+
+    })
 }
 
 // increment time every 1min(60secs)

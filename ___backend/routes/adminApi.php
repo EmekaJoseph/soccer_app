@@ -41,6 +41,7 @@ Route::controller(LiveMatchesController::class)->group(function () {
     Route::post('startLiveMatch',  'startLiveMatch');
     Route::post('updateLiveMatch/{live_id}',  'updateLiveMatch');
     Route::get('endLiveMatch/{live_id}',  'endLiveMatch');
+    Route::get('endLiveMatchAndSave/{live_id}',  'endLiveMatchAndSave');
     Route::get('getLiveMatchesByUser/{tour_id}',  'getLiveMatchesByUser');
     Route::get('getLiveMatchesForAdmin/{tour_id}',  'getLiveMatchesForAdmin');
 });

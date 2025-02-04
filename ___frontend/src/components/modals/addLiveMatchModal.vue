@@ -71,6 +71,7 @@ const isSaving = ref(false)
 
 
 async function start() {
+    if (!selectedMatch.value.match_id) return;
 
     isSaving.value = true
 

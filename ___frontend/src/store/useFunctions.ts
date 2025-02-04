@@ -80,6 +80,23 @@ export default {
         })
     },
 
+    confirmOptions: (text: string, btnTextConfirm: string, btnTextDeny: string) => {
+        return Swal.fire({
+            text: `${text}`,
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: `${btnTextConfirm}`,
+            denyButtonText: `${btnTextDeny}`,
+            reverseButtons: true,
+            customClass: {
+                confirmButton: 'swal-confirm-button',
+                cancelButton: 'swal-cancel-button',
+                denyButton: 'swal-confirm-button-delete',
+            },
+        })
+    },
+
+
     addCommas: (numb: number) => {
         const str = !numb ? ['0'] : numb.toString().split(".");
         str[0] = str[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");

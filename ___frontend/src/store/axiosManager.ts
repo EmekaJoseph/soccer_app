@@ -171,6 +171,10 @@ export default {
         return $instance.get(`endLiveMatch/${live_id}`)
     },
 
+    endLiveMatchAndSave(live_id: string) {
+        return $instance.get(`endLiveMatchAndSave/${live_id}`)
+    },
+
     getLiveMatchesByUser(tour_id: string) {
         return $instance.get(`getLiveMatchesByUser/${tour_id}`,)
     },

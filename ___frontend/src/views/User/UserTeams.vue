@@ -32,7 +32,7 @@
                                                             class="list-group list-group-flush">
                                                             <li @click="activeTeam = team"
                                                                 class="list-group-item team-line-item my-1"
-                                                                :class="{ 'active-team': activeTeam?.team_id == team.team_id }">
+                                                                :class="{ 'active-team shadow-sm': activeTeam?.team_id == team.team_id }">
                                                                 <span class="me-2">{{ index + 1 }}</span>
                                                                 {{ team.team_name }}
                                                                 <i class="bi bi-circle-fill me-1 "
@@ -51,15 +51,20 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-6">
+                            <div class="col-lg-6" v-show="activeTeam">
                                 <div class="card border-0 h-100">
                                     <div
                                         class="card-header text-muted  bg-transparent border-0 text-uppercase fw-bolder">
                                         {{ activeTeam?.team_name }}
-                                        <span class="span float-end small cursor-pointer">
-                                            <i class="bi bi-pencil-fill me-4"></i>
-                                            <i @click="deleteTeam(activeTeam)"
-                                                class="bi bi-trash3 text-danger me-3"></i>
+                                        <span class="span float-end">
+                                            <button class="btn btn-sm bg-secondary-subtle text-dark hover-tilt-Y me-2">
+                                                <i class="bi bi-pencil-fill "></i>
+                                            </button>
+                                            <button @click="deleteTeam(activeTeam)"
+                                                class="btn btn-sm bg-secondary-subtle text-danger hover-tilt-Y me-2">
+                                                <i class="bi bi-trash3"></i>
+                                            </button>
+
                                         </span>
                                     </div>
                                     <div class="card-body">
@@ -182,7 +187,7 @@ async function deleteTeam(team: any) {
 .team-line-item {
     cursor: pointer;
     font-size: 14px;
-    border-radius: 10px;
+    border-radius: 7px;
 }
 
 .team-line-item:hover {
