@@ -53,11 +53,11 @@
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
                         <StatsLayout>
-                            <StandingsPanel v-show="currentShowing == 0" />
-                            <SchedulePanel v-show="currentShowing == 1" />
-                            <LivePanel v-show="currentShowing == 2" />
-                            <ResultsPanel v-show="currentShowing == 3" />
-                            <InfoPanel v-show="currentShowing == 4" />
+                            <SchedulePanel v-if="currentShowing == 1" />
+                            <LivePanel v-if="currentShowing == 2" />
+                            <ResultsPanel v-if="currentShowing == 3" />
+                            <InfoPanel v-if="currentShowing == 4" />
+                            <StandingsPanel v-if="currentShowing == 0" />
                         </StatsLayout>
                     </div>
                 </div>
@@ -87,13 +87,13 @@ const { vibrate, stop } = useVibrate({ pattern: [300, 100, 300] })
 
 
 
-function showPanel(Index: number) {
-    console.log(Index);
+function showPanel(index: number) {
+    console.log(index);
 
-    if (Index == 4) {
+    if (index == 4) {
         stats.getTourTeamsInfo()
     }
-    currentShowing.value = Index;
+    currentShowing.value = index;
     window.scrollTo(0, 0);
 }
 

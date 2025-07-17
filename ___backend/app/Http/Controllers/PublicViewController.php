@@ -172,24 +172,24 @@ class PublicViewController extends BaseController
 
     public function showLiveMatches(Request $req, $tour_id)
     {
-        $liveUpdates = DB::table('tbl_live')->where('tour_id', $tour_id)->get();
+        $live = DB::table('tbl_live')->where('tour_id', $tour_id)->get();
 
-        if ($liveUpdates->isNotEmpty()) {
+        if ($live->isNotEmpty()) {
             // Get all unique team IDs from live updates
-            $teamIds = $liveUpdates->pluck('home_team')->merge($liveUpdates->pluck('away_team'))->unique();
+            $teamIds = $live->pluck('home_team')->merge($live->pluck('away_team'))->unique();
 
             // Fetch all teams in one query and store them in an associative array
             $teams = TeamModel::whereIn('team_id', $teamIds)->get()->keyBy('team_id');
 
             // Assign team details to live updates
-            foreach ($liveUpdates as $result) {
+            foreach ($live as $result) {
                 $result->home_team = $teams[$result->home_team] ?? null;
                 $result->away_team = $teams[$result->away_team] ?? null;
             }
         }
 
 
-        return response()->json($liveUpdates, 200);
+        return response()->json($live, 200);
     }
 
     public function sendFeedBack(Request $req)

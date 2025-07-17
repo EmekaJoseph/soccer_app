@@ -1,8 +1,8 @@
 <template>
-    <div class="hero">
+    <div class="hero bg-image">
         <div class="hero-overlay"></div>
         <div class="row g-0">
-            <section class="col-6 bg-primary-theme d-none d-lg-flex">
+            <section class="col-6 bg-primary-them bg-transparent d-none d-lg-flex">
                 <div class="container position-relative p-5 text-white">
                     <img src="/icons/soccer.svg" width="100" alt="">
                     <h1>Tournament Manager</h1>
@@ -14,7 +14,7 @@
                     </div>
                 </div>
             </section>
-            <section class="col-lg-6  bg-imag bg-primary-theme px-md-0 px-3">
+            <section class="col-lg-6  bg-imag bg-primary-them px-md-0 px-3">
                 <LoginComponent v-if="route.path != '/register'" />
                 <RegisterComponent v-else />
             </section>
@@ -43,7 +43,7 @@ const route = useRoute()
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to bottom, var(--theme-color-7) 100%, #00000000 100%);
+    background: linear-gradient(to bottom, var(--theme-color-7) 100%, #000000cc 100%);
 }
 
 section {

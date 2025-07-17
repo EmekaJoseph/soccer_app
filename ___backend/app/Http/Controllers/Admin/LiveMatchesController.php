@@ -49,6 +49,9 @@ class LiveMatchesController extends BaseController
             'match_id' => $req->input('match_id'),
             'creator' => $currentUser,
             'tour_id' => $match->tour_id,
+            'match_stage' => $match->match_stage,
+            'home_team' => $match->home_team,
+            'away_team' => $match->away_team,
         ]);
 
         try {

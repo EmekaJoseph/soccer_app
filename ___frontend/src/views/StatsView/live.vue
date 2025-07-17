@@ -17,16 +17,16 @@
                     <div class="card-body p-3">
 
                         <div class="fw-bolder text-uppercase mb-2">
-                            <span v-if="home_team.team_badge"> {{ home_team.team_badge }} </span>
+                            <span v-if="home_team?.team_badge"> {{ home_team.team_badge }} </span>
                             <span v-else>
                                 <i :style="{ color: `${!home_team.team_color ? '#eee' : home_team.team_color}` }"
                                     class="bi bi-shield-fill"></i>
                             </span>
-                            {{ home_team.team_name }}:
+                            {{ home_team?.team_name }}:
                             <span class="float-end">{{ home_team_score }}</span>
                         </div>
                         <div class="fw-bolder text-uppercase">
-                            <span v-if="away_team.team_badge"> {{ away_team.team_badge }} </span>
+                            <span v-if="away_team?.team_badge"> {{ away_team?.team_badge }} </span>
                             <span v-else>
                                 <i :style="{ color: `${!away_team.team_color ? '#eee' : away_team.team_color}` }"
                                     class="bi bi-shield-fill"></i>

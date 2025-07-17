@@ -7,7 +7,7 @@ const selectedTournament = defineModel()
 
 <template>
     <div class="col-12">
-        <div class="col-lg-6 float-lg-end">
+        <div class="col-lg-12 float-lg-en">
             <div class="card border-0">
                 <div class="card-body">
                     <div>SELECT TOURNAMENT:</div>

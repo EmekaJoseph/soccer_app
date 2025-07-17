@@ -1,8 +1,9 @@
 <template>
     <div class="modal fade bg-faint show d-block " id="TournamentFormModal" tabindex="-1" data-bs-backdrop="static"
         data-bs-keyboard="false" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-lg animate__animated animate__slideInDown animate__faster" role="document">
-            <div class="modal-content border-0 ">
+        <div class="modal-dialog modal- animate__animated animate__slideInDown animate__faster modal-dialog-scrollable"
+            role="document">
+            <div class="modal-content border-0 px-lg-2 ">
                 <div class="modal-header border-0 ">
                     <h5 class="modal-title ">
                         {{ !props.isEditing ? 'NEW TOURNAMENT' : 'UPATE TOUNAMENT' }}
@@ -12,27 +13,30 @@
                 </div>
                 <div class="modal-body ">
 
+                    <div v-if="formError" class="alert alert-danger border-0" role="alert">
+                        <strong>{{ formError }}</strong>
+                    </div>
+
+
                     <!-- <paystack buttonClass="'button-class btn btn-primary'" buttonText="Pay Online"
                         :publicKey="publicKey" :email="email" :amount="amount" :reference="''"
                         :onSuccess="onSuccessfulPayment" :onCanel="onCancelledPayment"></paystack> -->
 
 
                     <form @submit.prevent="saveTournament" class="row  g-3">
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" v-model="form.tour_title" id="titleT"
-                                    placeholder="" />
-                                <label for="titleT">Name:</label>
-                            </div>
+                        <div class="col-md-8">
+                            <div class="form-label" for="titleT">Name:</div>
+                            <input type="text" class="form-control" v-model="form.tour_title" id="titleT"
+                                placeholder="tournament name..." />
                         </div>
-                        <div class="col-md-6" v-if="!props.isEditing">
-                            <div class="form-floating">
-                                <select id="Ttype" v-model="form.tour_type" class="form-select">
-                                    <option value="cup" selected>CUP</option>
-                                    <option value="league">LEAGUE</option>
-                                </select>
-                                <label for="Ttype">Type:</label>
-                            </div>
+                        <div class="col-md-4" v-if="!props.isEditing">
+                            <!-- <div class="form-floating"> -->
+                            <div class="form-label" for="Ttype">Type:</div>
+                            <select id="Ttype" v-model="form.tour_type" class="form-select">
+                                <option value="cup" selected>CUP</option>
+                                <option value="league">LEAGUE</option>
+                            </select>
+                            <!-- </div> -->
 
                         </div>
                         <div class="col-12">
@@ -40,34 +44,11 @@
                         </div>
 
                         <div class="col-12">
-                            <div class="form-floating">
-                                <textarea v-model="form.tour_desc" id="Tdesc" placeholder="" class="form-control"
-                                    style="height: 85px"></textarea>
-                                <label for="Tdesc">Description:</label>
-                            </div>
+                            <div class="form-label" for="Tdesc">Description:</div>
+                            <input type="text" class="form-control" v-model="form.tour_desc" id="titleT"
+                                placeholder="brief description..." />
                         </div>
 
-                        <div class="col-12" v-if="!props.isEditing">
-                            <div class="">
-
-                                <div class="row g-1">
-                                    <!-- <div class="col-md-8">
-                                        <div class="dropzone" v-bind="getRootProps()">
-                                            <div class="text-center small">
-                                                <div><i class="bi bi-image color-theme"></i></div>
-                                                <div><span class="color-theme">Click to replace</span> or drag and
-                                                    drop
-                                                </div>
-                                                <div class="fw-light">SVG, PNG, JPG or GIF (max. 400 x 400px)</div>
-                                            </div>
-                                            <input v-bind="getInputProps()" />
-                                        </div>
-                                    </div> -->
-
-
-                                </div>
-                            </div>
-                        </div>
 
                         <div class="col-md-3  cursor-pointer">
                             <div class="mb-1"> Logo:</div>
@@ -79,7 +60,7 @@
 
                         </div>
 
-                        <div class="col-md-12">
+                        <!-- <div class="col-md-12">
                             <button v-if="!form.isSaving" type="submit" class="btn btn-primary-theme float-end btn-lg"
                                 style="width: 200px;">
                                 {{ !props.isEditing ? 'Create ' : 'Update ' }}
@@ -90,20 +71,21 @@
 
                             </button>
 
-                        </div>
+                        </div> -->
                     </form>
 
                 </div>
-                <!-- <div class="modal-footer border-0">
+                <div class="modal-footer border-0">
 
-                    <button v-if="!form.isSaving" type="submit" class="btn btn-primary-theme btn-lg">
+                    <button @click="saveTournament" v-if="!form.isSaving" type="submit"
+                        class="btn btn-primary-theme float-end btn-lg" style="width: 200px;">
                         {{ !props.isEditing ? 'Create ' : 'Update ' }}
                     </button>
-                    <button v-else class="btn btn-primary-theme " type="button" disabled>
-                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                        Saving...
+                    <button v-else class="btn btn-primary-theme float-end btn-lg " style="width: 200px;" type="button"
+                        disabled>
+                        <span class="spinner-border spinner-border-s" role="status" aria-hidden="true"></span>
                     </button>
-                </div> -->
+                </div>
             </div>
         </div>
     </div>
@@ -112,7 +94,7 @@
 
 
 <script setup lang="ts">
-import { computed, reactive, watchEffect } from 'vue';
+import { computed, reactive, ref, watchEffect } from 'vue';
 import { useToast } from 'vue-toast-notification';
 import api from '@/store/axiosManager'
 import { useDropzone } from "vue3-dropzone";
@@ -132,12 +114,15 @@ const props = defineProps({
     }
 })
 
+const formError = ref<string>('')
+
 
 const { getRootProps, getInputProps, ...rest } = useDropzone({
     onDrop: (acceptedFiles) => {
         const requiredFormats = ['png', 'jpg', 'jpeg']
         if (!useFxn.isExtension(acceptedFiles[0].name, requiredFormats)) {
-            useFxn.toast('Please upload an image', 'warning');
+            // useFxn.toast('Please upload an image', 'warning');
+            formError.value = 'Please upload an image'
             return;
         }
 
@@ -179,13 +164,16 @@ watchEffect(() => {
 })
 
 async function saveTournament() {
+    formError.value = ''
     if (!form.tour_title) {
-        $toast.default('Enter Tournament Title', { position: 'top-right' });
+        // $toast.default('Enter Tournament Title', { position: 'top-right' });
+        formError.value = 'Enter Tournament Title'
         return;
     }
 
     if (form.tour_title.length == 1) {
-        $toast.default('Name can not be  one Character', { position: 'top-right' });
+        // $toast.default('Name can not be  one Character', { position: 'top-right' });
+        formError.value = 'Name can not be  one Character'
         return;
     }
 
@@ -201,7 +189,8 @@ async function saveTournament() {
     try {
         const resp = props.isEditing ? await api.updateTournament(newForm) : await api.createTournament(newForm)
         if (resp.status == 203) {
-            $toast.warning('Title already exists', { position: 'top-right' });
+            // $toast.warning('Title already exists', { position: 'top-right' });
+            formError.value = 'Title already exists'
             form.isSaving = false;
             return;
         }
@@ -254,8 +243,8 @@ const tourTypeInfomation = computed(() => {
 
 <style lang="css" scoped>
 .image-circle {
-    height: 100px;
-    width: 100px;
+    height: 70px;
+    width: 70px;
     border-radius: 50%;
     background-color: var(--bs-light-bg-subtle);
     border: 1px solid #e8e5e5;

@@ -61,7 +61,7 @@
                                 </div>
                                 <div class="col-9">
                                     <input type="text"
-                                        class="form-control form-control-sm text-uppercase fw-bold border-0 text-end"
+                                        class="form-control form-control-sm text-uppercase fw-bold border-0 text-en"
                                         readonly :value="teamData.home_team">
                                 </div>
                                 <div class="col-3">
@@ -73,7 +73,7 @@
 
                                 <div class="col-9">
                                     <input type="text"
-                                        class="form-control form-control-sm text-uppercase fw-bold border-0 text-end"
+                                        class="form-control form-control-sm text-uppercase fw-bold border-0 text-en"
                                         readonly :value="teamData.away_team">
                                 </div>
                                 <div class="col-3">
@@ -90,13 +90,13 @@
                     </div>
                 </div>
 
-                <div class="col-9 mt-4">
+                <!-- <div class="col-9 mt-4">
                     <button :disabled="!liveData.statusChanged" @click.prevent="updateLive"
                         class="hover-tilt-X btn btn-primary-theme w-100">
                         <i class="bi bi-check-circle-fill"></i> UPDATE
                     </button>
-                </div>
-                <div class="col-3 mt-4">
+                </div> -->
+                <div class="col-12 mt-4">
                     <button @click.prevent="endLive" class="btn btn-danger w-100">
                         <i class="bi bi-power"></i>
                     </button>
@@ -128,40 +128,22 @@ const liveData = reactive({
     live_id: prop.teamData.live_id,
     curr_time: prop.teamData.curr_time,
     timeIsPaused: false,
-    statusChanged: false
 })
 
 const liveLoading = ref<boolean>(false)
 
 const $toast = useToast();
-// const statusChanged = ref<boolean>(false)
 const userData = useUserDataStore()
 
-watch(() => [liveData.away_team_score, liveData.home_team_score], () => {
-    liveData.statusChanged = true
-})
 
 
 function adjustTime(val: number) {
-    liveData.statusChanged = true
     if (val == -1)
         liveData.curr_time = (liveData.curr_time >= 1) ? liveData.curr_time -= 1 : 0
     else
         liveData.curr_time++
 }
 
-
-async function updateLive() {
-    useFunctions.confirm('Update Live?', 'Update').then(async (tap) => {
-        if (tap.value) {
-            liveLoading.value = true
-            await sendUpdate()
-            liveData.statusChanged = false
-            liveLoading.value = false
-            $toast.default('Updated succesfully', { position: 'top-right' });
-        }
-    })
-}
 
 async function sendUpdate() {
     try {
@@ -176,7 +158,7 @@ async function sendUpdate() {
 }
 
 async function endLive() {
-    useFunctions.confirmOptions('This will END and Save Results', 'Save & end', 'End').then(async (tap) => {
+    useFunctions.confirmOptions('This will END and Save Results', 'END & SAVE', 'END').then(async (tap) => {
         try {
             if (tap.isConfirmed || tap.isDenied) {
                 liveLoading.value = true
@@ -204,7 +186,6 @@ async function endLive() {
 let liveMatchInterval = setInterval(() => {
     if (!liveData.timeIsPaused) {
         liveData.curr_time = parseInt(liveData.curr_time) + 1
-        sendUpdate()
     }
 }, 60000)
 
@@ -212,6 +193,15 @@ onUnmounted(() => {
     // clearInterval(liveMatchInterval)
     // clearInterval(liveUpdater)
 })
+
+watch(() => liveData, () => {
+    if (liveData.home_team_score != '' && liveData.away_team_score != '') {
+        setTimeout(() => {
+            sendUpdate()
+        }, 2000)
+    }
+
+}, { deep: true })
 
 
 </script>

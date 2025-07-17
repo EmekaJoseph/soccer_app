@@ -51,7 +51,7 @@
 
                             <button v-if="!dataIsLoading && authStore.isAdmin" @click="openTourModal()"
                                 class="btn btn-theme btn-sm px-3  btn-dark float-end hover-tilt-Y m-0">
-                                Add <i class="bi bi-plus-square-fill"></i>
+                                Add <i class="bi bi-plus-lg"></i>
                             </button>
                         </div>
                         <div class="card-body">
