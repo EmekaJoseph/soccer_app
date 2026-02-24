@@ -1,83 +1,67 @@
 <template>
-    <!-- <section class="bg-gradient"> -->
-    <!-- <div class="container"> -->
-    <div class="min-vh-100 animate__animated animate__fadeIn d-flex justify-content-center align-items-center">
-        <div class="col-md-10">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-transparent fs-5 text-center fw-bolder border-0">
-                    Create New Account
-                </div>
-                <div class="card-body">
-                    <!-- <div class="text-center">Create Account</div> -->
-                    <form @submit.prevent="login" class="row g-4 mt-1">
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <input v-model="form.email" :class="{ 'form-error': form.emailError }" type="text"
-                                    class="form-control" id="nameInput" placeholder="name">
-                                <label for="nameInput">Full Name</label>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <input v-model="form.email" :class="{ 'form-error': form.emailError }" type="email"
-                                    class="form-control" id="emailInput" placeholder="email">
-                                <label for="emailInput">Email address</label>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input v-model="form.password" :type="form.pswordType" class="form-control "
-                                    :class="{ 'form-error': form.passwError }" id="passwInput" placeholder="password">
-                                <label for="passwInput">Password</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input v-model="form.password" :type="form.pswordType" class="form-control "
-                                    :class="{ 'form-error': form.passwError }" id="passwInput" placeholder="password">
-                                <label for="passwInput">Repeat Password</label>
-                            </div>
-                        </div>
-                        <!-- <div class="col-12">
-                                    <div class="input-group">
-                                        <div class="form-floating">
-                                            <input v-model="form.password" :type="form.pswordType"
-                                                class="form-control  border-end-0 "
-                                                :class="{ 'form-error': form.passwError }" id="passwInput"
-                                                placeholder="password">
-                                            <label for="passwInput">Password</label>
-                                        </div>
-
-                                        <div v-if="form.pswordType == 'password'" @click="swapPasFieldType"
-                                            class="input-group-text small-text fw-bold bg-white border-start-0 cursor-pointer">
-                                            <i class="bi bi-eye-slash"></i>
-                                        </div>
-                                        <div v-else @click="swapPasFieldType"
-                                            class="input-group-text small-text fw-bold bg-white border-start-0 cursor-pointer">
-                                            <i class="bi bi-eye"></i>
-                                        </div>
-                                    </div>
-                                </div> -->
-                        <div class="col-12 mt-4">
-                            <button :disabled="form.isLoading" type="submit"
-                                class="btn btn-primary-theme w-100 btn-lg">CREATE ACCOUNT</button>
-                            <!-- <span class="float-end cursor-pointer">forgot password?</span> -->
-                        </div>
-
-                        <div class="col-12 mt-5 text-center">
-                            Already have an account?
-                            <RouterLink class="text-decoration-none text-primary-theme fw-bolder" to="/login">
-                                Login
-                            </RouterLink>
-                        </div>
-                    </form>
-                </div>
+    <div class="animate__animated animate__fadeIn">
+        <div class="glass-card p-4 p-md-5">
+            <div class="text-center mb-4">
+                <img src="/icons/soccer.svg" width="50" alt="" class="mb-3 animate-float">
+                <h2 class="text-white fw-bold mb-1">Create Account</h2>
+                <p class="text-white-50 small">Join our community and manage your tournaments like a pro</p>
             </div>
+
+            <form @submit.prevent="register" class="row g-3">
+                <div class="col-12">
+                    <div class="form-floating custom-form-floating">
+                        <input v-model="form.name" :class="{ 'is-invalid': form.nameError }" type="text"
+                            class="form-control" id="nameInput" placeholder="John Doe">
+                        <label for="nameInput" class="text-white-50">Full Name</label>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="form-floating custom-form-floating">
+                        <input v-model="form.email" :class="{ 'is-invalid': form.emailError }" type="email"
+                            class="form-control" id="emailInput" placeholder="name@example.com">
+                        <label for="emailInput" class="text-white-50">Email address</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating custom-form-floating">
+                        <input v-model="form.password" :type="form.pswordType" class="form-control"
+                            :class="{ 'is-invalid': form.passwError }" id="passwInput" placeholder="password">
+                        <label for="passwInput" class="text-white-50">Password</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating custom-form-floating">
+                        <input v-model="form.password_confirmation" :type="form.pswordType" class="form-control"
+                            :class="{ 'is-invalid': form.passwError }" id="repeatPasswInput" placeholder="password">
+                        <label for="repeatPasswInput" class="text-white-50">Repeat Password</label>
+                    </div>
+                </div>
+
+                <div class="col-12 mt-4">
+                    <button :disabled="form.isLoading" type="submit"
+                        class="btn btn-primary-theme w-100 py-3 fw-bold rounded-3 shadow-sm hover-tilt-Y">
+                        <span v-if="!form.isLoading">CREATE ACCOUNT</span>
+                        <span v-else>
+                            <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+                            CREATING ACCOUNT...
+                        </span>
+                    </button>
+                </div>
+
+                <div class="col-12 mt-4 text-center">
+                    <p class="text-white-50 small mb-0">
+                        Already have an account?
+                        <RouterLink class="text-gradient fw-bold text-decoration-none ms-1" to="/login">
+                            Login
+                        </RouterLink>
+                    </p>
+                </div>
+            </form>
         </div>
     </div>
-    <!-- </div>
-    </section> -->
 </template>
 
 <script setup lang="ts">
@@ -87,76 +71,90 @@ import api from '@/store/axiosManager'
 import { useAuthStore } from '@/store/authStore';
 
 const authStore = useAuthStore()
-
-
 const router = useRouter();
+
 const form = reactive({
+    name: '',
     email: '',
     password: '',
+    password_confirmation: '',
     pswordType: 'password',
     isLoading: false,
+    nameError: '',
     emailError: '',
     passwError: ''
 })
 
-const swapPasFieldType = () => {
-    form.pswordType = form.pswordType == 'password' ? 'text' : 'password'
-}
-
-
-async function login() {
+async function register() {
+    form.nameError = '';
     form.emailError = '';
     form.passwError = '';
+
+    if (!form.name) {
+        form.nameError = 'Name is required';
+        return;
+    }
     if (!form.email) {
-        form.emailError = 'username is required';
+        form.emailError = 'Email is required';
         return;
     }
-
     if (!form.password) {
-        form.passwError = 'password is required';
+        form.passwError = 'Password is required';
         return;
-    }
-
-    let obj = {
-        email: form.email,
-        password: form.password
     }
 
     form.isLoading = true
     try {
-        let resp = await api.login(obj)
-        if (resp.status == 203) {
+        let resp = await api.login({
+            email: form.email,
+            password: form.password
+        })
+
+        if (resp.status === 203) {
             alert('invalid details')
             form.isLoading = false
             return;
         }
 
-        form.email = ''
-        form.password = ''
-        const data = resp.data
-
-        // account.state = resp.data
-        // account.token = resp.data.token
-        authStore.login(data)
+        authStore.login(resp.data)
         router.replace({ path: '/user/dashboard' })
-        form.isLoading = false
-
     } catch (error) {
         alert('Network Error')
+    } finally {
         form.isLoading = false
     }
-
 }
 </script>
 
 <style scoped>
-input:focus+.input-group-text {
-    /* border-color: var(--theme-color-3) !important; */
-    border-color: #dee2e6 !important;
+.custom-form-floating .form-control {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    border-radius: 12px;
 }
 
-.form-error,
-.form-error+.input-group-text {
-    border-color: var(--theme-color-2)
+.custom-form-floating .form-control:focus {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 4px rgba(0, 242, 254, 0.1) !important;
+}
+
+.is-invalid {
+    border-color: #ff4d4d !important;
+}
+
+.btn-primary-theme {
+    background: var(--accent-gradient) !important;
+    border: none !important;
+    color: #000 !important;
+    letter-spacing: 0.5px;
+}
+
+.text-gradient {
+    background: var(--accent-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 </style>

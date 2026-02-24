@@ -1,162 +1,143 @@
 <template>
-    <section id="why-us" class="why-us section">
-
-        <div class="container">
-
-            <div class="row g-0">
-
-                <div class="col-xl-5 img-bg" data-aos="fade-up" data-aos-delay="100">
-                    <img src="@/assets/img/why-us-bg.jpg" alt="">
-                </div>
-
-                <div class="col-xl-7 slides position-relative" data-aos="fade-up" data-aos-delay="200">
-
-                    <div class="swiper init-swiper">
-
-                        <div class="swiper-wrapper">
-
-                            <div class="swiper-slide">
-                                <div class="item">
-                                    <h3>Unmissable Tournaments. Live Scores. One App.</h3>
-
-                                    <p>Ditch the app overload! Follow all your favorite tournaments, live scores, team
-                                        standings, and breaking news in a single, convenient platform. Stay ahead of the
-                                        curve, analyze team performance, and never miss a close call with real-time
-                                        notifications.</p>
-                                </div>
-                            </div><!-- End slide item -->
-
-                            <div class="swiper-slide">
-                                <div class="item">
-                                    <h3>Real-time score updates</h3>
-
-                                    <p>Dynamically displayed scores for ongoing matches, including elapsed time and
-                                        additional stats </p>
-                                </div>
-                            </div><!-- End slide item -->
-
-                            <div class="swiper-slide">
-                                <div class="item">
-                                    <h3>Interactive leaderboards</h3>
-
-                                    <p>Sortable tables showcasing team rankings, points, wins/losses, and other relevant
-                                        stats</p>
-                                </div>
-                            </div><!-- End slide item -->
-
-                            <div class="swiper-slide">
-                                <div class="item">
-                                    <h3>Clear and concise schedule</h3>
-
-                                    <p>List upcoming matches with dates, times, and participating teams</p>
-                                </div>
-                            </div><!-- End slide item -->
-
-                            <div class="swiper-slide">
-                                <div class="item">
-                                    <h3>In-depth team information</h3>
-
-                                    <p>Detailed pages with team logos, player rosters, bios, and performance statistics
-                                    </p>
-                                </div>
-                            </div><!-- End slide item -->
-
-                        </div>
-                        <div class="swiper-pagination"></div>
+    <section id="why-us" class="why-us section position-relative overflow-hidden">
+        <div class="container position-relative z-1">
+            <div class="row align-items-center gy-5">
+                <div class="col-xl-5" data-aos="fade-right">
+                    <div class="image-wrapper position-relative">
+                        <div class="glass-decoration animate-float"></div>
+                        <img src="@/assets/img/why-us-bg.jpg" alt="Soccer Experience"
+                            class="img-fluid rounded-4 shadow-lg border border-white border-opacity-10">
                     </div>
-
-                    <div class="swiper-button-prev"></div>
-                    <div class="swiper-button-next"></div>
                 </div>
 
-            </div>
+                <div class="col-xl-7" data-aos="fade-left">
+                    <div class="ps-xl-5">
+                        <!-- <div class="badge bg-primary-theme px-3 py-2 mb-3 rounded-pill">
+                            <i class="bi bi-info-circle-fill me-2 text-gradient"></i>
+                            Why Choose Us
+                        </div> -->
+                        <h2 class="display-5 fw-bold text-white mb-4">Unmatched Soccer <span
+                                class="text-gradient">Experience</span></h2>
 
+                        <div class="swiper init-swiper glass-card p-4 p-md-5">
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide">
+                                    <div class="item">
+                                        <h3 class="text-white mb-3">Complete Tournament Ecosystem</h3>
+                                        <p class="text-white-50">From grassroots leagues to professional cups, manage
+                                            every league, result, and team in one premium dashboard.</p>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+                                    <div class="item">
+                                        <h3 class="text-white mb-3">Player-Centric Tracking</h3>
+                                        <p class="text-white-50">Monitor individual player performance, goals, cards,
+                                            and substitutions across all match events.</p>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+                                    <div class="item">
+                                        <h3 class="text-white mb-3">Fan Engagement Ready</h3>
+                                        <p class="text-white-50">Give your fans a professional experience with
+                                            live-updating results, sleek standings, and mobile-ready match centers.</p>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+                                    <div class="item">
+                                        <h3 class="text-white mb-3">Strategic Team Planning</h3>
+                                        <p class="text-white-50">Organize squads, track historical performance, and
+                                            manage team logos and rosters with professional precision.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="swiper-pagination mt-4"></div>
+                            <div class="d-none d-md-flex swiper-navigation position-absolute bottom-0 end-0 p-4">
+                                <button class="btn btn-outline-light btn-sm swiper-button-prev me-2"><i
+                                        class="bi bi-chevron-left"></i></button>
+                                <button class="btn btn-outline-light btn-sm swiper-button-next"><i
+                                        class="bi bi-chevron-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
+        <!-- Decorative elements -->
+        <div class="decoration top-0 start-0 translate-middle bg-primary-theme opacity-10 rounded-circle"
+            style="width: 400px; height: 400px; filter: blur(80px);"></div>
+        <div class="decoration bottom-0 end-0 translate-middle-y bg-info opacity-10 rounded-circle"
+            style="width: 300px; height: 300px; filter: blur(60px);"></div>
     </section>
 </template>
 
 <style lang="css" scoped>
-.why-us .img-bg {
-    min-height: 500px;
+.why-us {
+    background: #0f2027;
+    /* Dark matching hero */
+    padding: 100px 0;
+}
+
+.image-wrapper {
     position: relative;
+    padding: 20px;
 }
 
-.why-us .img-bg img {
+.glass-decoration {
     position: absolute;
-    inset: 0;
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 1;
-}
-
-.why-us .slides {
-    background-color: color-mix(in srgb, var(--default-color), transparent 97%);
-}
-
-.why-us h3 {
-    font-size: 24px;
-    font-weight: 700;
-}
-
-.why-us h4 {
-    font-size: 18px;
-    font-weight: 300;
-    color: color-mix(in srgb, var(--default-color), transparent 30%);
+    top: -20px;
+    right: -20px;
+    width: 60%;
+    height: 60%;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    z-index: -1;
 }
 
 .why-us .swiper {
-    margin: 140px 140px 120px 140px;
+    position: relative;
     overflow: hidden;
 }
 
-.why-us .swiper-wrapper {
-    height: auto;
+.why-us .item h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
 }
 
-.why-us .swiper-button-prev:after,
-.why-us .swiper-button-next:after {
-    font-size: 24px;
-    color: color-mix(in srgb, var(--default-color), transparent 50%);
+.swiper-navigation .btn {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
 }
 
-.why-us .swiper-button-prev {
-    left: 80px;
+.swiper-navigation .btn:hover {
+    background: var(--accent-gradient);
+    border-color: transparent;
+    color: #000;
 }
 
-.why-us .swiper-button-next {
-    right: 80px;
+.decoration {
+    position: absolute;
+    pointer-events: none;
+    z-index: 0;
 }
 
-.why-us .swiper-pagination {
-    margin-top: 30px;
-    position: relative;
+.z-1 {
+    z-index: 1;
 }
 
-.why-us .swiper-pagination .swiper-pagination-bullet {
-    background-color: color-mix(in srgb, var(--default-color), transparent 50%);
+:deep(.swiper-pagination-bullet) {
+    background: rgba(255, 255, 255, 0.3);
+    opacity: 1;
 }
 
-.why-us .swiper-pagination .swiper-pagination-bullet-active {
-    background-color: var(--accent-color);
-}
-
-@media (max-width: 1200px) {
-    .why-us .swiper {
-        margin: 60px 60px 40px 60px;
-    }
-
-    .why-us .swiper-button-prev,
-    .why-us .swiper-button-next {
-        display: none;
-    }
-}
-
-@media (max-width: 575px) {
-    .why-us .swiper {
-        margin: 40px 40px 20px 40px;
-    }
+:deep(.swiper-pagination-bullet-active) {
+    background: var(--accent-color);
 }
 </style>

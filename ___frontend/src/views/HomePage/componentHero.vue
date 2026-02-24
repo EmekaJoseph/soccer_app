@@ -1,23 +1,45 @@
 <template>
-    <div class="hero bg-image">
+    <div class="hero bg-image d-flex align-items-center">
         <div class="hero-overlay"></div>
-        <div class="row g-0">
-            <section class="col-6 bg-primary-them bg-transparent d-none d-lg-flex">
-                <div class="container position-relative p-5 text-white">
-                    <img src="/icons/soccer.svg" width="100" alt="">
-                    <h1>Tournament Manager</h1>
-                    <div class="px-5">
-                        Manage live scores, team standings, and match updates for all your favorite tournaments in one
-                        place. Stay ahead of the
-                        curve, analyze team performance, and never miss a close call with real-time
-                        notifications.
+        <div class="container position-relative z-1">
+            <div class="row align-items-center gy-5">
+                <div class="col-lg-6 text-center text-lg-start">
+                    <div class="badge bg-primary-theme px-3 py-2 mb-3 rounded-pill animate-float">
+                        <i class="bi bi-trophy-fill me-2 text-warning"></i>
+                        Professional Soccer Management
+                    </div>
+                    <h1 class="display-3 fw-bold text-white mb-4">
+                        Elevate Every <span class="text-gradient">Soccer Goal</span>
+                    </h1>
+                    <p class="lead text-white-50 mb-5 px-lg-0 px-4">
+                        The all-in-one platform for tournament organizers and fans. Track every team, manage player
+                        rosters, and deliver real-time results directly to your audience.
+                    </p>
+                    <div class="d-flex justify-content-center justify-content-lg-start gap-3">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-lightning-charge-fill text-gradient fs-3 me-2"></i>
+                            <div class="text-white">
+                                <div class="fw-bold">Live Scores</div>
+                                <div class="small text-white-50">Instant Tracking</div>
+                            </div>
+                        </div>
+                        <div class="vr bg-white mx-3 opacity-25"></div>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-people-fill text-gradient fs-3 me-2"></i>
+                            <div class="text-white">
+                                <div class="fw-bold">Player Stats</div>
+                                <div class="small text-white-50">Detailed Rosters</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </section>
-            <section class="col-lg-6  bg-imag bg-primary-them px-md-0 px-3">
-                <LoginComponent v-if="route.path != '/register'" />
-                <RegisterComponent v-else />
-            </section>
+                <div class="col-lg-6">
+                    <!-- <div class="glass-card p-4 p-md-5"> -->
+                    <LoginComponent v-if="route.path != '/register'" />
+                    <RegisterComponent v-else />
+                    <!-- </div> -->
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -33,7 +55,9 @@ const route = useRoute()
 <style scoped>
 .hero {
     position: relative;
+    min-height: 100vh;
     overflow: hidden;
+    padding: 100px 0;
 }
 
 .hero-overlay {
@@ -43,15 +67,8 @@ const route = useRoute()
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to bottom, var(--theme-color-7) 100%, #000000cc 100%);
-}
-
-section {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+    background: linear-gradient(135deg, rgba(15, 32, 39, 0.9) 0%, rgba(32, 58, 67, 0.8) 100%);
+    z-index: 0;
 }
 
 .bg-image {
@@ -60,8 +77,17 @@ section {
 }
 
 .hero h1 {
-    margin: 0;
-    font-size: 3rem;
-    font-weight: 700;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    line-height: 1.1;
+}
+
+.z-1 {
+    z-index: 1;
+}
+
+@media (max-width: 991.98px) {
+    .hero {
+        padding: 80px 0;
+    }
 }
 </style>

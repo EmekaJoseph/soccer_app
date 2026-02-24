@@ -1,26 +1,53 @@
 @import './base.css';
 
+:root {
+  --primary-gradient: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  --accent-color: #00f2fe;
+  --accent-gradient: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-blur: blur(12px);
+  --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--card-shadow);
+  border-radius: 15px;
+}
+
+.text-gradient {
+  background: var(--accent-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
 input:focus,
 select:focus,
 textarea:focus,
 button:focus,
 .page-link:focus {
   outline: none !important;
-  box-shadow: none !important;
-  border-color: #dee2e6 !important;
-  /* border-color: var(--theme-color-3) !important; */
-  /* background-color: none; */
-}
-
-.btn-primary-theme {
-  background-color: var(--btn-color) !important;
-  outline: none !important;
-  border: none !important;
-  color: #fff !important;
+  box-shadow: 0 0 0 0.25rem rgba(0, 242, 254, 0.25) !important;
+  border-color: var(--accent-color) !important;
 }
 
 .bg-primary-theme {
-  background-color: #27566d !important;
+  background: var(--primary-gradient) !important;
 }
 
 .btn-primary-theme:hover {
@@ -78,7 +105,7 @@ button:focus,
 }
 
 .general-body {
-  padding-bottom: 250px;
+  padding-bottom: 60px;
   background-color: var(--bs-light);
   background-color: var(--bs-white);
 }

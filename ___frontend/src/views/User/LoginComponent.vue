@@ -1,68 +1,68 @@
 <template>
-    <div class="min-vh-100 d-flex animate__animated animate__fadeIn justify-content-center align-items-center">
-        <div class="col-md-8">
-            <div class="card border-0 bg-white">
-                <div class="card-header bg-transparent fs-5 text-center fw-bolder border-0">
-                    Login to your Account
-                </div>
-                <div class="card-body">
-                    <div v-show="form.formError" class="alert alert-danger border-0 text-center py-2" role="alert">
-                        <strong>
-                            <i class="bi bi-exclamation-circle-fill"></i> Incorrect Email/Password
-                        </strong>
-                    </div>
-
-                    <form @submit.prevent="login" class="row g-4 mt-1">
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <input v-model="form.email" :class="{ 'form-error': form.emailError }" type="email"
-                                    class="form-control form-control-lg bg-white" id="emailInput" placeholder="email">
-                                <label for="emailInput">Email address</label>
-                            </div>
-                            <div class="small text-danger text-start">{{ form.emailError }}</div>
-                        </div>
-                        <div class="col-12">
-                            <div class="input-group">
-                                <div class="form-floating">
-                                    <input v-model="form.password" :type="form.pswordType"
-                                        class="form-control  border-end-0 form-control-lg bg-white"
-                                        :class="{ 'form-error': form.passwError }" id="passwInput"
-                                        placeholder="password">
-                                    <label for="passwInput">Password</label>
-                                </div>
-
-                                <div v-if="form.pswordType == 'password'" @click="swapPasFieldType"
-                                    :class="{ 'form-error': form.passwError }"
-                                    class="input-group-text small-text fw-bold bg-white border-start-0 cursor-pointer">
-                                    <i class="bi bi-eye-slash"></i>
-                                </div>
-                                <div v-else @click="swapPasFieldType" :class="{ 'form-error': form.passwError }"
-                                    class="input-group-text small-text fw-bold bg-white border-start-0 cursor-pointer">
-                                    <i class="bi bi-eye"></i>
-                                </div>
-                            </div>
-                            <div class="small text-danger text-start">{{ form.passwError }}</div>
-                        </div>
-                        <div class="col-12 mt-4">
-                            <button v-if="!form.isLoading" type="submit"
-                                class="btn btn-primary-theme w-100 btn-lg">LOGIN</button>
-                            <button v-else class="btn btn-primary-theme btn-lg w-100" type="button" disabled>
-                                <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                                Logining in..
-                            </button>
-                            <span class="float-end cursor-pointer mt-2 text-primary-theme fw-bolder">forgot
-                                password?</span>
-                        </div>
-
-                        <div class="col-12 mt-5 text-center text-dark">
-                            Dont have an account?
-                            <RouterLink class="text-decoration-none fw-bolder text-primary-theme" to="/register">
-                                Create account
-                            </RouterLink>
-                        </div>
-                    </form>
-                </div>
+    <div class="animate__animated animate__fadeIn">
+        <div class="glass-card p-4 p-md-5">
+            <div class="text-center mb-4">
+                <img src="/icons/soccer.svg" width="50" alt="" class="mb-3 animate-float">
+                <h2 class="text-white fw-bold mb-1">Welcome Back</h2>
+                <p class="text-white-50 small">Enter your credentials to access your dashboard</p>
             </div>
+
+            <div v-show="form.formError"
+                class="alert alert-danger border-0 bg-danger bg-opacity-10 text-danger small text-center py-2"
+                role="alert">
+                <i class="bi bi-exclamation-circle-fill me-2"></i> Incorrect Email or Password
+            </div>
+
+            <form @submit.prevent="login" class="row g-3">
+                <div class="col-12">
+                    <div class="form-floating custom-form-floating">
+                        <input v-model="form.email" :class="{ 'is-invalid': form.emailError }" type="email"
+                            class="form-control" id="emailInput" placeholder="name@example.com">
+                        <label for="emailInput" class="text-white-50">Email address</label>
+                    </div>
+                    <div class="small text-danger mt-1 text-start" v-if="form.emailError">{{ form.emailError }}</div>
+                </div>
+
+                <div class="col-12">
+                    <div class="input-group custom-input-group">
+                        <div class="form-floating flex-grow-1 custom-form-floating">
+                            <input v-model="form.password" :type="form.pswordType" class="form-control border-end-0"
+                                :class="{ 'is-invalid': form.passwError }" id="passwInput" placeholder="password">
+                            <label for="passwInput" class="text-white-50">Password</label>
+                        </div>
+                        <span @click="swapPasFieldType"
+                            class="input-group-text bg-transparent border-start-0 cursor-pointer text-white-50">
+                            <i :class="form.pswordType === 'password' ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+                        </span>
+                    </div>
+                    <div class="small text-danger mt-1 text-start" v-if="form.passwError">{{ form.passwError }}</div>
+                </div>
+
+                <div class="col-12 d-flex justify-content-end mt-2">
+                    <span class="cursor-pointer small text-gradient fw-bold">Forgot password?</span>
+                </div>
+
+                <div class="col-12 mt-4">
+                    <button v-if="!form.isLoading" type="submit"
+                        class="btn btn-primary-theme w-100 py-3 fw-bold rounded-3 shadow-sm hover-tilt-Y">
+                        LOGIN TO ACCOUNT
+                    </button>
+                    <button v-else class="btn btn-primary-theme w-100 py-3 fw-bold rounded-3 shadow-sm" type="button"
+                        disabled>
+                        <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+                        LOGGING IN...
+                    </button>
+                </div>
+
+                <div class="col-12 mt-4 text-center">
+                    <p class="text-white-50 small mb-0">
+                        Don't have an account?
+                        <RouterLink class="text-gradient fw-bold text-decoration-none ms-1" to="/register">
+                            Create account
+                        </RouterLink>
+                    </p>
+                </div>
+            </form>
         </div>
     </div>
 </template>
@@ -74,9 +74,8 @@ import api from '@/store/axiosManager'
 import { useAuthStore } from '@/store/authStore';
 
 const authStore = useAuthStore()
-
-
 const router = useRouter();
+
 const form = reactive({
     email: '',
     password: '',
@@ -88,64 +87,86 @@ const form = reactive({
 })
 
 const swapPasFieldType = () => {
-    form.pswordType = form.pswordType == 'password' ? 'text' : 'password'
+    form.pswordType = form.pswordType === 'password' ? 'text' : 'password'
 }
-
 
 async function login() {
     form.emailError = '';
     form.passwError = '';
     form.formError = false;
+
     if (!form.email) {
-        form.emailError = 'username is required';
+        form.emailError = 'Email is required';
         return;
     }
 
     if (!form.password) {
-        form.passwError = 'password is required';
+        form.passwError = 'Password is required';
         return;
-    }
-
-    let obj = {
-        email: form.email,
-        password: form.password
     }
 
     form.isLoading = true
     try {
-        let resp = await api.login(obj)
-        if (resp.status == 203) {
+        let resp = await api.login({
+            email: form.email,
+            password: form.password
+        })
+
+        if (resp.status === 203) {
             form.formError = true
             form.isLoading = false
             return;
         }
 
-        form.email = ''
-        form.password = ''
-        const data = resp.data
-
-        // account.state = resp.data
-        // account.token = resp.data.token
-        authStore.login(data)
+        authStore.login(resp.data)
         router.replace({ path: '/user/dashboard' })
-        form.isLoading = false
-
     } catch (error) {
         alert('Network Error')
+    } finally {
         form.isLoading = false
     }
-
 }
 </script>
 
 <style scoped>
-input:focus+.input-group-text {
-    /* border-color: var(--theme-color-3) !important; */
-    border-color: #dee2e6 !important;
+.custom-form-floating .form-control {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    border-radius: 12px;
 }
 
-.form-error,
-.form-error+.input-group-text {
-    border-color: var(--theme-color-2)
+.custom-form-floating .form-control:focus {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 4px rgba(0, 242, 254, 0.1) !important;
+}
+
+.custom-input-group .input-group-text {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 0 12px 12px 0;
+}
+
+.custom-form-floating .form-control.border-end-0 {
+    border-radius: 12px 0 0 12px;
+}
+
+.is-invalid {
+    border-color: #ff4d4d !important;
+}
+
+.btn-primary-theme {
+    background: var(--accent-gradient) !important;
+    border: none !important;
+    color: #000 !important;
+    letter-spacing: 0.5px;
+}
+
+.text-gradient {
+    background: var(--accent-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 </style>
