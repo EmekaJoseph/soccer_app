@@ -1,65 +1,59 @@
 <template>
-    <div class="main general-body">
-        <div class="fixed-top shadow-s">
-            <div class="m-3 ">
-                <RouterLink class="text-white me-1 me-lg-3" to="/"> <i class="bi bi-chevron-left"></i></RouterLink>
-                <RouterLink to="/" class=""><img class="sm-logo" src="@/assets/images/dlam_academy.png" alt="">
-                </RouterLink>
-                <span class="fw-bolder text-uppercase float-end">{{ stats.tour_title }}</span>
-            </div>
-            <div class="mt-4 container">
-
-                <div class="row justify-content-center ">
-                    <div class="col-md-5 col-12">
-                        <div class="small text-dim scrolling-text"> {{ today_date }}
-                        </div>
+    <div class="main general-body stats-page">
+        <!-- Modern Header -->
+        <div class="fixed-top glass-header">
+            <div class="container py-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <RouterLink class="text-white me-3 hover-scale" to="/">
+                            <i class="bi bi-chevron-left fs-4"></i>
+                        </RouterLink>
+                        <RouterLink to="/" class="d-none d-sm-block">
+                            <img class="logo-modern" src="@/assets/images/dlam_academy.png" alt="Logo">
+                        </RouterLink>
                     </div>
-                    <div class="col-lg-8">
-                        <div class="menu-div ">
-                            <div class="d-flex justify-content-between">
+                    <div class="text-end">
+                        <div class="fw-bold text-gradient text-uppercase small ls-1">{{ stats.tour_title }}</div>
+                        <div class="small text-white-50 mt-1 d-none d-md-block">{{ today_date }}</div>
+                    </div>
+                </div>
 
-                                <div @click="showPanel(1)" :class="{ 'menu-active': currentShowing == 1 }"
-                                    class=" menu-item">
-                                    <i class="bi bi-calendar-event"></i> FIXTURES
-                                </div>
-                                <div @click="showPanel(2)" :class="{ 'menu-active': currentShowing == 2 }"
-                                    class=" menu-item">
-                                    <i class="bi bi-tv"></i> LIVE
-                                    <i v-if="stats.tourLives.length"
-                                        class=" blinker small ms-1 bi bi-circle-fill text-success"></i>
-                                </div>
-                                <div @click="showPanel(3)" :class="{ 'menu-active': currentShowing == 3 }"
-                                    class=" menu-item">
-                                    <i class="bi bi-flag"></i> RESULTS
-                                </div>
-                                <div @click="showPanel(4)" :class="{ 'menu-active': currentShowing == 4 }"
-                                    class=" menu-item">
-                                    <i class="bi bi-people"></i> TEAMS
-                                </div>
-                                <div @click="showPanel(0)" :class="{ 'menu-active': currentShowing == 0 }"
-                                    class=" menu-item">
-                                    <i class="bi bi-collection"></i> GROUPS
-                                </div>
-                            </div>
+                <!-- Modern Navigation Pills -->
+                <div class="navigation-wrapper mt-4">
+                    <div class="nav-pills-modern">
+                        <div @click="showPanel(1)" :class="{ 'active': currentShowing == 1 }" class="nav-pill">
+                            <i class="bi bi-calendar-event me-2"></i> FIXTURES
+                        </div>
+                        <div @click="showPanel(2)" :class="{ 'active': currentShowing == 2 }" class="nav-pill">
+                            <i class="bi bi-broadcast me-2"></i> LIVE
+                            <span v-if="stats.tourLives.length" class="pulse-indicator"></span>
+                        </div>
+                        <div @click="showPanel(3)" :class="{ 'active': currentShowing == 3 }" class="nav-pill">
+                            <i class="bi bi-trophy me-2"></i> RESULTS
+                        </div>
+                        <div @click="showPanel(4)" :class="{ 'active': currentShowing == 4 }" class="nav-pill">
+                            <i class="bi bi-people me-2"></i> TEAMS
+                        </div>
+                        <div @click="showPanel(0)" :class="{ 'active': currentShowing == 0 }" class="nav-pill">
+                            <i class="bi bi-grid me-2"></i> GROUPS
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-
-        <div class="min-vh-10">
-            <div class=" show-panel container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <StatsLayout>
+        <div class="content-area container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <StatsLayout>
+                        <div class="panel-container animate__animated animate__fadeIn">
                             <SchedulePanel v-if="currentShowing == 1" />
                             <LivePanel v-if="currentShowing == 2" />
                             <ResultsPanel v-if="currentShowing == 3" />
                             <InfoPanel v-if="currentShowing == 4" />
                             <StandingsPanel v-if="currentShowing == 0" />
-                        </StatsLayout>
-                    </div>
+                        </div>
+                    </StatsLayout>
                 </div>
             </div>
         </div>
@@ -81,40 +75,21 @@ import LivePanel from './live.vue'
 import InfoPanel from './informationCenter.vue'
 
 const $toast = useToast();
-
-const today_date = useDateFormat(useNow(), `dddd, DD/MMMM/YYYY , H:mm aa`);
-const { vibrate, stop } = useVibrate({ pattern: [300, 100, 300] })
-
-
-
-function showPanel(index: number) {
-    console.log(index);
-
-    if (index == 4) {
-        stats.getTourTeamsInfo()
-    }
-    currentShowing.value = index;
-    window.scrollTo(0, 0);
-}
-
+const today_date = useDateFormat(useNow(), `dddd, DD/MM/YYYY`);
+const { vibrate } = useVibrate({ pattern: [300, 100, 300] })
 
 const stats = useStatsStore()
 const route = useRoute()
 const router = useRouter()
-
 const currentShowing = ref(3)
 
-onMounted(async () => {
-    if (!stats.statsLoaded) {
-        stats.tour_id = route.params.tour_id
-        stats.apiLoading = true
-        await stats.getTourDetails()
-        loadAllData()
-        stats.getLiveMatches()
+function showPanel(index: number) {
+    if (index == 4) {
         stats.getTourTeamsInfo()
-        stats.statsLoaded = true
     }
-})
+    currentShowing.value = index;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
 function beep() {
     var audio = new Audio('/audio/ping.mp3');
@@ -128,26 +103,28 @@ async function loadAllData() {
     await stats.getResults()
 }
 
-// load all data every 180secs(3mins)
+onMounted(async () => {
+    if (!stats.statsLoaded) {
+        stats.tour_id = route.params.tour_id
+        stats.apiLoading = true
+        await stats.getTourDetails()
+        loadAllData()
+        stats.getLiveMatches()
+        stats.getTourTeamsInfo()
+        stats.statsLoaded = true
+    }
+})
+
 let allDataInterval = setInterval(() => {
     loadAllData()
 }, 180000)
 
-// load live results every 10secs(0.10mins)
-// let liveMatchInterval = setInterval(() => {
-//     stats.getLiveMatches()
-// }, 10000)
-
 onUnmounted(() => {
     clearInterval(allDataInterval)
-    // clearInterval(liveMatchInterval)
 })
 
-
-// #################### Listen to websocet ################
 // @ts-ignore
 window.Echo.channel('liveMatch').listen('liveScore', async (e) => {
-    // console.log(e); // the data from the server
     let liveMatch = stats.tourLives.find((x) => x.live_id == e.live_id)
     if (!liveMatch) {
         await stats.getLiveMatches()
@@ -165,7 +142,6 @@ window.Echo.channel('liveMatch').listen('liveScore', async (e) => {
 
 // @ts-ignore
 window.Echo.channel('endMatch').listen('endMatch', (e) => {
-    // console.log(e); // the data from the server
     stats.tourLives = stats.tourLives.filter((x) => x.live_id != e.live_id)
 })
 
@@ -173,67 +149,125 @@ window.Echo.channel('endMatch').listen('endMatch', (e) => {
 window.Echo.channel('startMatch').listen('startMatch', async (e) => {
     await stats.getLiveMatches()
 })
-// #################### Listen to websocet ################
-
 </script>
 
 <style scoped>
-.fixed-top {
-    background-color: var(--theme-color-3b);
-    color: #fff !important;
-    /* height: 100px; */
+.stats-page {
+    background: var(--primary-gradient);
+    min-height: 100vh;
+    padding-bottom: 50px;
 }
 
-.menu-div {
-    /* margin: 10px; */
-    padding-top: 10px;
-    padding-bottom: 20px;
-    width: 100%;
+.glass-header {
+    background: rgba(15, 32, 39, 0.8);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1020;
+}
+
+.logo-modern {
+    height: 40px;
+    filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.3));
+}
+
+.navigation-wrapper {
     overflow-x: auto;
-    white-space: nowrap;
-    overflow-y: hidden;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
-.menu-div .menu-item {
-    /* display: inline-block; */
-    font-size: 13px;
-    margin-right: 10px;
-    padding: 5px 14px;
-    border-radius: 30px;
+.navigation-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.nav-pills-modern {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 4px;
+}
+
+@media (max-width: 768px) {
+    .nav-pills-modern {
+        justify-content: flex-start;
+    }
+}
+
+.nav-pill {
+    padding: 8px 20px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
     cursor: pointer;
-    background-color: var(--theme-color-3bb);
-    color: #c7c790;
-    border: solid 1px var(--theme-color-3);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
 }
 
-.menu-active {
-    color: #ffff00 !important;
-    font-weight: bolder;
-    background-color: #02496d !important;
-    /* background-color: #fff !important; */
+.nav-pill.active {
+    background: var(--accent-gradient);
+    border-color: transparent;
+    color: #000;
+    box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+    transform: translateY(-2px);
 }
 
-
-.sm-logo {
-    width: 50px;
+.nav-pill:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
 }
 
-.show-panel {
-    padding-top: 200px;
+.pulse-indicator {
+    width: 8px;
+    height: 8px;
+    background: #4caf50;
+    border-radius: 50%;
+    margin-left: 8px;
+    box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+    animation: pulse 1.5s infinite;
 }
 
-@media screen and (max-width: 992px) {
-    .menu-item {
-        padding: 10px;
-        font-size: 14px;
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
     }
 
-    .sm-logo {
-        width: 30px;
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
     }
 
-    /* .show-panel {
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+    }
+}
+
+.content-area {
+    padding-top: 180px;
+}
+
+.ls-1 {
+    letter-spacing: 1px;
+}
+
+.hover-scale:hover {
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .content-area {
         padding-top: 160px;
-    } */
+    }
+
+    .logo-modern {
+        height: 30px;
+    }
 }
 </style>

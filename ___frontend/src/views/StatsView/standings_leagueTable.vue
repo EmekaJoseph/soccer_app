@@ -1,31 +1,31 @@
 <template>
-    <div class="card rounded-0 mb-4">
-        <div class="card-header fw-bolder bg-white shadow-sm">
-            STANDINGS
+    <div class="glass-card mb-5 overflow-hidden border-0">
+        <div class="card-header-modern p-3 p-md-4 border-bottom border-white border-opacity-10">
+            <h4 class="text-white fw-black mb-0 text-uppercase d-flex align-items-center">
+                <i class="bi bi-trophy-fill me-2 text-gradient"></i>
+                LEAGUE STANDINGS
+            </h4>
         </div>
-        <div v-if="data" class="card-body p-1 py-3">
-            <EasyDataTable table-class-name="easy-table-cup-league" class="border-0" :headers="headers" :items="data"
-                show-index>
+        <div v-if="data" class="p-0">
+            <EasyDataTable table-class-name="easy-table-cup-league" :headers="headers" :items="data" show-index>
 
-                <template #header="header">
-                    <div class="fw-bolde">
-                        {{ header.text == '#' ? '' : header.text }}</div>
+                <template #header-index="header">
+                    <span class="text-white">S/N</span>
                 </template>
 
                 <template #item-team_badge="item">
-                    <div v-if="item.badge"> {{ item.badge }} </div>
-                    <div v-else>
-                        <i :style="{ color: `${!item.team_color ? '#eee' : item.team_color}` }"
-                            class="bi bi-shield-fill"></i>
+                    <div class="badge-mini">
+                        <span v-if="item.badge" class="badge-text">{{ item.badge }}</span>
+                        <i v-else :style="{ color: item.team_color || '#eee' }" class="bi bi-shield-fill"></i>
                     </div>
                 </template>
 
                 <template #item-team_name="item">
-                    <div class=" fw-bolder"> {{ item.team_name }} </div>
+                    <div class="text-white fw-bold name-truncate"> {{ item.team_name }} </div>
                 </template>
 
                 <template #item-points="item">
-                    <div class=" fw-bolder"> {{ item.points }} </div>
+                    <div class="text-gradient fw-black fs-5"> {{ item.points }} </div>
                 </template>
 
             </EasyDataTable>
@@ -43,14 +43,40 @@ const prop = defineProps({
 })
 
 const headers: Header[] = [
-    { text: "", value: "team_badge" },
-    { text: "", value: "team_name" },
-    { text: "P", value: "played" },
-    { text: "W", value: "won" },
-    { text: "D", value: "draw" },
-    { text: "L", value: "lose" },
-    { text: "GD", value: "goal_diff" },
-    { text: "Pts", value: "points" },
+    { text: "", value: "team_badge", width: 40 },
+    { text: "TEAM", value: "team_name" },
+    { text: "P", value: "played", width: 40 },
+    { text: "W", value: "won", width: 40 },
+    { text: "D", value: "draw", width: 40 },
+    { text: "L", value: "lose", width: 40 },
+    { text: "GD", value: "goal_diff", width: 50 },
+    { text: "PTS", value: "points", width: 60 },
 ];
-
 </script>
+
+<style scoped>
+.badge-mini {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fw-black {
+    font-weight: 900;
+}
+
+.name-truncate {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 576px) {
+    .name-truncate {
+        max-width: 80px;
+    }
+}
+</style>
