@@ -100,7 +100,7 @@
                                                     <template #item-link="item">
                                                         <button @click="openTournamentLinkModal(item.tour_id)"
                                                             class="btn btn-link text-primary-theme btn-sm text-decoration-none border-0 p-0 m-0">
-                                                            <i class="bi bi-box-arrow-up-right"></i> open
+                                                            <i class="bi bi-box-arrow-up-right"></i> Link
                                                         </button>
                                                     </template>
 
