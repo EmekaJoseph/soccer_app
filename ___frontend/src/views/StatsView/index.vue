@@ -212,7 +212,7 @@ window.Echo.channel('startMatch').listen('startMatch', async (e) => {
 .nav-pill.active {
     background: var(--accent-gradient);
     border-color: transparent;
-    color: #000;
+    color: #0f2027;
     box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
     transform: translateY(-2px);
 }

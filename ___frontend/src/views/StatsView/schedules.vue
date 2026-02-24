@@ -1,7 +1,7 @@
 <template>
     <div v-if="!stats.tourMatches.length" class="min-vh-100 d-flex align-items-center justify-content-center">
         <emptyDataComponent>
-            No schedules yet, <br> Come back later.
+            <div class="text-white">No schedules yet, <br> Come back later.</div>
         </emptyDataComponent>
     </div>
 
@@ -18,7 +18,8 @@
                     <div class="small text-white fw-bold">{{ dateFormat(kick_off) }}</div>
                     <div class="small text-white-50">{{ new Date(kick_off).toLocaleTimeString([], {
                         hour: '2-digit',
-                        minute: '2-digit' }) }}</div>
+                        minute: '2-digit'
+                    }) }}</div>
                 </div>
             </div>
 
@@ -111,7 +112,7 @@ const dateFormat = (date: any) => useDateFormat(new Date(date), 'ddd, MMM DD, YY
     align-items: center;
     justify-content: center;
     background: var(--accent-gradient);
-    color: #000;
+    color: #0f2027;
     font-weight: 800;
     font-size: 12px;
     border-radius: 50%;

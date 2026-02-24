@@ -1,7 +1,7 @@
 <template>
     <div v-if="!stats.tourLives.length" class="min-vh-100 d-flex align-items-center justify-content-center">
         <emptyDataComponent>
-            No Live Matches at the moment.
+            <div class="text-white">No Live Matches at the moment.</div>
         </emptyDataComponent>
     </div>
     <div v-else class="min-vh-50 pb-5">
@@ -24,7 +24,7 @@
                         <div class="team text-center flex-1">
                             <div class="shield-modern mb-2 mx-auto">
                                 <span v-if="home_team?.team_badge" class="badge-text fs-4">{{ home_team.team_badge
-                                    }}</span>
+                                }}</span>
                                 <i v-else :style="{ color: home_team?.team_color || '#eee' }"
                                     class="bi bi-shield-fill fs-2"></i>
                             </div>
@@ -43,7 +43,7 @@
                         <div class="team text-center flex-1">
                             <div class="shield-modern mb-2 mx-auto">
                                 <span v-if="away_team?.team_badge" class="badge-text fs-4">{{ away_team.team_badge
-                                    }}</span>
+                                }}</span>
                                 <i v-else :style="{ color: away_team?.team_color || '#eee' }"
                                     class="bi bi-shield-fill fs-2"></i>
                             </div>

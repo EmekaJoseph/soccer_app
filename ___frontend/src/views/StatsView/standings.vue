@@ -16,8 +16,8 @@
 
         </div>
         <!-- <div class="backdrop "></div> -->
-        <div class="card rounded-0">
-            <div class="card-body text-center py-1">END</div>
+        <div class="py-4 text-center">
+            <span class="text-white-50 small caps-ls-1 opacity-50">• END OF STANDINGS •</span>
         </div>
     </div>
 </template>
