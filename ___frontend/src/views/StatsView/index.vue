@@ -9,12 +9,22 @@
                             <i class="bi bi-chevron-left fs-4"></i>
                         </RouterLink>
                         <RouterLink to="/" class="d-none d-sm-block">
-                            <img class="logo-modern" src="@/assets/images/dlam_academy.png" alt="Logo">
+                            <img v-if="stats.tour_logo" class="logo-modern rounded-3" :src="fx.resolvePhotoSrc(stats.tour_logo)" alt="">
+                            <img v-else class="logo-modern" src="/icons/soccer.svg" alt="">
                         </RouterLink>
                     </div>
-                    <div class="text-end">
-                        <div class="fw-bold text-gradient text-uppercase small ls-1">{{ stats.tour_title }}</div>
-                        <div class="small text-white-50 mt-1 d-none d-md-block">{{ today_date }}</div>
+                    <div class="d-flex align-items-center gap-2">
+                        <button v-if="stats.tourTeamsInfo.length >= 3 && !hasPredicted" class="btn btn-sm btn-outline-info rounded-pill"
+                            @click="predictionOpen = true">
+                            <i class="bi bi-trophy"></i> <span class="d-none d-sm-inline">Predict</span>
+                        </button>
+                        <button class="btn btn-sm btn-outline-light rounded-pill" title="Send feedback" @click="feedbackOpen = true">
+                            <i class="bi bi-chat-heart"></i>
+                        </button>
+                        <div class="text-end ms-2">
+                            <div class="fw-bold text-gradient text-uppercase small ls-1">{{ stats.tour_title }}</div>
+                            <div class="small text-white-50 mt-1 d-none d-md-block">{{ today_date }}</div>
+                        </div>
                     </div>
                 </div>
 
@@ -35,7 +45,7 @@
                             <i class="bi bi-people me-2"></i> TEAMS
                         </div>
                         <div @click="showPanel(0)" :class="{ 'active': currentShowing == 0 }" class="nav-pill">
-                            <i class="bi bi-grid me-2"></i> GROUPS
+                            <i class="bi bi-grid me-2"></i> {{ stats.tour_type == 'league' ? 'TABLE' : 'GROUPS' }}
                         </div>
                     </div>
                 </div>
@@ -57,97 +67,89 @@
                 </div>
             </div>
         </div>
+
+        <predictionModal v-if="predictionOpen" :teams="stats.tourTeamsInfo" :tour_id="stats.tour_id"
+            @close="predictionOpen = false" @done="onPredicted" />
+        <feedbackModal v-if="feedbackOpen" :tour_id="stats.tour_id" :name="visitorName"
+            @close="feedbackOpen = false" @done="feedbackOpen = false" />
     </div>
 </template>
 
 <script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router';
-import { onMounted, ref, onUnmounted } from 'vue'
+import { computed, onUnmounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { useNow, useDateFormat, useStorage, useVibrate } from '@vueuse/core'
 import { useStatsStore } from '@/store/statsStore'
-import StatsLayout from './StatsLayout.vue';
-import { useToast } from 'vue-toast-notification';
-import { useNow, useDateFormat, useVibrate } from '@vueuse/core';
-
+import { listenToTournament } from '@/lib/echo'
+import fx from '@/store/useFunctions'
+import StatsLayout from './StatsLayout.vue'
 import StandingsPanel from './standings.vue'
 import ResultsPanel from './results.vue'
 import SchedulePanel from './schedules.vue'
 import LivePanel from './live.vue'
 import InfoPanel from './informationCenter.vue'
+import predictionModal from '@/components/modals/predictionModal.vue'
+import feedbackModal from '@/components/modals/feedbackModal.vue'
 
-const $toast = useToast();
-const today_date = useDateFormat(useNow(), `dddd, DD/MM/YYYY`);
+const REFRESH_EVERY_MS = 3 * 60 * 1000
+
+const today_date = useDateFormat(useNow(), 'dddd, DD/MM/YYYY')
 const { vibrate } = useVibrate({ pattern: [300, 100, 300] })
 
 const stats = useStatsStore()
 const route = useRoute()
-const router = useRouter()
 const currentShowing = ref(3)
+const predictionOpen = ref(false)
+const feedbackOpen = ref(false)
 
-function showPanel(index: number) {
-    if (index == 4) {
-        stats.getTourTeamsInfo()
-    }
-    currentShowing.value = index;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+// Remember per tournament whether this browser already predicted.
+const predictedTournaments = useStorage<string[]>('socc_predicted', [])
+const visitorName = useStorage('socc_visitor', '')
+const hasPredicted = computed(() => predictedTournaments.value.includes(stats.tour_id))
+
+function onPredicted(name: string) {
+    predictedTournaments.value = [...predictedTournaments.value, stats.tour_id]
+    visitorName.value = name
+    predictionOpen.value = false
+    fx.toast.success(`Prediction saved. Good luck, ${name}!`)
 }
 
-function beep() {
-    var audio = new Audio('/audio/ping.mp3');
-    audio.play()
+function showPanel(index: number) {
+    currentShowing.value = index
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+function goalAlert() {
+    fx.toast.success('Goooooooal!')
+    new Audio('/audio/ping.mp3').play().catch(() => {}) // browsers block audio until the page is tapped
     vibrate()
 }
 
-async function loadAllData() {
-    await stats.getStandings()
-    await stats.getMatches()
-    await stats.getResults()
-}
+let stopListening = () => {}
 
-onMounted(async () => {
-    if (!stats.statsLoaded) {
-        stats.tour_id = route.params.tour_id
-        stats.apiLoading = true
-        await stats.getTourDetails()
-        loadAllData()
-        stats.getLiveMatches()
-        stats.getTourTeamsInfo()
-        stats.statsLoaded = true
-    }
-})
+watch(() => route.params.tour_id as string, async (tourId) => {
+    if (!tourId) return
+    stopListening()
+    await stats.load(tourId)
+    if (stats.tourLives.length) currentShowing.value = 2
 
-let allDataInterval = setInterval(() => {
-    loadAllData()
-}, 180000)
+    stopListening = listenToTournament(tourId, {
+        started: () => stats.getLiveMatches(),
+        updated: (e) => {
+            if (stats.applyLiveUpdate(e)) goalAlert()
+        },
+        ended: (e) => {
+            stats.removeLive(e.live_id)
+            stats.refresh() // the result may have been saved
+        },
+    })
+}, { immediate: true })
+
+const refreshTimer = setInterval(() => stats.refresh(), REFRESH_EVERY_MS)
 
 onUnmounted(() => {
-    clearInterval(allDataInterval)
-})
-
-// @ts-ignore
-window.Echo.channel('liveMatch').listen('liveScore', async (e) => {
-    let liveMatch = stats.tourLives.find((x) => x.live_id == e.live_id)
-    if (!liveMatch) {
-        await stats.getLiveMatches()
-    }
-
-    if (e.results.home_team_score > liveMatch.home_team_score || e.results.away_team_score > liveMatch.away_team_score) {
-        $toast.success('Goooooooal!', { position: 'top-right' });
-        beep()
-    }
-
-    liveMatch.home_team_score = e.results.home_team_score
-    liveMatch.away_team_score = e.results.away_team_score
-    liveMatch.curr_time = e.results.curr_time
-})
-
-// @ts-ignore
-window.Echo.channel('endMatch').listen('endMatch', (e) => {
-    stats.tourLives = stats.tourLives.filter((x) => x.live_id != e.live_id)
-})
-
-// @ts-ignore
-window.Echo.channel('startMatch').listen('startMatch', async (e) => {
-    await stats.getLiveMatches()
+    clearInterval(refreshTimer)
+    stopListening()
 })
 </script>
 

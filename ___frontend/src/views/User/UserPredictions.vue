@@ -1,238 +1,123 @@
 <template>
     <div class="container px-3">
-        <div v-if="userData.apiError">
-            <internetErrorComponent />
-        </div>
-        <div v-else>
-            <div class="row gy-4">
+        <componentLoadingSpinner v-if="loading" />
+        <internetErrorComponent v-else-if="userData.apiError" />
+        <div v-else class="row gy-4">
+            <tourDropdownSelect v-model="selectedTournament" @change="changed" />
 
-                <tourDropdownSelect @change="loadPredictionsData" v-model="selectedTournament" />
+            <div v-if="!selectedTournament" class="col-12">
+                <emptyDataComponent>Create a tournament on the dashboard first.</emptyDataComponent>
+            </div>
 
+            <template v-else>
                 <div class="col-lg-12">
-                    <div class="col-md-4">
-                        <input placeholder="search name.." type="text" class="form-control " v-model="searchValue">
-                    </div>
-                </div>
-
-
-                <div class="col-lg-12">
-                    <fieldset class="border rounded-3 p-3 bg-light-subtle h-100 shadow-sm">
-                        <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">PREDICTIONS:
-                        </legend>
-                        <div class="col-md-12 mt-3">
-                            <div class="card border-0 p-0">
-                                <div class="card-body p-1 m-1">
-                                    <div v-if="userData.predictions">
-                                        <EasyDataTable class="border-0" :headers="tableHeaders"
-                                            :items="userData.predictions" show-index :search-field="searchField"
-                                            :search-value="searchValue">
-
-
-                                            <template #item-full_name="item">
-                                                {{ item.full_name }},
-                                                ({{ item.phone_number }})
-                                            </template>
-                                        </EasyDataTable>
-                                    </div>
-                                </div>
+                    <fieldset class="border rounded-3 p-3 bg-light-subtle shadow-sm">
+                        <legend class="text-muted float-none p-0 px-2 w-auto small fw-bolder">FIND WINNERS</legend>
+                        <form class="row g-3" @submit.prevent="searchWinners">
+                            <div class="col-md-3">
+                                <label class="text-muted w-100">1ST:
+                                    <select class="form-select" v-model="filter.first" required
+                                        @change="filter.second = filter.third = ''">
+                                        <option value="" disabled>Select…</option>
+                                        <option v-for="t in userData.tournamentTeams" :key="t.team_id" :value="t.team_id">{{ t.team_name }}</option>
+                                    </select>
+                                </label>
                             </div>
+                            <div class="col-md-3">
+                                <label class="text-muted w-100">2ND:
+                                    <select class="form-select" v-model="filter.second" @change="filter.third = ''">
+                                        <option value="">*Any*</option>
+                                        <option v-for="t in secondOptions" :key="t.team_id" :value="t.team_id">{{ t.team_name }}</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="text-muted w-100">3RD:
+                                    <select class="form-select" v-model="filter.third">
+                                        <option value="">*Any*</option>
+                                        <option v-for="t in thirdOptions" :key="t.team_id" :value="t.team_id">{{ t.team_name }}</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button type="submit" :disabled="!filter.first || searching" class="btn btn-primary-theme w-100">
+                                    <i class="bi bi-search"></i> {{ searching ? 'Searching…' : 'Find winners' }}
+                                </button>
+                            </div>
+                        </form>
+                        <div v-if="winners" class="mt-4">
+                            <div class="fw-bold mb-2">{{ winners.length }} matching prediction(s), earliest first</div>
+                            <ol v-if="winners.length" class="mb-0">
+                                <li v-for="w in winners" :key="w.prediction_id">
+                                    {{ w.full_name }} — {{ w.phone_number }}
+                                    <span class="text-muted small">({{ fx.dateDisplay(w.created_at, true) }})</span>
+                                </li>
+                            </ol>
                         </div>
                     </fieldset>
                 </div>
 
                 <div class="col-lg-12">
-                    <fieldset class="border rounded-3 p-3 bg-light-subtle h-100 shadow-sm">
-                        <legend class="text-muted float-none xsmall p-0 px-2 w-auto small fw-bolder">FIND WINNERS:
+                    <fieldset class="border rounded-3 p-3 bg-light-subtle shadow-sm">
+                        <legend class="text-muted float-none p-0 px-2 w-auto small fw-bolder">
+                            PREDICTIONS ({{ userData.predictions.length }})
                         </legend>
-
-                        <div class="col-lg-12">
-                            <div class="row g-3">
-                                <div class="col-md-3">
-                                    <label class="text-muted">1ST:</label>
-                                    <select class="form-select  cursor-pointer" v-model="formSearchObj.first"
-                                        @change="formSearchObj.second = formSearchObj.third = '0'">
-                                        <option value="0" selected disabled>Select...</option>
-                                        <option v-for="i in userData.tournamentTeams" :key="i" :value="i.team_id">
-                                            {{ i.team_name }}
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="text-muted">2ND:</label>
-                                    <select class="form-select  cursor-pointer" v-model="formSearchObj.second"
-                                        @change="formSearchObj.third = '0'">
-                                        <option value="0" selected>*Any*</option>
-                                        <option v-for="i in secondPostitionDrop" :key="i" :value="i.team_id">
-                                            {{ i.team_name }}
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="text-muted">3RD:</label>
-                                    <select class="form-select  cursor-pointer" v-model="formSearchObj.third">
-                                        <option value="0" selected>*Any*</option>
-                                        <option v-for="i in thirdPositionDrop" :key="i" :value="i.team_id">
-                                            {{ i.team_name }}
-                                        </option>
-                                    </select>
-                                </div>
-
-                                <div class="col-md-3 mt-4">
-                                    <button :disabled="(formSearchObj.first == '0')" @click="searchWinners()"
-                                        v-if="!formSearchObj.isLoading" class="btn btn-primary-theme mt-3 w-100">
-                                        <i class="bi bi-search"></i> Search by filter
-                                    </button>
-                                    <button v-else disabled class="btn btn-primary-theme mt-3 w-100">
-                                        Searching ..
-                                    </button>
-                                </div>
-                            </div>
+                        <div class="col-md-4 mb-3">
+                            <input placeholder="search name…" type="text" class="form-control" v-model="searchValue">
+                        </div>
+                        <EasyDataTable class="border-0" :headers="tableHeaders" :items="userData.predictions" show-index
+                            :search-field="['full_name']" :search-value="searchValue">
+                            <template #item-full_name="item">{{ item.full_name }} ({{ item.phone_number }})</template>
+                        </EasyDataTable>
+                        <div class="small text-muted mt-2">
+                            Fans predict from the "Predict" button on your tournament's public page.
                         </div>
                     </fieldset>
-
                 </div>
-            </div>
+            </template>
         </div>
-
-
-
-
-
-
-
-        <!-- Button trigger modal -->
-        <button ref="winnersModalTrigger" type="button" class="d-none" data-bs-toggle="modal"
-            data-bs-target="#winnersModal">
-        </button>
-
-        <!-- Modal -->
-        <div class="modal fade" id="winnersModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-            aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header bg-light-subtle">
-                        <h6 class="modal-title fs-6 fw-bolder">WINNERS BY PREDICTIONS ({{ winnersResultData.length }})
-                        </h6>
-                        <button ref="btnX" type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body p-4  min-vh-50">
-                        <div class="table-responsive" v-if="winnersResultData.length">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <td>S/N</td>
-                                        <td>Name</td>
-                                        <td>Date</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(winner, index) in winnersResultData" :key="index">
-                                        <th>{{ (index + 1) }}</th>
-                                        <td>{{ winner.full_name }}</td>
-                                        <td>{{ (new Date(winner.created_at)).toLocaleString() }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div v-else>
-                            <div class="text-center py-5">No winners</div>
-                        </div>
-
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-
-
-
-
-
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue';
-import { useUserDataStore } from '@/store/userDataStore';
-import type { Header } from "vue3-easy-data-table";
-import api from '@/store/axiosManager'
-import { onBeforeRouteLeave } from 'vue-router';
+import { computed, reactive, ref } from 'vue'
+import type { Header } from 'vue3-easy-data-table'
+import { useUserDataStore } from '@/store/userDataStore'
+import api, { apiErrorMessage } from '@/store/axiosManager'
+import fx from '@/store/useFunctions'
+import { useTournamentPicker } from '@/composables/useTournamentPicker'
 
 const userData = useUserDataStore()
-const selectedTournament = ref<any>({})
+const searchValue = ref('')
+const searching = ref(false)
+const winners = ref<any[] | null>(null)
+const filter = reactive({ first: '', second: '', third: '' })
 
-
-onMounted(async () => {
-    await userData.getTournaments()
-    if (userData.tournaments.length) {
-        selectedTournament.value = userData.tournaments[0]
-        userData.getTournamentTeams(selectedTournament.value.id)
-        loadPredictionsData();
-    }
-})
-
-function loadPredictionsData() {
-    userData.getPredictions(selectedTournament.value.id)
-}
-
-// TABLE #####################################
-const searchField = ["full_name"];
-const searchValue = ref('');
 const tableHeaders: Header[] = [
-    { text: "Name", value: "full_name" },
-    { text: "1ST", value: "first_place" },
-    { text: "2ND", value: "second_place" },
-    { text: "3RD", value: "third_place" },
-    { text: "Date", value: "predicted" },
-    // { text: "", value: "delete" },
-];
+    { text: 'Name', value: 'full_name' },
+    { text: '1ST', value: 'first_place' },
+    { text: '2ND', value: 'second_place' },
+    { text: '3RD', value: 'third_place' },
+    { text: 'When', value: 'predicted' },
+]
 
-
-
-// searching winners ###########################################################
-const winnersResultData = ref<any>([])
-const winnersModalTrigger = ref<any>(null)
-const btnX: any = ref(null)
-onBeforeRouteLeave(() => {
-    btnX.value.click()
-})
-const formSearchObj = reactive({
-    first: '0',
-    second: '0',
-    third: '0',
-    tour_id: '',
-    isLoading: false
-})
-const secondPostitionDrop = computed(() => {
-    return userData.tournamentTeams.filter((x: { team_id: any; }) => x.team_id !== formSearchObj.first)
+const { selectedTournament, changed, loading } = useTournamentPicker(async (tourId) => {
+    winners.value = null
+    Object.assign(filter, { first: '', second: '', third: '' })
+    await Promise.all([userData.getTournamentTeams(tourId), userData.getPredictions(tourId)])
 })
 
-const thirdPositionDrop = computed(() => {
-    return userData.tournamentTeams.filter((x: { team_id: any; }) => ((x.team_id !== formSearchObj.first) && (x.team_id !== formSearchObj.second)))
-})
-
+const secondOptions = computed(() => userData.tournamentTeams.filter((t) => t.team_id !== filter.first))
+const thirdOptions = computed(() => userData.tournamentTeams.filter((t) => t.team_id !== filter.first && t.team_id !== filter.second))
 
 async function searchWinners() {
-    // console.log(formSearchObj);
-    formSearchObj.isLoading = true
-
+    searching.value = true
     try {
-        formSearchObj.tour_id = selectedTournament.value.id
-        let resp = await api.getWinnersByPrediction(formSearchObj)
-        if (resp.status == 200) {
-            winnersResultData.value = resp.data
-            winnersModalTrigger.value.click()
-        }
+        winners.value = (await api.getWinnersByPrediction(selectedTournament.value.tour_id, { ...filter })).data
     } catch (error) {
-        console.log(error);
+        fx.toast.error(apiErrorMessage(error))
+    } finally {
+        searching.value = false
     }
-    finally {
-        formSearchObj.isLoading = false
-    }
-
 }
-// searching winners ###########################################################
-
 </script>

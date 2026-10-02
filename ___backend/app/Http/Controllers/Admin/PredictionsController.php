@@ -2,84 +2,59 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\PredictionModel;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Http\Request;
-
-
-use App\Models\TeamModel;
 use App\Models\TournamentModel;
-use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
-
-class PredictionsController extends BaseController
+class PredictionsController extends Controller
 {
-    use AuthorizesRequests, ValidatesRequests;
-
-
-
-    public function save_prediction(Request $req)
+    public function index(Request $request, TournamentModel $tournament): JsonResponse
     {
-        // check if tournament exists
-        $thisTournament = TournamentModel::find($req->input('tour_id'));
-        if (!$thisTournament) {
-            return response()->json('invalid tournament', 203);
-        }
+        $this->authorizeTournament($request, $tournament);
 
-        try {
-            PredictionModel::create([
-                'tour_id' => $req->input('tour_id'),
-                'first_place' => $req->input('first_place'),
-                'second_place' => $req->input('second_place'),
-                'third_place' => $req->input('third_place'),
-                'full_name' => $req->input('full_name'),
-                'phone_number' => $req->input('phone_number'),
-                'email' => $req->input('email'),
-                'created_at' => Carbon::now(),
-                'device_ip' => $req->ip(),
-            ]);
-            return response()->json('saved', 200);
-        } catch (\Throwable $th) {
-            //throw $th;
-            return response()->json('error', 401);
-        }
+        return response()->json($this->present($tournament, $tournament->predictions()->latest('created_at')->get()));
     }
 
-    public function get_predictions(Request $req)
+    /**
+     * Fans whose prediction matches the given finishing order. "second" and
+     * "third" are optional ("0" or empty = any team).
+     */
+    public function winners(Request $request, TournamentModel $tournament): JsonResponse
     {
-        $predictions = PredictionModel::where('tour_id', $req->input('tour_id'))->orderByDesc('created_at')->get();
+        $this->authorizeTournament($request, $tournament);
 
-        if (sizeof($predictions) > 0) {
-            foreach ($predictions as $prediction) {
-                $prediction->first_place = (TeamModel::find($prediction->first_place))->team_name;
-                $prediction->second_place = (TeamModel::find($prediction->second_place))->team_name;
-                $prediction->third_place = (TeamModel::find($prediction->third_place))->team_name;
-                $prediction->predicted = Carbon::parse($prediction->created_at)->diffForHumans();
-            }
-        }
-        return response()->json($predictions, 200);
-    }
+        $data = $request->validate([
+            'first' => ['required', 'string'],
+            'second' => ['nullable', 'string'],
+            'third' => ['nullable', 'string'],
+        ]);
 
-    public function  getWinnersByPrediction(Request $req)
-    {
-
-        $predictions = PredictionModel::where('tour_id', $req->input('tour_id'))
-            ->where('first_place', $req->first)
-
-            ->when($req->second !== '0', function ($query) use ($req) {
-                return $query->where('second_place', $req->second);
-            })
-
-            ->when($req->third !== '0', function ($query) use ($req) {
-                return $query->where('third_place', $req->third);
-            })
-
-            ->orderByDesc('created_at')
-
+        $predictions = $tournament->predictions()
+            ->where('first_place', $data['first'])
+            ->when(filled($data['second'] ?? null) && $data['second'] !== '0', fn ($q) => $q->where('second_place', $data['second']))
+            ->when(filled($data['third'] ?? null) && $data['third'] !== '0', fn ($q) => $q->where('third_place', $data['third']))
+            ->oldest('created_at') // earliest correct guess first
             ->get();
 
-        return response()->json($predictions, 200);
+        return response()->json($this->present($tournament, $predictions));
+    }
+
+    /** Swap team ids for names (teams may have been deleted since). */
+    private function present(TournamentModel $tournament, Collection $predictions): Collection
+    {
+        $names = $tournament->relatedTeams()->pluck('team_name', 'team_id');
+
+        return $predictions->map(fn (PredictionModel $p) => [
+            ...$p->toArray(),
+            'first_place_id' => $p->first_place,
+            'first_place' => $names[$p->first_place] ?? 'Removed team',
+            'second_place' => $names[$p->second_place] ?? 'Removed team',
+            'third_place' => $names[$p->third_place] ?? 'Removed team',
+            'predicted' => Carbon::parse($p->created_at)->diffForHumans(),
+        ]);
     }
 }

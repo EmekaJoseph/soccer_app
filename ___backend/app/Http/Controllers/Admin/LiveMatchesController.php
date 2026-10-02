@@ -2,187 +2,169 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Events\endMatch;
-use App\Events\liveScore;
-use App\Events\startMatch;
-use App\Interfaces\MatchResultsServiceInterface;
+use App\Events\LiveMatchEnded;
+use App\Events\LiveMatchStarted;
+use App\Events\LiveMatchUpdated;
+use App\Http\Controllers\Controller;
+use App\Models\LiveMatchModel;
 use App\Models\MatchModel;
-use App\Models\TeamModel;
-use App\Models\SubUserModel;
-use App\Models\UserModel;
-use Exception;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Support\Facades\Validator;
-
+use App\Models\TournamentModel;
+use App\Services\MatchResultsService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Throwable;
 
-class LiveMatchesController extends BaseController
+class LiveMatchesController extends Controller
 {
-    use AuthorizesRequests, ValidatesRequests;
+    public function __construct(private readonly MatchResultsService $results) {}
 
-    protected $matchResultService;
-    public function __construct(MatchResultsServiceInterface $matchResultService)
+    /** Live matches the signed-in account is scoring. */
+    public function index(Request $request, TournamentModel $tournament): JsonResponse
     {
-        $this->matchResultService = $matchResultService;
+        $this->authorizeTournament($request, $tournament);
+
+        $live = $tournament->liveMatches()
+            ->where('creator', $this->account($request)->creatorKey())
+            ->with(['homeTeam', 'awayTeam'])
+            ->get()
+            ->map(fn (LiveMatchModel $live) => $this->present($live));
+
+        return response()->json($live);
     }
 
-    public function startLiveMatch(Request $req)
+    /** Every live match in the tournament and who is scoring it (owner only). */
+    public function all(Request $request, TournamentModel $tournament): JsonResponse
     {
-        // validate required varibles
-        $rules = [
-            'match_id' => 'required',
-        ];
+        $this->authorizeTournament($request, $tournament);
+        $me = $this->account($request);
 
-        $validator = Validator::make($req->all(),  $rules);
-        $match = MatchModel::find($req->input('match_id'));
+        $live = $tournament->liveMatches()
+            ->with(['homeTeam', 'awayTeam'])
+            ->get()
+            ->map(function (LiveMatchModel $live) use ($me) {
+                $creator = $live->creatorAccount();
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+                return [
+                    ...$this->present($live),
+                    'creator' => $creator?->only(['email', 'firstname', 'lastname']),
+                    'isMe' => $creator && $creator->email === $me->email ? 'You' : null,
+                ];
+            });
+
+        return response()->json($live);
+    }
+
+    public function store(Request $request): JsonResponse
+    {
+        $request->validate(['match_id' => ['required', 'string']]);
+
+        $match = MatchModel::findOrFail($request->input('match_id'));
+        $this->authorizeMatch($request, $match);
+
+        if ($match->result()->exists()) {
+            throw new ConflictHttpException('This match already has a result.');
         }
-        $currentUser = ($req->user()->role == 'admin') ? $req->user()->user_id : $req->user()->subuser_id;
 
-        DB::table('tbl_live')->insert([
-            'match_id' => $req->input('match_id'),
-            'creator' => $currentUser,
+        if ($match->live()->exists()) {
+            throw new ConflictHttpException('This match is already being scored live.');
+        }
+
+        $live = LiveMatchModel::create([
+            'match_id' => $match->match_id,
+            'creator' => $this->account($request)->creatorKey(),
             'tour_id' => $match->tour_id,
             'match_stage' => $match->match_stage,
             'home_team' => $match->home_team,
             'away_team' => $match->away_team,
+            'home_team_score' => 0,
+            'away_team_score' => 0,
+            'curr_time' => 0,
+            'isPaused' => false,
         ]);
 
-        try {
-            event(new startMatch());
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
+        $this->broadcast(new LiveMatchStarted($live->tour_id, $live->live_id));
 
-        return response()->json('started', 200);
+        return response()->json($this->present($live->load(['homeTeam', 'awayTeam'])), 201);
     }
 
-
-    public function getLiveMatchesForAdmin($tour_id)
+    public function update(Request $request, LiveMatchModel $live): JsonResponse
     {
-        $me = Auth::user();
-        $liveUpdates = DB::table('tbl_live')
-            ->where('tour_id', $tour_id)
-            ->get();
-        if (sizeof($liveUpdates) > 0) {
-            foreach ($liveUpdates as $live) {
-                $match = MatchModel::find($live->match_id);
-                $live->home_team = (TeamModel::find($match->home_team))?->team_name;
-                $live->away_team = (TeamModel::find($match->away_team))?->team_name;
+        $this->authorizeLive($request, $live);
 
-                $creator = SubUserModel::find($live->creator);
+        $data = $request->validate([
+            'home_team_score' => ['required', 'integer', 'min:0', 'max:99'],
+            'away_team_score' => ['required', 'integer', 'min:0', 'max:99'],
+            'curr_time' => ['required', 'integer', 'min:0', 'max:200'],
+            'isPaused' => ['sometimes', 'boolean'],
+        ]);
 
-                if (!$creator) {
-                    $creator = UserModel::find($live->creator);
-                }
+        $live->update($data);
 
-                $live->isMe = ($creator->email === $me->email) ? 'You' : null;
+        $this->broadcast(new LiveMatchUpdated($live->tour_id, $live->live_id, [
+            'home_team_score' => $live->home_team_score,
+            'away_team_score' => $live->away_team_score,
+            'curr_time' => $live->curr_time,
+            'isPaused' => $live->isPaused,
+        ]));
 
-                $live->creator =  $creator;
+        return response()->json($this->present($live->load(['homeTeam', 'awayTeam'])));
+    }
+
+    /** End the live match, optionally saving its score as the final result. */
+    public function end(Request $request, LiveMatchModel $live): JsonResponse
+    {
+        $this->authorizeLive($request, $live);
+        $save = $request->boolean('save');
+
+        $result = DB::transaction(function () use ($live, $save) {
+            $result = null;
+
+            if ($save) {
+                $match = $live->match ?? abort(404, 'The scheduled match no longer exists.');
+                $result = $this->results->saveResult($match, $live->home_team_score, $live->away_team_score);
             }
-        }
 
-        return response()->json($liveUpdates, 200);
+            $live->delete();
+
+            return $result;
+        });
+
+        $this->broadcast(new LiveMatchEnded($live->tour_id, $live->live_id));
+
+        return response()->json([
+            'message' => $save ? 'Match ended and result saved.' : 'Match ended.',
+            'result' => $result,
+        ]);
     }
 
-
-    public function getLiveMatchesByUser(Request $req, $tour_id)
+    /** Owners can manage any live match in their tournaments; sub-users only their own. */
+    private function authorizeLive(Request $request, LiveMatchModel $live): void
     {
-        $currentUser = ($req->user()->role == 'admin') ? $req->user()->user_id : $req->user()->subuser_id;
-        $liveUpdates = DB::table('tbl_live')
-            ->where('tour_id', $tour_id)
-            ->where('creator', $currentUser)
-            ->get();
-        if (sizeof($liveUpdates) > 0) {
-            foreach ($liveUpdates as $result) {
-                $match = MatchModel::find($result->match_id);
-                $result->home_team = (TeamModel::find($match->home_team))?->team_name;
-                $result->away_team = (TeamModel::find($match->away_team))?->team_name;
-            }
-        }
+        $this->authorizeRecord($request, $live);
+        $account = $this->account($request);
 
-        return response()->json($liveUpdates, 200);
+        abort_unless($account->isAdmin() || $live->creator === $account->creatorKey(), 403, 'Someone else is scoring this match.');
     }
 
-    public function updateLiveMatch(Request $req, $live_id)
+    private function present(LiveMatchModel $live): array
     {
-        // validate required varibles
-        $rules = [
-            'home_team_score' => 'required',
-            'away_team_score' => 'required',
-            'curr_time' => 'required',
+        return [
+            ...$live->only(['live_id', 'match_id', 'tour_id', 'match_stage', 'home_team_score', 'away_team_score', 'curr_time', 'isPaused']),
+            'home_team' => $live->homeTeam?->team_name,
+            'away_team' => $live->awayTeam?->team_name,
         ];
-
-        $validator = Validator::make($req->all(),  $rules);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $dataToUpdate = [
-            'home_team_score' => $req->input('home_team_score'),
-            'away_team_score' => $req->input('away_team_score'),
-            'curr_time' => $req->input('curr_time'),
-        ];
-
-        DB::table('tbl_live')->where('live_id', $live_id)->update($dataToUpdate);
-
-        try {
-            event(new liveScore($live_id, $dataToUpdate));
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
-
-        return response()->json('updated', 200);
     }
 
-    public function endLiveMatch(Request $req, $live_id)
+    /** Scores are already saved; a Pusher outage must not fail the request. */
+    private function broadcast(object $event): void
     {
-
-        DB::table('tbl_live')->where('live_id', $live_id)->delete();
-
         try {
-            event(new endMatch($live_id));
-        } catch (\Throwable $th) {
-            //throw $th;
+            event($event);
+        } catch (Throwable $e) {
+            Log::warning('Live score broadcast failed: '.$e->getMessage());
         }
-
-        return response()->json('ended', 200);
-    }
-
-
-    public function endLiveMatchAndSave(Request $req, $live_id)
-    {
-        $live = DB::table('tbl_live')->where('live_id', $live_id)->first();
-
-        $requestData = (array) $live;
-        $requestData['homeTeam_score'] = $live->home_team_score;
-        $requestData['awayTeam_score'] = $live->away_team_score;
-
-        // Create the request
-        $request = new Request($requestData);
-
-        try {
-            $this->matchResultService->saveResult($request);
-        } catch (Exception $e) {
-            // return response()->json(['error' => $e->getMessage()], $e->getCode());
-        }
-
-        DB::table('tbl_live')->where('live_id', $live_id)->delete();
-
-
-        try {
-            event(new endMatch($live_id));
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
-
-        return response()->json('ended', 200);
     }
 }

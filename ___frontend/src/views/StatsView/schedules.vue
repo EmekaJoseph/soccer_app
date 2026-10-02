@@ -1,12 +1,12 @@
 <template>
-    <div v-if="!stats.tourMatches.length" class="min-vh-100 d-flex align-items-center justify-content-center">
+    <div v-if="!stats.tourMatches.length" class="py-5 d-flex align-items-center justify-content-center">
         <emptyDataComponent>
-            <div class="text-white">No schedules yet, <br> Come back later.</div>
+            <div class="text-white">No upcoming fixtures. <br> Come back later.</div>
         </emptyDataComponent>
     </div>
 
     <div v-else class="min-vh-50 pb-5">
-        <div v-for="({ match_stage, kick_off, home_team, away_team, venue }, i) in stats.tourMatches" :key="i"
+        <div v-for="({ match_stage, kick_off, home_team, away_team, venue, match_id }) in stats.tourMatches" :key="match_id"
             class="glass-card fixture-card mb-4 p-3 p-md-4 transition-all hover-tilt-Y">
 
             <div
@@ -26,8 +26,7 @@
             <div class="match-teams-row d-flex align-items-center justify-content-between px-md-4">
                 <div class="team-container left text-center flex-1">
                     <div class="shield-wrapper mb-2 mx-auto">
-                        <span v-if="home_team.team_badge" class="badge-text fs-3">{{ home_team.team_badge }}</span>
-                        <i v-else :style="{ color: home_team.team_color || '#eee' }" class="bi bi-shield-fill fs-1"></i>
+                        <TeamBadge :badge="home_team?.team_badge" :color="home_team.team_color" :size="48" />
                     </div>
                     <div class="team-name text-white fw-bold text-uppercase">{{ home_team.team_name }}</div>
                 </div>
@@ -38,8 +37,7 @@
 
                 <div class="team-container right text-center flex-1">
                     <div class="shield-wrapper mb-2 mx-auto">
-                        <span v-if="away_team.team_badge" class="badge-text fs-3">{{ away_team.team_badge }}</span>
-                        <i v-else :style="{ color: away_team.team_color || '#eee' }" class="bi bi-shield-fill fs-1"></i>
+                        <TeamBadge :badge="away_team?.team_badge" :color="away_team.team_color" :size="48" />
                     </div>
                     <div class="team-name text-white fw-bold text-uppercase">{{ away_team.team_name }}</div>
                 </div>
@@ -55,6 +53,7 @@
 </template>
 
 <script setup lang="ts">
+import TeamBadge from '@/components/TeamBadge.vue'
 import { useStatsStore } from '@/store/statsStore';
 import { useDateFormat } from '@vueuse/core';
 

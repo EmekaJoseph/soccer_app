@@ -1,54 +1,85 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AccountController;
-use App\Http\Controllers\Admin\PlayersContoller;
-use App\Http\Controllers\Admin\TeamsController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\FeedbackController;
+use App\Http\Controllers\Admin\LiveMatchesController;
+use App\Http\Controllers\Admin\MatchController;
+use App\Http\Controllers\Admin\PlayersController;
 use App\Http\Controllers\Admin\PredictionsController;
-
+use App\Http\Controllers\Admin\ResultsController;
+use App\Http\Controllers\Admin\SubUserController;
+use App\Http\Controllers\Admin\TeamsController;
+use App\Http\Controllers\Admin\TournamentController;
 use App\Http\Controllers\PublicViewController;
+use Illuminate\Support\Facades\Route;
 
+//  ######################## PUBLIC ########################## //
 
-//  ######################## UNPROTECTED ########################## //
-Route::controller(AccountController::class)->group(function () {
-    Route::post('userRegister',  'userRegister');
-    Route::post('userLogin',  'userLogin');
-
-    /**WARNING REMOVE!!!!!**/ Route::get('resetApp',  'resetApp');
+Route::controller(AccountController::class)->middleware('throttle:10,1')->group(function () {
+    Route::post('register', 'register');
+    Route::post('login', 'login');
+    Route::post('forgot-password', 'forgotPassword');
+    Route::post('reset-password', 'resetPassword');
 });
 
+Route::prefix('view/tournaments/{tournament}')->controller(PublicViewController::class)->group(function () {
+    Route::get('/', 'tournament');
+    Route::get('standings', 'standings');
+    Route::get('results', 'results');
+    Route::get('matches', 'matches');
+    Route::get('live', 'live');
+    Route::get('teams', 'teams');
+    Route::get('players', 'players');
 
-Route::prefix('view')->group(function () {
-    Route::get('players/{tour_id}', [PlayersContoller::class, 'players']);
-    Route::get('tour_data/{tour_id}', [PublicViewController::class, 'tourData']);
-    Route::get('standings/{tour_id}',   [PublicViewController::class, 'standings']);
-    Route::get('results/{tour_id}',   [PublicViewController::class, 'results']);
-    Route::get('matches/{tour_id}',   [PublicViewController::class, 'matches']);
-    Route::get('live/{tour_id}',   [PublicViewController::class, 'showLiveMatches']);
-    Route::get('infomationCenter/{tour_id}',   [PublicViewController::class, 'infomationCenter']);
+    Route::middleware('throttle:10,1')->group(function () {
+        Route::post('predictions', 'storePrediction');
+        Route::post('feedback', 'storeFeedback');
+    });
 });
 
-Route::controller(PredictionsController::class)->group(function () {
-    Route::post('save_prediction',  'save_prediction');
-    Route::get('get_predictions',  'get_predictions');
-    Route::post('getWinnersByPrediction',  'getWinnersByPrediction');
+//  ######################## SIGNED IN (admins and sub-users) ########################## //
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::controller(AccountController::class)->group(function () {
+        Route::post('logout', 'logout');
+        Route::get('me', 'me');
+        Route::put('me', 'updateProfile');
+        Route::put('me/password', 'changePassword');
+    });
+
+    Route::get('dashboard', DashboardController::class);
+
+    Route::get('tournaments', [TournamentController::class, 'index']);
+    Route::get('tournaments/{tournament}/teams', [TeamsController::class, 'index']);
+    Route::get('tournaments/{tournament}/matches', [MatchController::class, 'index']);
+    Route::get('tournaments/{tournament}/results', [ResultsController::class, 'index']);
+    Route::get('tournaments/{tournament}/live', [LiveMatchesController::class, 'index']);
+
+    Route::apiResource('matches', MatchController::class)->only(['store', 'update', 'destroy']);
+
+    Route::post('results', [ResultsController::class, 'store']);
+    Route::delete('results/{result}', [ResultsController::class, 'destroy']);
+
+    Route::controller(LiveMatchesController::class)->group(function () {
+        Route::post('live', 'store');
+        Route::put('live/{live}', 'update');
+        Route::post('live/{live}/end', 'end');
+    });
+
+    //  ######################## OWNER (admin) ONLY ########################## //
+
+    Route::middleware('admin')->group(function () {
+        Route::apiResource('tournaments', TournamentController::class)->only(['store', 'update', 'destroy']);
+        Route::get('tournaments/{tournament}/live/all', [LiveMatchesController::class, 'all']);
+        Route::get('tournaments/{tournament}/predictions', [PredictionsController::class, 'index']);
+        Route::get('tournaments/{tournament}/predictions/winners', [PredictionsController::class, 'winners']);
+        Route::get('tournaments/{tournament}/players', [PlayersController::class, 'index']);
+        Route::get('feedback', [FeedbackController::class, 'index']);
+
+        Route::apiResource('teams', TeamsController::class)->only(['store', 'update', 'destroy']);
+        Route::apiResource('players', PlayersController::class)->only(['store', 'update', 'destroy']);
+        Route::apiResource('sub-users', SubUserController::class)->only(['index', 'store', 'destroy'])
+            ->parameters(['sub-users' => 'subUser']);
+    });
 });
-
-
-Route::post('sendFeedBack', [PublicViewController::class, 'sendFeedBack']);
-Route::get('getFeedbacks', [PublicViewController::class, 'getFeedbacks']);
-
-Route::resource('team', TeamsController::class)->only(['index']);
-
-// players
-Route::get('getFeedbacks', [PublicViewController::class, 'getFeedbacks']);
-
-
-//  ######################## PROTECTED WITH SANCTUM ########################## //
-
-Route::group(['middleware' => ['auth:sanctum']], function () {
-    require __DIR__ . '/adminApi.php';
-});
-
-//  ########################################################################### //

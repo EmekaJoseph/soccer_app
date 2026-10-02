@@ -1,83 +1,93 @@
 <template>
-
-    <ul class="list-group list-group-flush">
-        <li v-for="menu in menuList" class="list-group-item" :class="{ 'active-list': menu.link == route.path }">
-            <RouterLink v-if="menu.roles?.includes(data.role)" :to="menu.link"><i :class="menu.icon"></i>
-                {{ menu.name }}
-            </RouterLink>
-        </li>
-
-
-        <!-- <li class="list-group-item mt-5">
-            <div class="cursor-pointer" @click="logOut"><i class="bi bi-box-arrow-left"></i> Logout </div>
-        </li> -->
-    </ul>
+    <nav class="menu" aria-label="Main">
+        <div class="menu-label">Menu</div>
+        <RouterLink v-for="menu in visibleMenu" :key="menu.link" :to="menu.link" class="menu-item"
+            :class="{ current: route.path.startsWith(menu.link) }" @click="emit('navigate')">
+            <i :class="menu.icon"></i>
+            <span>{{ menu.name }}</span>
+        </RouterLink>
+    </nav>
 </template>
 
 <script setup lang="ts">
-import { useRouter, useRoute } from 'vue-router';
-import api from '@/store/axiosManager'
-import { useAuthStore } from '@/store/authStore';
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { useAuthStore } from '@/store/authStore'
+import { menuItems } from '@/router/user_routes'
 
-const menuList = [
-    { name: 'Dashboard', icon: 'bi bi-view-stacked', link: '/user/dashboard', roles: ['user', 'admin'] },
-    { name: 'Teams', icon: 'bi bi-people', link: '/user/teams', roles: ['admin'] },
-    { name: 'Matches', icon: 'bi bi-calendar2-event', link: '/user/matches', roles: ['user', 'admin'] },
-    { name: 'Results', icon: 'bi bi-list-check', link: '/user/results', roles: ['user', 'admin'] },
-    { name: 'Live', icon: 'bi bi-circle', link: '/user/Live', roles: ['user', 'admin'] },
-    { name: 'Predictions', icon: 'bi bi-command', link: '/user/predictions', roles: ['admin'] },
-]
-
+const emit = defineEmits<{ navigate: [] }>()
 const authStore = useAuthStore()
-
-const data: any = authStore.getUserData()
-
-const router = useRouter()
 const route = useRoute()
 
-
-function logOut() {
-    try {
-        api.logout()
-    } catch (error) {
-        // 
-    }
-    finally {
-        authStore.logout()
-        router.replace({ path: '/' })
-    }
-
-}
-
+const visibleMenu = computed(() => menuItems.filter((m) => authStore.user && m.roles.includes(authStore.user.role)))
 </script>
 
 <style scoped>
-.list-group {
-    margin-top: 20px;
-    background-color: transparent !important;
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
-.list-group-item {
-    border: 0px;
-    margin-block: 7px;
-    background-color: transparent;
+.menu-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.35);
+    padding: 0 0.75rem 0.5rem;
 }
 
-.list-group-item a {
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.75rem;
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.68);
     text-decoration: none;
-    padding: 5px 50px 5px 5px;
-    font-size: 18px;
-    color: #ffff;
+    font-weight: 500;
+    font-size: 0.93rem;
+    transition: background-color 0.15s, color 0.15s;
 }
 
-.list-group-item a:hover,
-.list-group-item .active {
-    color: var(--theme-color-4) !important;
-    font-weight: bolder;
+.menu-item i {
+    font-size: 1.05rem;
+    width: 1.2rem;
+    text-align: center;
 }
 
-.active-list {
-    background-color: #04141bf0;
-    border-right: solid 3px var(--theme-color-4) !important;
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+}
+
+.menu-item.current {
+    background: linear-gradient(135deg, rgba(79, 172, 254, 0.22), rgba(0, 242, 254, 0.12));
+    color: #fff;
+    box-shadow: inset 0 0 0 1px rgba(0, 242, 254, 0.25);
+}
+
+.menu-item.current i {
+    color: var(--brand-cyan);
+}
+
+/* Light variant used inside the mobile offcanvas */
+:global(.offcanvas) .menu-label {
+    color: var(--text-muted);
+}
+
+:global(.offcanvas) .menu-item {
+    color: var(--text-body);
+}
+
+:global(.offcanvas) .menu-item:hover,
+:global(.offcanvas) .menu-item.current {
+    background: #eef6fb;
+    color: var(--text-strong);
+    box-shadow: none;
+}
+
+:global(.offcanvas) .menu-item.current i {
+    color: #1f8fd1;
 }
 </style>

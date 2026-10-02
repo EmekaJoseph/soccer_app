@@ -2,23 +2,25 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class FeedbackModel extends Authenticatable
+class FeedbackModel extends Model
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory;
 
     protected $table = 'tbl_feedback';
+
     protected $primaryKey = 'feedback_id';
-    protected $guarded = [];
+
+    protected $guarded = ['feedback_id'];
+
+    protected $hidden = ['device_ip'];
 
     public $timestamps = false;
 
-    public function relatedTournament()
+    public function relatedTournament(): BelongsTo
     {
         return $this->belongsTo(TournamentModel::class, 'tour_id');
     }

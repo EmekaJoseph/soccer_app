@@ -5,7 +5,12 @@
         <div class="text-white-50 small caps-ls-1">Syncing Live Stats...</div>
     </div>
     <div v-else>
-        <div v-if="stats.apiError" class="mt-5">
+        <div v-if="stats.notFound" class="mt-5 text-white">
+            <emptyDataComponent>
+                This tournament does not exist (anymore). Check the link you were given.
+            </emptyDataComponent>
+        </div>
+        <div v-else-if="stats.apiError" class="mt-5 text-white">
             <internetErrorComponent />
         </div>
         <div v-else>

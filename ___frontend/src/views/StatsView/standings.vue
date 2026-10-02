@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!stats.tourStandings.length" class="min-vh-100">
+    <div v-if="!stats.tourStandings.length" class="py-5 text-white">
         <emptyDataComponent>
             No standings
         </emptyDataComponent>

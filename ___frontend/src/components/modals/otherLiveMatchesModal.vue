@@ -1,44 +1,26 @@
 <template>
-    <div>
-        <div class="modal fade" id="otherLiveMatchesModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable modal-sm">
-                <div class="modal-content">
-                    <div class="modal-header border-0 bg-light">
-                        <span class="fw-bold">Other Live Matches:</span>
-                        <button ref="btnX" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-
-                        <div v-if="isLoading" class="d-flex justify-content-center align-items-center my-5">
-                            <div style="width: 3rem; height: 3rem;"
-                                class="text-secondary spinner-border spinner-border-sm">
+    <div class="modal fade bg-faint show d-block" tabindex="-1" role="dialog" aria-modal="true">
+        <div class="modal-dialog modal-dialog-scrollable animate__animated animate__slideInDown animate__faster">
+            <div class="modal-content">
+                <div class="modal-header border-0 bg-light">
+                    <span class="fw-bold">All live matches</span>
+                    <button class="btn btn-close" aria-label="Close" @click="emit('close')"></button>
+                </div>
+                <div class="modal-body">
+                    <componentLoadingSpinner v-if="isLoading" />
+                    <div v-else-if="error" class="text-danger text-center my-4">{{ error }}</div>
+                    <ul v-else-if="liveMatchesList.length" class="list-group list-group-flush">
+                        <li v-for="live in liveMatchesList" :key="live.live_id" class="list-group-item text-center">
+                            <div>
+                                {{ live.home_team }} <span class="fw-bold">VS</span> {{ live.away_team }}
+                                ({{ live.curr_time }}')
                             </div>
-                        </div>
-                        <div v-else>
-                            <ul v-if="liveMatchesList.length" class="list-group list-group-flush">
-                                <li v-for="live in liveMatchesList" class="list-group-item">
-                                    <div class="text-center">
-                                        {{ live.home_team }}
-                                        <span class="fw-bold">VS</span>
-                                        {{ live.away_team }}
-                                        ({{ live.curr_time }}')
-                                    </div>
-                                    <div class="text-center">
-                                        {{ live.home_team_score }} : {{ live.away_team_score }}
-                                    </div>
-                                    <div class="text-center">
-                                        <small class="text-muted text-center">created by: </small>
-                                        <span>
-                                            {{ live.isMe ? live.isMe : live.creator.email }}
-                                        </span>
-                                    </div>
-                                </li>
-                            </ul>
-                            <div v-else class="d-flex justify-content-center align-items-center my-5">
-                                NO MATCHES
-                            </div>
-                        </div>
-                    </div>
+                            <div class="fs-5 fw-bold">{{ live.home_team_score }} : {{ live.away_team_score }}</div>
+                            <small class="text-muted">scored by: </small>
+                            <span>{{ live.isMe ?? live.creator?.email ?? 'unknown' }}</span>
+                        </li>
+                    </ul>
+                    <div v-else class="text-center my-5">NO LIVE MATCHES</div>
                 </div>
             </div>
         </div>
@@ -46,54 +28,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { onBeforeRouteLeave } from 'vue-router';
-import { useUserDataStore } from '@/store/userDataStore';
-import api from '@/store/axiosManager'
+import { onMounted, ref } from 'vue'
+import api, { apiErrorMessage } from '@/store/axiosManager'
 
-const prop = defineProps({
-    tour: {
-        type: Object,
-        required: true
-    },
-    clicker: {
-        type: Boolean,
-        required: true
-    }
-})
+const props = defineProps<{ tour: any }>()
+const emit = defineEmits<{ close: [] }>()
 
-
-watch(() => prop.clicker, () => {
-    tour_id.value = prop.tour.id
-    isLoading.value = true
-    liveMatchesList.value = []
-    getLiveMatchesForAdmin()
-    console.log(prop.clicker);
-
-})
-
-const tour_id = ref<any>(null)
 const liveMatchesList = ref<any[]>([])
-const isLoading = ref(false)
+const isLoading = ref(true)
+const error = ref('')
 
-
-
-async function getLiveMatchesForAdmin() {
+onMounted(async () => {
     try {
-        let resp = await api.getLiveMatchesForAdmin(tour_id.value)
-        liveMatchesList.value = resp.data
-        console.log(resp.data);
-    } catch (error) {
-
-    }
-    finally {
+        liveMatchesList.value = (await api.getLiveMatchesForAdmin(props.tour.tour_id)).data
+    } catch (e) {
+        error.value = apiErrorMessage(e)
+    } finally {
         isLoading.value = false
     }
-}
-
-
-const btnX: any = ref(null)
-onBeforeRouteLeave(() => {
-    btnX.value.click()
 })
 </script>

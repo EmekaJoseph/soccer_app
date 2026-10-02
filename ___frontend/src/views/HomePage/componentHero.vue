@@ -35,8 +35,9 @@
                 </div>
                 <div class="col-lg-6">
                     <!-- <div class="glass-card p-4 p-md-5"> -->
-                    <LoginComponent v-if="route.path != '/register'" />
-                    <RegisterComponent v-else />
+                    <RegisterComponent v-if="route.path == '/register'" />
+                    <PasswordResetComponent v-else-if="route.path == '/forgot-password' || route.path == '/reset-password'" />
+                    <LoginComponent v-else />
                     <!-- </div> -->
                 </div>
             </div>
@@ -47,6 +48,7 @@
 <script setup lang="ts">
 import LoginComponent from '../User/LoginComponent.vue';
 import RegisterComponent from '../User/RegisterComponent.vue';
+import PasswordResetComponent from '../User/PasswordResetComponent.vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute()

@@ -1,97 +1,46 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import api from '@/store/axiosManager'
 
+export const MATCH_STAGES = ['Friendly', 'Group_Stage', 'Round_of_32', 'Round_of_16', 'Knock_Out', 'Quarter_Final', 'Semi_Final', 'Third_place', 'Final'] as const
+export const GROUPS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'] as const
+
+/** Data for the signed-in dashboard. Every loader records `apiError` instead of throwing. */
 export const useUserDataStore = defineStore('dataStore', () => {
-  const apiError = ref<boolean>(false)
-  const apiLoading = ref<boolean>(true)
-  const tournaments = ref<any>([])
-  const tournamentTeams = ref<any>([])
-  const tournamentMatches = ref<any>([])
-  const tournamentResults = ref<any>([])
-  const tournamentLive = ref<any>([])
-  const subUsers = ref<any>([])
-  const dashboardFigures = ref<any>(null)
-  const predictions = ref<any>([])
-  const match_stages = ref<any>(['Friendly', 'Group_Stage', 'Round_of_32', 'Round_of_16', 'Knock_Out', 'Quarter_Final', 'Semi_Final', 'Third_place', 'Final'])
-  const valid_groups = ref<any>(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'])
+  const apiError = ref(false)
+  const apiLoading = ref(true)
+  const tournaments = ref<any[]>([])
+  const tournamentTeams = ref<any[]>([])
+  const tournamentMatches = ref<any[]>([])
+  const tournamentResults = ref<any[]>([])
+  const tournamentLive = ref<any[]>([])
+  const tournamentPlayers = ref<any[]>([])
+  const subUsers = ref<any[]>([])
+  const dashboardFigures = ref<Record<string, number> | null>(null)
+  const predictions = ref<any[]>([])
+  const feedback = ref<any[]>([])
+  const match_stages = ref<readonly string[]>(MATCH_STAGES)
+  const valid_groups = ref<readonly string[]>(GROUPS)
 
-  async function getTournaments() {
+  async function load<T>(request: () => Promise<{ data: T }>, assign: (data: T) => void) {
     try {
-      let resp = await api.getTournaments()
-      tournaments.value = (resp.status == 200) ? resp.data : [];
-    } catch (error) {
-      // console.log(error);
+      assign((await request()).data)
+      apiError.value = false
+    } catch {
+      apiError.value = true
     }
   }
 
-  async function getTournamentTeams(id: string) {
-    try {
-      let resp = await api.getTournamentTeams(id)
-      tournamentTeams.value = (resp.status == 200) ? resp.data : [];
-    } catch (error) {
-      // console.log(error);
-    }
-  }
-
-  async function getTournamentMatches(id: string) {
-    try {
-      let resp = await api.getTournamentMatches(id)
-      tournamentMatches.value = (resp.status == 200) ? resp.data : [];
-    } catch (error) {
-      // console.log(error);
-    }
-  }
-
-  async function getTournamentResults(id: string) {
-    try {
-      let resp = await api.results(id)
-      tournamentResults.value = (resp.status == 200) ? resp.data : [];
-    } catch (error) {
-      // console.log(error);
-    }
-  }
-
-  async function getLiveMatchesByUser(id: string) {
-    try {
-      let resp = await api.getLiveMatchesByUser(id)
-      tournamentLive.value = (resp.status == 200) ? resp.data : [];
-    } catch (error) {
-      // console.log(error);
-    }
-  }
-
-  async function getPredictions(id: string) {
-    try {
-      let resp = await api.getPredictions(id)
-      predictions.value = (resp.status == 200) ? resp.data : [];
-    } catch (error) {
-      // console.log(error);
-    }
-  }
-
-  async function getDashboardFigures() {
-    try {
-      let resp = await api.dashboard()
-      dashboardFigures.value = resp.data;
-      // console.log(resp);
-
-    } catch (error) {
-      // console.log(error);
-    }
-  }
-
-
-  async function getSubUsers() {
-    try {
-      let resp = await api.subUsersList()
-      subUsers.value = resp.data;
-      // console.log(resp);
-
-    } catch (error) {
-      // console.log(error);
-    }
-  }
+  const getTournaments = () => load(api.getTournaments, (d: any[]) => (tournaments.value = d))
+  const getTournamentTeams = (id: string) => load(() => api.getTournamentTeams(id), (d: any[]) => (tournamentTeams.value = d))
+  const getTournamentMatches = (id: string) => load(() => api.getTournamentMatches(id), (d: any[]) => (tournamentMatches.value = d))
+  const getTournamentResults = (id: string) => load(() => api.getTournamentResults(id), (d: any[]) => (tournamentResults.value = d))
+  const getLiveMatchesByUser = (id: string) => load(() => api.getLiveMatchesByUser(id), (d: any[]) => (tournamentLive.value = d))
+  const getPlayers = (id: string) => load(() => api.getPlayers(id), (d: any[]) => (tournamentPlayers.value = d))
+  const getPredictions = (id: string) => load(() => api.getPredictions(id), (d: any[]) => (predictions.value = d))
+  const getDashboardFigures = () => load(api.dashboard, (d: Record<string, number>) => (dashboardFigures.value = d))
+  const getSubUsers = () => load(api.subUsersList, (d: any[]) => (subUsers.value = d))
+  const getFeedbacks = () => load(api.getFeedbacks, (d: any[]) => (feedback.value = d))
 
   return {
     apiLoading,
@@ -101,18 +50,22 @@ export const useUserDataStore = defineStore('dataStore', () => {
     getTournamentMatches,
     getTournamentResults,
     getLiveMatchesByUser,
+    getPlayers,
     getPredictions,
     getSubUsers,
     getDashboardFigures,
+    getFeedbacks,
     tournaments,
     tournamentTeams,
     tournamentMatches,
     tournamentResults,
     tournamentLive,
+    tournamentPlayers,
     match_stages,
     valid_groups,
     predictions,
     subUsers,
     dashboardFigures,
+    feedback,
   }
 })

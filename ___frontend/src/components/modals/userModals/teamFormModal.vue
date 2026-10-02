@@ -1,200 +1,124 @@
 <template>
-
-    <button type="button" ref="openModalBtn" class="d-none" data-bs-toggle="modal" data-bs-target="#teamFormModal">
-    </button>
-
-    <div class="modal fade" id="teamFormModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
-        role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollabl modal-dialog-centered" role="document">
+    <div class="modal fade bg-faint show d-block" tabindex="-1" role="dialog" aria-modal="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable animate__animated animate__slideInDown animate__faster" role="document">
             <div class="modal-content">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title " id="modalTitleId">
-                        Team Modal
-                    </h5>
-                    <button ref="closeModalBtn" type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <h5 class="modal-title">{{ team ? `Edit ${team.team_name}` : 'New team' }}</h5>
+                    <button type="button" class="btn-close" aria-label="Close" @click="emit('close')"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row g-3">
-                        <div v-if="selectedTournament.type == 'cup'" class="col-md-12 col-lg-5">
+                    <div v-if="formError" class="alert alert-danger border-0 small">{{ formError }}</div>
+
+                    <form id="teamForm" class="row g-3" @submit.prevent="save">
+                        <div class="col-md-12">
                             <div class="form-floating">
-                                <select id="fo4444" v-model="form.group_in" class="form-select  text-uppercase">
-                                    <option value="" selected disabled>--select--</option>
-                                    <option v-for="i in userData.valid_groups" :key="i" :value="i">
-                                        {{ i }}
-                                    </option>
+                                <input v-model.trim="form.team_name" type="text" class="form-control" id="teamName" placeholder="" required />
+                                <label for="teamName">Team name</label>
+                            </div>
+                        </div>
+
+                        <div v-if="tournament.type == 'cup'" class="col-6">
+                            <div class="form-floating">
+                                <select id="teamGroup" v-model="form.group_in" class="form-select text-uppercase" required>
+                                    <option v-for="g in GROUPS" :key="g" :value="g">{{ g }}</option>
                                 </select>
-                                <label for="fo4444">Group</label>
+                                <label for="teamGroup">Group</label>
                             </div>
-
                         </div>
 
-                        <div class="col-md-12 col-lg-7">
-                            <div class="card">
-                                <div class="card-body">
-                                    <span class="form-label me-3">Team's color: </span>
-                                    <span class="float-end">
-                                        <ColorPicker v-model:pureColor="form.team_color" format="hex" shape="square"
-                                            blur-close disable-alpha />
-                                    </span>
-                                </div>
-                            </div>
-
+                        <div class="col-6">
+                            <label class="card h-100 px-3 d-flex flex-row align-items-center justify-content-between cursor-pointer">
+                                <span>Team colour</span>
+                                <input v-model="form.team_color" type="color" class="form-control form-control-color border-0">
+                            </label>
                         </div>
 
                         <div class="col-md-12">
                             <div class="form-floating">
-                                <input v-model="form.team_name" type="text" class="form-control" id="formId1xaxa"
-                                    placeholder="" />
-                                <label for="formId1xaxa">Team Name:</label>
+                                <input v-model="form.manager" type="text" class="form-control" id="teamManager" placeholder="" />
+                                <label for="teamManager">Manager's name</label>
                             </div>
-
                         </div>
-                        <div class="col-md-12">
-                            <div class="form-floating">
-                                <input v-model="form.manager" type="text" class="form-control" id="formId1xaxaasasa"
-                                    placeholder="" />
-                                <label for="formId1xaxaasasa">Team Manager's Name:</label>
-                            </div>
-
-                        </div>
-
 
                         <div class="col-md-12">
                             <div class="form-floating">
-                                <textarea id="team_brief" v-model="form.team_brief" style="height: 150px;"
-                                    class="form-control" placeholder=""></textarea>
-                                <label for="team_brief">About Team (optional):</label>
+                                <input v-model="form.address" type="text" class="form-control" id="teamAddress" placeholder="" />
+                                <label for="teamAddress">Home ground / address (optional)</label>
                             </div>
                         </div>
 
-                        <div v-if="userData.tournaments.length" class="col-md-12 mt-3">
-                            <button v-if="!form.isSaving" @click.prevent="save"
-                                class="btn btn-primary-theme btn w-100">Save</button>
-                            <button v-else class="btn btn-primary-theme w-100" type="button" disabled>
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                Saving...
-                            </button>
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <textarea id="teamBrief" v-model="form.team_brief" style="height: 120px;" class="form-control" placeholder=""></textarea>
+                                <label for="teamBrief">About the team (optional)</label>
+                            </div>
                         </div>
-                    </div>
+
+                        <div class="col-12">
+                            <ImagePicker v-model="form.team_badge" :current="team?.team_badge" label="Badge" :size="60" />
+                        </div>
+                    </form>
                 </div>
-                <!-- <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        Close
+                <div class="modal-footer border-0">
+                    <button form="teamForm" type="submit" :disabled="isSaving" class="btn btn-primary-theme w-100">
+                        <span v-if="isSaving" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                        {{ isSaving ? 'Saving…' : 'Save' }}
                     </button>
-                    <button type="button" class="btn btn-primary">Save</button>
-                </div> -->
+                </div>
             </div>
         </div>
     </div>
-
 </template>
-<script setup lang="ts">
-import { reactive, ref, watch } from 'vue';
-import { onBeforeRouteLeave } from 'vue-router';
-import { ColorPicker } from "vue3-colorpicker";
-import "vue3-colorpicker/style.css";
-import { useToast } from 'vue-toast-notification';
 
-import { useUserDataStore } from '@/store/userDataStore';
-import api from '@/store/axiosManager'
+<script setup lang="ts">
+import { reactive, ref } from 'vue'
+import api, { apiErrorMessage } from '@/store/axiosManager'
+import fx from '@/store/useFunctions'
+import { GROUPS } from '@/store/userDataStore'
+import ImagePicker from '@/components/ImagePicker.vue'
 
 const props = defineProps<{
-    toggleModal: boolean;
-    selectedTournament: any
-}>();
+    tournament: any
+    /** Team being edited; omit to create a new one. */
+    team?: any
+}>()
 
-const emit = defineEmits(['done'])
+const emit = defineEmits<{ close: []; saved: [team: any] }>()
 
-const userData = useUserDataStore()
-const openModalBtn = ref<any>(null)
-const closeModalBtn = ref<any>(null)
-const $toast = useToast();
+const isSaving = ref(false)
+const formError = ref('')
 
-
-
-watch(() => props.toggleModal, () => {
-    openModalBtn.value?.click()
-})
-
-onBeforeRouteLeave(() => {
-    closeModalBtn.value?.click()
-})
-
-
-
-
-
-// form
 const form = reactive({
-    team_name: '',
-    manager: '',
-    team_brief: ' ',
-    team_color: '#ff0000',
-    group_in: 'A',
-    isSaving: false
+    team_name: props.team?.team_name ?? '',
+    manager: props.team?.manager ?? '',
+    address: props.team?.address ?? '',
+    team_brief: props.team?.team_brief ?? '',
+    team_color: props.team?.team_color ?? '#1f6f8b',
+    group_in: props.team?.group_in ?? 'A',
+    team_badge: null as File | null,
 })
-
-function resetForm() {
-    form.team_name = '';
-    form.manager = '';
-    form.team_brief = ' ';
-    form.team_color = '#ff0000';
-    // form.group_in= 'A';
-}
-
-
-
-
 
 async function save() {
+    formError.value = ''
+    isSaving.value = true
 
-    if (!form.team_name) {
-        $toast.default('Enter Team Name', { position: 'top-right' });
-        return;
+    const fields = {
+        ...form,
+        tour_id: props.tournament.tour_id,
+        group_in: props.tournament.type == 'cup' ? form.group_in : null,
     }
-
-    if (!form.manager) {
-        $toast.default('Enter Manager', { position: 'top-right' });
-        return;
-    }
-
-    if (props.selectedTournament.type == 'cup') {
-        if (!form.group_in) {
-            $toast.default('Select Group', { position: 'top-right' });
-            return;
-        }
-    }
-
-    let obj: any = {};
-    obj.team_name = form.team_name;
-    obj.manager = form.manager;
-    obj.team_color = form.team_color;
-    obj.team_brief = form.team_brief;
-    obj.tour_id = props.selectedTournament.id;
-    obj.group_in = props.selectedTournament.type == 'cup' ? form.group_in : null
-
-    form.isSaving = true
 
     try {
-        let resp = await api.createTeam(obj)
-        if (resp.status == 203) {
-            $toast.error('Name already exists', { position: 'top-right' });
-            form.isSaving = false
-            return;
-        }
-        $toast.default('New Team added', { position: 'top-right' });
-        userData.getTournamentTeams(props.selectedTournament.id)
-        form.isSaving = false
-        closeModalBtn.value?.click()
-        resetForm()
+        const { data } = props.team
+            ? await api.updateTeam(props.team.team_id, fields)
+            : await api.createTeam(fields)
+        fx.toast.success(props.team ? 'Team updated' : 'Team added')
+        emit('saved', data)
+        emit('close')
     } catch (error) {
-        $toast.error('Network Error', { position: 'top-right' });
-        form.isSaving = false
+        formError.value = apiErrorMessage(error)
+    } finally {
+        isSaving.value = false
     }
-
 }
-
-
-
 </script>

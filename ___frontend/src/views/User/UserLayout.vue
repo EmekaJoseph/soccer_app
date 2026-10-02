@@ -1,42 +1,34 @@
 <template>
-    <div class="bg-admin min-vh-100">
-        <ComponentHeader />
+    <div class="admin-shell">
         <ComponentSideBar />
-        <div class="py-5 px-lg-4 main-content ">
-            <RouterView />
-        </div>
-
-
+        <ComponentHeader />
+        <main class="main-content">
+            <RouterView v-slot="{ Component }">
+                <Transition name="page" mode="out-in">
+                    <component :is="Component" />
+                </Transition>
+            </RouterView>
+        </main>
     </div>
 </template>
 
 <script setup lang="ts">
-import ComponentSideBar from './ComponentSideBar.vue';
-import ComponentHeader from './ComponentHeader.vue';
-
+import ComponentSideBar from './ComponentSideBar.vue'
+import ComponentHeader from './ComponentHeader.vue'
 </script>
 
 <style scoped>
-.bg-admin {
-    /* background-color: var(--bs-light); */
-    background-color: #f5f6f8;
+.page-enter-active,
+.page-leave-active {
+    transition: opacity 0.18s ease, transform 0.18s ease;
 }
 
-.main-content {
-    margin-left: 250px;
+.page-enter-from {
+    opacity: 0;
+    transform: translateY(6px);
 }
 
-@media (max-width: 767px) {
-    .main-content {
-        margin-left: 0px;
-    }
+.page-leave-to {
+    opacity: 0;
 }
-
-@media (min-width: 767px) {
-    .navbar-toggler-icon {
-        display: none;
-    }
-}
-
-/*  */
 </style>

@@ -2,166 +2,137 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-
-
+use App\Http\Controllers\Controller;
+use App\Models\LiveMatchModel;
+use App\Models\MatchModel;
+use App\Models\ResultModel;
+use App\Models\Standings_CupModel;
+use App\Models\Standings_LeagueModel;
 use App\Models\TeamModel;
 use App\Models\TournamentModel;
-use App\Models\Standings_LeagueModel;
-use App\Models\Standings_CupModel;
-use App\Models\ResultModel;
-use App\Models\MatchModel;
+use App\Support\ImageUploader;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Intervention\Image\ImageManagerStatic as Image;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
-class TeamsController extends BaseController
+class TeamsController extends Controller
 {
-    use AuthorizesRequests, ValidatesRequests;
+    public const GROUPS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
 
-    private $folder_name = 'team_badges';
+    private const BADGE_FOLDER = 'team_badges';
 
-    // add a team
-    public function store(Request $req)
+    public function __construct(private readonly ImageUploader $uploader) {}
+
+    public function index(Request $request, TournamentModel $tournament): JsonResponse
     {
-        // validate varibles
-        $rules = [
-            'team_name' => 'required',
-            'tour_id' => 'required',
-        ];
+        $this->authorizeTournament($request, $tournament);
 
-        $validator = Validator::make($req->all(),  $rules);
+        return response()->json(
+            $tournament->relatedTeams()->withCount('players')->orderBy('team_name')->get()
+        );
+    }
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
+    public function store(Request $request): JsonResponse
+    {
+        $tournament = $this->authorizeTournament($request, $request->input('tour_id'));
+        $data = $this->validated($request, $tournament);
+        $this->ensureNameIsFree($tournament, $data['team_name']);
 
-        // get all possible inputs
-        $team_name = $req->input('team_name');
-        $tour_id = $req->input('tour_id');
-        $team_brief = $req->input('team_brief');
-        $team_color = $req->input('team_color', null);
-        $group_in = $req->input('group_in', null);
-        $address = $req->input('address', null);
-        $manager = $req->input('manager', null);
-        $team_badge = null;
-
-        // check if tournament is valid
-        $thisTournament = TournamentModel::find($tour_id);
-        if (!$tour_id) return response()->json('invalid tournament', 203);
-
-
-        // check if team exists
-        if (TeamModel::where(['tour_id' => $tour_id, 'team_name' => $team_name])->exists())
-            return response()->json('already exists', 203);
-
-
-        if ($req->hasFile("team_badge")) {
-            $image = $req->file("team_badge");
-            $team_badge = HelperUploadImageAndResize($this->folder_name, $image, 50, 50, 'badge_');
-        }
-
-        // add to database
-        $newTeam = TeamModel::create([
-            'team_name' => $team_name,
-            'tour_id' => $tour_id,
-            'team_brief' => $team_brief,
-            'team_color' => $team_color,
-            'group_in' => $group_in,
-            'address' => $address,
-            'manager' => $manager,
-            'team_badge' => $team_badge,
-        ]);
-
-        if ($thisTournament->tour_type == 'cup') {
-            Standings_CupModel::create([
-                'team_id' => $newTeam->team_id,
-                'tour_id' => $tour_id,
-                'group_in' => $group_in
+        $team = DB::transaction(function () use ($request, $tournament, $data) {
+            $team = TeamModel::create([
+                ...$data,
+                'group_in' => $tournament->isCup() ? $data['group_in'] : null,
+                'team_badge' => $request->hasFile('team_badge')
+                    ? $this->uploader->store($request->file('team_badge'), self::BADGE_FOLDER, 120)
+                    : null,
             ]);
-        } else {
-            Standings_LeagueModel::create([
-                'team_id' => $newTeam->team_id,
-                'tour_id' => $tour_id,
+
+            $tournament->standings()->create([
+                'team_id' => $team->team_id,
+                'group_in' => $team->group_in,
+            ]);
+
+            return $team;
+        });
+
+        return response()->json($team, 201);
+    }
+
+    public function update(Request $request, TeamModel $team): JsonResponse
+    {
+        $tournament = $this->authorizeTournament($request, $team->tour_id);
+        $data = $this->validated($request, $tournament);
+        $this->ensureNameIsFree($tournament, $data['team_name'], $team->team_id);
+
+        DB::transaction(function () use ($request, $tournament, $team, $data) {
+            $team->update([
+                ...$data,
+                'tour_id' => $team->tour_id,
+                'group_in' => $tournament->isCup() ? $data['group_in'] : null,
+                'team_badge' => $this->uploader->replace($request->file('team_badge'), $team->team_badge, self::BADGE_FOLDER, 120),
+            ]);
+
+            if ($tournament->isCup()) {
+                Standings_CupModel::where('team_id', $team->team_id)->update(['group_in' => $team->group_in]);
+            }
+        });
+
+        return response()->json($team->loadCount('players'));
+    }
+
+    public function destroy(Request $request, TeamModel $team): JsonResponse
+    {
+        $this->authorizeRecord($request, $team);
+
+        if (ResultModel::where('home_team', $team->team_id)->orWhere('away_team', $team->team_id)->exists()) {
+            throw ValidationException::withMessages([
+                'team' => 'This team has recorded results. Undo them first so the standings stay correct.',
             ]);
         }
 
-        return response()->json($newTeam->team_id, 200);
+        DB::transaction(function () use ($team) {
+            foreach ($team->players as $player) {
+                $this->uploader->delete($player->image);
+            }
+            $team->players()->delete();
+
+            Standings_CupModel::where('team_id', $team->team_id)->delete();
+            Standings_LeagueModel::where('team_id', $team->team_id)->delete();
+            MatchModel::where('home_team', $team->team_id)->orWhere('away_team', $team->team_id)->delete();
+            LiveMatchModel::where('home_team', $team->team_id)->orWhere('away_team', $team->team_id)->delete();
+
+            $this->uploader->delete($team->team_badge);
+            $team->delete();
+        });
+
+        return response()->json(['message' => 'Team deleted.']);
     }
 
-    // show all teams in tournament
-    public function index(Request $req)
+    private function validated(Request $request, TournamentModel $tournament): array
     {
-        $tour_id = $req->input('tour_id');
-        $thisTournament = TournamentModel::find($tour_id);
-        if (!$tour_id) {
-            return response()->json('invalid tournament', 203);
-        }
-        return response()->json($thisTournament->relatedTeams, 200);
+        return $request->validate([
+            'tour_id' => ['required', 'string'],
+            'team_name' => ['required', 'string', 'max:255'],
+            'team_brief' => ['nullable', 'string', 'max:5000'],
+            'team_color' => ['nullable', 'string', 'max:30'],
+            'manager' => ['nullable', 'string', 'max:100'],
+            'address' => ['nullable', 'string', 'max:255'],
+            'group_in' => [$tournament->isCup() ? 'required' : 'nullable', Rule::in(self::GROUPS)],
+            'team_badge' => ['nullable', 'image', 'max:4096'],
+        ], ['group_in.required' => 'Pick the group this team plays in.']);
     }
 
-
-    // get team details
-    public function show(Request $req, $team_id)
+    private function ensureNameIsFree(TournamentModel $tournament, string $name, ?string $exceptId = null): void
     {
-        $data = TeamModel::find($team_id);
-        if ($data) {
-            $data->tournament = TeamModel::find($team_id)->relatedTournament;
-            return response()->json($data, 200);
+        $taken = $tournament->relatedTeams()
+            ->where('team_name', $name)
+            ->when($exceptId, fn ($q) => $q->whereKeyNot($exceptId))
+            ->exists();
+
+        if ($taken) {
+            throw ValidationException::withMessages(['team_name' => 'A team with this name already exists in the tournament.']);
         }
-        return response()->json('team not found', 203);
-    }
-
-
-    // delete a team
-    public function destroy(Request $req, $team_id)
-    {
-        $team = TeamModel::find($team_id);
-        $team->delete();
-
-        // delete from standings and results
-        Standings_CupModel::where('team_id', $team_id)->delete();
-        Standings_LeagueModel::where('team_id', $team_id)->delete();
-        ResultModel::where('away_team', $team_id)->orWhere('home_team', $team_id)->delete();
-        MatchModel::where('away_team', $team_id)->orWhere('home_team', $team_id)->delete();
-        DB::table('tbl_live')->where('away_team', $team_id)->orWhere('home_team', $team_id)->delete();
-    }
-
-
-    // update a team
-    public function update(Request $req, $team_id)
-    {
-        // validate varibles
-        $rules = ['team_name' => 'required', 'tour_id' => 'required'];
-
-        $validator = Validator::make($req->all(),  $rules);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        // get inputs
-        $thisName = $req->input('team_name');
-        $team_brief = $req->input('team_brief');
-
-        // check if name exists
-        if (TeamModel::whereNot('team_id', $team_id)->where([
-            'team_name' => $thisName,
-            'tour_id' => $req->input('tour_id'),
-        ])->exists()) {
-            return response()->json('exists', 203);
-        }
-
-        $team = TeamModel::find($team_id);
-
-        $team->team_name = $req->input('team_name');
-        if ($team_brief) $team->team_brief = $req->input('team_brief');
-
-        $team->save();
-
-        return response()->json('updated', 200);
     }
 }

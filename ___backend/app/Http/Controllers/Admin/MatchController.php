@@ -2,117 +2,112 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Support\Facades\Validator;
-
-use Illuminate\Http\Request;
-use Carbon\Carbon;
-
-use App\Models\TeamModel;
+use App\Http\Controllers\Controller;
 use App\Models\MatchModel;
+use App\Models\TeamModel;
 use App\Models\TournamentModel;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
-class MatchController extends BaseController
+class MatchController extends Controller
 {
-    use AuthorizesRequests, ValidatesRequests;
-
-
-    public function store(Request $req)
+    public function index(Request $request, TournamentModel $tournament): JsonResponse
     {
-        $rules = [
-            'homeTeam' => 'required',
-            'awayTeam' => 'required',
-            'kick_off' => 'required',
-            'venue' => 'required',
-            'tour_id' => 'required',
-        ];
+        $this->authorizeTournament($request, $tournament);
 
-        $validator = Validator::make($req->all(),  $rules);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $homeTeam = $req->input('homeTeam');
-        $awayTeam = $req->input('awayTeam');
-        $kick_off = $req->input('kick_off');
-
-        // check teams are valid
-        if (sizeof(TeamModel::find([$homeTeam, $awayTeam])) < 2) {
-            return response()->json('Team(s) not found', 404);
-        }
-
-        if (MatchModel::where([
-            'home_team' =>  $homeTeam,
-            'away_team' =>  $awayTeam,
-            'kick_off' => $kick_off
-        ])->exists()) {
-            return response()->json('Duplicate entries', 203);
-        }
-
-        $newMatch = MatchModel::create(
-            [
-                'tour_id' => $req->input('tour_id'),
-                'venue' => $req->input('venue'),
-                'kick_off' => $kick_off,
-                'home_team' => $homeTeam,
-                'away_team' => $awayTeam,
-                'match_stage' => $req->input('match_stage'),
-                'created' => Carbon::now()
-            ]
+        return response()->json(
+            $tournament->matches()
+                ->with(['homeTeam', 'awayTeam', 'result', 'live'])
+                ->orderBy('kick_off')
+                ->get()
         );
-
-        return response()->json($newMatch, 200);
     }
 
-
-    public function update(Request $req, $match_id)
+    public function store(Request $request): JsonResponse
     {
-        $rules = [
-            'kick_off' => 'required',
-            'venue' => 'required'
-        ];
+        $tournament = $this->authorizeTournament($request, $request->input('tour_id'));
 
-        $validator = Validator::make($req->all(),  $rules);
+        $data = $request->validate([
+            'tour_id' => ['required', 'string'],
+            'homeTeam' => ['required', 'string'],
+            'awayTeam' => ['required', 'string', 'different:homeTeam'],
+            'kick_off' => ['required', 'date'],
+            'venue' => ['required', 'string', 'max:255'],
+            'match_stage' => [$tournament->isCup() ? 'required' : 'nullable', Rule::in(MatchModel::STAGES)],
+        ], ['awayTeam.different' => 'A team cannot play itself.']);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+        $teamsInTournament = TeamModel::where('tour_id', $tournament->tour_id)
+            ->whereKey([$data['homeTeam'], $data['awayTeam']])
+            ->count();
+
+        if ($teamsInTournament !== 2) {
+            throw ValidationException::withMessages(['homeTeam' => 'Both teams must belong to this tournament.']);
         }
 
-        $match = MatchModel::find($match_id);
-        $match->venue = $req->input('venue');
-        $match->kick_off = $req->input('kick_off');
-        if ($req->input('match_stage'))
-            $match->match_stage = $req->input('match_stage');
-        $match->save();
+        $kickOff = Carbon::parse($data['kick_off'])->toIso8601ZuluString('millisecond');
 
-        return response()->json('updated', 200);
-    }
+        $duplicate = MatchModel::where([
+            'home_team' => $data['homeTeam'],
+            'away_team' => $data['awayTeam'],
+            'kick_off' => $kickOff,
+        ])->exists();
 
-    public function index(Request $req)
-    {
-        $tour_id = $req->input('tour_id');
-
-        $thisTournament = TournamentModel::find($tour_id);
-        if (!$thisTournament) {
-            return response()->json('invalid tournament', 203);
+        if ($duplicate) {
+            throw new ConflictHttpException('This match is already scheduled.');
         }
 
-        $matchs = MatchModel::with(['awayTeam', 'homeTeam'])->where('tour_id', $req->tour_id)->get();
+        $match = MatchModel::create([
+            'tour_id' => $tournament->tour_id,
+            'home_team' => $data['homeTeam'],
+            'away_team' => $data['awayTeam'],
+            'venue' => $data['venue'],
+            'kick_off' => $kickOff,
+            'match_stage' => $tournament->isCup() ? $data['match_stage'] : null,
+            'created' => now()->toDateTimeString(),
+        ]);
 
-        return response()->json($matchs, 200);
+        return response()->json($match->load(['homeTeam', 'awayTeam']), 201);
     }
 
-
-
-
-    public function destroy(Request $req, $match_id)
+    public function update(Request $request, MatchModel $match): JsonResponse
     {
-        $match = MatchModel::find($match_id);
+        $tournament = $this->authorizeMatch($request, $match);
+
+        $data = $request->validate([
+            'kick_off' => ['required', 'date'],
+            'venue' => ['required', 'string', 'max:255'],
+            'match_stage' => ['nullable', Rule::in(MatchModel::STAGES)],
+        ]);
+
+        // The stage decides whether a result touched the standings, so freeze it once played.
+        if ($match->result()->exists() && ($data['match_stage'] ?? $match->match_stage) !== $match->match_stage) {
+            throw ValidationException::withMessages(['match_stage' => 'Undo the result before changing the stage.']);
+        }
+
+        $match->update([
+            'venue' => $data['venue'],
+            'kick_off' => Carbon::parse($data['kick_off'])->toIso8601ZuluString('millisecond'),
+            'match_stage' => $tournament->isCup() ? ($data['match_stage'] ?? $match->match_stage) : null,
+        ]);
+
+        return response()->json($match->load(['homeTeam', 'awayTeam', 'result']));
+    }
+
+    public function destroy(Request $request, MatchModel $match): JsonResponse
+    {
+        $this->authorizeMatch($request, $match);
+
+        if ($match->result()->exists()) {
+            throw new ConflictHttpException('Undo this match\'s result before deleting it.');
+        }
+
+        $match->live()->delete();
         $match->delete();
 
-        return response()->json('deleted', 200);
+        return response()->json(['message' => 'Match deleted.']);
     }
 }

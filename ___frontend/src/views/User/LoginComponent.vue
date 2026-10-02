@@ -1,172 +1,93 @@
 <template>
-    <div class="animate__animated animate__fadeIn">
-        <div class="glass-card p-4 p-md-5">
-            <div class="text-center mb-4">
-                <img src="/icons/soccer.svg" width="50" alt="" class="mb-3 animate-float">
-                <h2 class="text-white fw-bold mb-1">Welcome Back</h2>
-                <p class="text-white-50 small">Enter your credentials to access your dashboard</p>
-            </div>
-
-            <div v-show="form.formError"
-                class="alert alert-danger border-0 bg-danger bg-opacity-10 text-danger small text-center py-2"
-                role="alert">
-                <i class="bi bi-exclamation-circle-fill me-2"></i> Incorrect Email or Password
-            </div>
-
-            <form @submit.prevent="login" class="row g-3">
-                <div class="col-12">
-                    <div class="form-floating custom-form-floating">
-                        <input v-model="form.email" :class="{ 'is-invalid': form.emailError }" type="email"
-                            class="form-control" id="emailInput" placeholder="name@example.com">
-                        <label for="emailInput" class="text-white-50">Email address</label>
-                    </div>
-                    <div class="small text-danger mt-1 text-start" v-if="form.emailError">{{ form.emailError }}</div>
-                </div>
-
-                <div class="col-12">
-                    <div class="input-group custom-input-group">
-                        <div class="form-floating flex-grow-1 custom-form-floating">
-                            <input v-model="form.password" :type="form.pswordType" class="form-control border-end-0"
-                                :class="{ 'is-invalid': form.passwError }" id="passwInput" placeholder="password">
-                            <label for="passwInput" class="text-white-50">Password</label>
-                        </div>
-                        <span @click="swapPasFieldType"
-                            class="input-group-text bg-transparent border-start-0 cursor-pointer text-white-50">
-                            <i :class="form.pswordType === 'password' ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
-                        </span>
-                    </div>
-                    <div class="small text-danger mt-1 text-start" v-if="form.passwError">{{ form.passwError }}</div>
-                </div>
-
-                <div class="col-12 d-flex justify-content-end mt-2">
-                    <span class="cursor-pointer small text-gradient fw-bold">Forgot password?</span>
-                </div>
-
-                <div class="col-12 mt-4">
-                    <button v-if="!form.isLoading" type="submit"
-                        class="btn btn-primary-theme w-100 py-3 fw-bold rounded-3 shadow-sm hover-tilt-Y">
-                        LOGIN TO ACCOUNT
-                    </button>
-                    <button v-else class="btn btn-primary-theme w-100 py-3 fw-bold rounded-3 shadow-sm" type="button"
-                        disabled>
-                        <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-                        LOGGING IN...
-                    </button>
-                </div>
-
-                <div class="col-12 mt-4 text-center">
-                    <p class="text-white-50 small mb-0">
-                        Don't have an account?
-                        <RouterLink class="text-gradient fw-bold text-decoration-none ms-1" to="/register">
-                            Create account
-                        </RouterLink>
-                    </p>
-                </div>
-            </form>
+    <AuthCard title="Welcome Back" subtitle="Enter your credentials to access your dashboard">
+        <div v-if="formError" class="alert auth-alert small text-center py-2" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-2"></i> {{ formError }}
         </div>
-    </div>
+
+        <form @submit.prevent="login" class="row g-3" novalidate>
+            <div class="col-12">
+                <div class="form-floating">
+                    <input v-model.trim="form.email" :class="{ 'is-invalid': errors.email }" type="email"
+                        class="form-control" id="emailInput" placeholder="name@example.com" autocomplete="email">
+                    <label for="emailInput">Email address</label>
+                </div>
+                <div class="small text-danger mt-1 text-start" v-if="errors.email">{{ errors.email }}</div>
+            </div>
+
+            <div class="col-12">
+                <div class="input-group">
+                    <div class="form-floating flex-grow-1">
+                        <input v-model="form.password" :type="showPassword ? 'text' : 'password'" class="form-control border-end-0"
+                            :class="{ 'is-invalid': errors.password }" id="passwInput" placeholder="password" autocomplete="current-password">
+                        <label for="passwInput">Password</label>
+                    </div>
+                    <button type="button" @click="showPassword = !showPassword"
+                        class="input-group-text bg-transparent border-start-0 text-white-50"
+                        :aria-label="showPassword ? 'Hide password' : 'Show password'">
+                        <i :class="showPassword ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
+                    </button>
+                </div>
+                <div class="small text-danger mt-1 text-start" v-if="errors.password">{{ errors.password }}</div>
+            </div>
+
+            <div class="col-12 d-flex justify-content-end mt-2">
+                <RouterLink to="/forgot-password" class="small text-gradient fw-bold text-decoration-none">Forgot password?</RouterLink>
+            </div>
+
+            <div class="col-12 mt-4">
+                <button type="submit" :disabled="isLoading"
+                    class="btn btn-primary-theme w-100 py-3 fw-bold rounded-3 shadow-sm hover-tilt-Y">
+                    <span v-if="isLoading" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+                    {{ isLoading ? 'LOGGING IN...' : 'LOGIN TO ACCOUNT' }}
+                </button>
+            </div>
+
+            <div class="col-12 mt-4 text-center">
+                <p class="text-white-50 small mb-0">
+                    Don't have an account?
+                    <RouterLink class="text-gradient fw-bold text-decoration-none ms-1" to="/register">Create account</RouterLink>
+                </p>
+            </div>
+        </form>
+    </AuthCard>
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
-import { useRouter } from 'vue-router';
-import api from '@/store/axiosManager'
-import { useAuthStore } from '@/store/authStore';
+import { reactive, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import api, { apiErrorMessage } from '@/store/axiosManager'
+import { useAuthStore } from '@/store/authStore'
+import fx from '@/store/useFunctions'
+import AuthCard from './AuthCard.vue'
 
 const authStore = useAuthStore()
-const router = useRouter();
+const router = useRouter()
+const route = useRoute()
 
-const form = reactive({
-    email: '',
-    password: '',
-    pswordType: 'password',
-    isLoading: false,
-    emailError: '',
-    passwError: '',
-    formError: false,
-})
-
-const swapPasFieldType = () => {
-    form.pswordType = form.pswordType === 'password' ? 'text' : 'password'
-}
+const form = reactive({ email: '', password: '' })
+const errors = reactive({ email: '', password: '' })
+const formError = ref('')
+const showPassword = ref(false)
+const isLoading = ref(false)
 
 async function login() {
-    form.emailError = '';
-    form.passwError = '';
-    form.formError = false;
+    errors.email = !form.email ? 'Email is required' : !fx.isValidEmail(form.email) ? 'Enter a valid email' : ''
+    errors.password = form.password ? '' : 'Password is required'
+    formError.value = ''
+    if (errors.email || errors.password) return
 
-    if (!form.email) {
-        form.emailError = 'Email is required';
-        return;
-    }
-
-    if (!form.password) {
-        form.passwError = 'Password is required';
-        return;
-    }
-
-    form.isLoading = true
+    isLoading.value = true
     try {
-        let resp = await api.login({
-            email: form.email,
-            password: form.password
-        })
-
-        if (resp.status === 203) {
-            form.formError = true
-            form.isLoading = false
-            return;
-        }
-
-        authStore.login(resp.data)
-        router.replace({ path: '/user/dashboard' })
+        const { data } = await api.login({ email: form.email, password: form.password })
+        authStore.login(data)
+        const redirect = typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/user')
+            ? route.query.redirect
+            : '/user/dashboard'
+        router.replace(redirect)
     } catch (error) {
-        alert('Network Error')
+        formError.value = apiErrorMessage(error)
     } finally {
-        form.isLoading = false
+        isLoading.value = false
     }
 }
 </script>
-
-<style scoped>
-.custom-form-floating .form-control {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    color: white !important;
-    border-radius: 12px;
-}
-
-.custom-form-floating .form-control:focus {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border-color: var(--accent-color) !important;
-    box-shadow: 0 0 0 4px rgba(0, 242, 254, 0.1) !important;
-}
-
-.custom-input-group .input-group-text {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 0 12px 12px 0;
-}
-
-.custom-form-floating .form-control.border-end-0 {
-    border-radius: 12px 0 0 12px;
-}
-
-.is-invalid {
-    border-color: #ff4d4d !important;
-}
-
-.btn-primary-theme {
-    background: var(--accent-gradient) !important;
-    border: none !important;
-    color: #000 !important;
-    letter-spacing: 0.5px;
-}
-
-.text-gradient {
-    background: var(--accent-gradient);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-</style>

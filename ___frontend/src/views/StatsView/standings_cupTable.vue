@@ -15,8 +15,7 @@
 
                 <template #item-team_badge="item">
                     <div class="badge-mini">
-                        <span v-if="item.badge" class="badge-text">{{ item.badge }}</span>
-                        <i v-else :style="{ color: item.team_color || '#eee' }" class="bi bi-shield-fill"></i>
+                        <TeamBadge :badge="item?.team_badge" :color="item.team_color" :size="22" />
                     </div>
                 </template>
 
@@ -34,6 +33,7 @@
 </template>
 
 <script setup lang="ts">
+import TeamBadge from '@/components/TeamBadge.vue'
 import type { Header } from "vue3-easy-data-table";
 const prop = defineProps({
     data: {

@@ -32,11 +32,17 @@
 
 <style scoped>
 .footer-section {
-    padding: 20px 0 60px 0;
-    /* background: #0f171a; */
-    /* Rich dark background */
+    padding: 24px 0 40px;
     width: 100%;
-    color: #111 !important;
+    background: var(--brand-navy-900);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.footer-section .glass-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: none;
+    backdrop-filter: none;
 }
 
 .text-gradient {
@@ -44,12 +50,6 @@
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-}
-
-.glass-card {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
 
 i {

@@ -1,20 +1,20 @@
 <template>
-    <div v-if="!stats.tourResults.length" class="min-vh-100 d-flex align-items-center justify-content-center">
+    <div v-if="!stats.tourResults.length" class="py-5 d-flex align-items-center justify-content-center">
         <emptyDataComponent>
-            No Results recorded.
+            <div class="text-white">No results recorded yet.</div>
         </emptyDataComponent>
     </div>
     <div v-else class="min-vh-50 pb-5">
         <div class="row g-4">
-            <div v-for="({ match_stage, home_name, away_name, away_score, home_score, winner, date_played, home_score_pen, away_score_pen, home_team, away_team }, i) in stats.tourResults"
-                :key="i" class="col-12">
+            <div v-for="({ match_stage, home_name, away_name, away_score, home_score, winner, date_played, home_score_pen, away_score_pen, home_team, away_team, home_badge, away_badge, home_color, away_color, result_id }) in stats.tourResults"
+                :key="result_id" class="col-12">
                 <div class="glass-card modern-result-card p-4 transition-all hover-glow">
                     <!-- Header: Stage & Date -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div class="stage-tag px-3 py-1 rounded-pill">
                             {{ match_stage ? match_stage.replaceAll('_', ' ') : 'MATCH' }}
                         </div>
-                        <div class="date-text">{{ dateFormat(date_played) }}</div>
+                        <div class="date-text">{{ date_played ? dateFormat(date_played) : '' }}</div>
                     </div>
 
                     <!-- Main Match Display -->
@@ -22,7 +22,7 @@
                         <!-- Home Team -->
                         <div class="team-side home">
                             <div class="shield-lg mb-3" :class="{ 'winner-shield': winner == home_team }">
-                                <i class="bi bi-shield-fill"></i>
+                                <TeamBadge :badge="home_badge" :color="home_color" :size="36" />
                             </div>
                             <h5 class="team-name"
                                 :class="{ 'text-white': winner == home_team, 'text-white-50': winner == away_team }">
@@ -39,7 +39,7 @@
                                 <span class="score-digit" :class="{ 'text-gradient': winner == away_team }">{{
                                     away_score }}</span>
                             </div>
-                            <div v-if="home_score_pen !== null" class="penalty-tag mt-2">
+                            <div v-if="home_score_pen !== null && home_score_pen !== undefined" class="penalty-tag mt-2">
                                 ({{ home_score_pen }} - {{ away_score_pen }} PEN)
                             </div>
                             <div class="ft-tag mt-2">FT</div>
@@ -48,7 +48,7 @@
                         <!-- Away Team -->
                         <div class="team-side away">
                             <div class="shield-lg mb-3" :class="{ 'winner-shield': winner == away_team }">
-                                <i class="bi bi-shield-fill"></i>
+                                <TeamBadge :badge="away_badge" :color="away_color" :size="36" />
                             </div>
                             <h5 class="team-name"
                                 :class="{ 'text-white': winner == away_team, 'text-white-50': winner == home_team }">
@@ -63,6 +63,7 @@
 </template>
 
 <script setup lang="ts">
+import TeamBadge from '@/components/TeamBadge.vue'
 import { useStatsStore } from '@/store/statsStore';
 import { useDateFormat } from '@vueuse/core';
 

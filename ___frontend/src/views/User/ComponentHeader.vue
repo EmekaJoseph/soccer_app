@@ -1,161 +1,160 @@
 <template>
-    <nav class="navbar py-4 px-lg-3 shadow-sm bg-white sticky-lg-top ">
-        <div class="container-fluid">
-            <div>
-                <span ref="btnClose" class="navbar-toggler-icon cursor-pointer" data-bs-toggle="offcanvas"
-                    data-bs-target="#offcanvasExample" aria-controls="offcanvasExample"></span>
-                <span class="ms-4 text-uppercase fw-bold">{{ route.name }}</span>
-            </div>
-            <div class="dropdown d-none d-md-block">
-                <button class=" bg-transparent border-0 dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    {{ data.firstame ?? data.email }}
-                </button>
-                <ul class="dropdown-menu">
-                    <li @click="logOut"><a class="dropdown-item" href="#">Logout</a></li>
-                </ul>
+    <header class="topbar">
+        <div class="d-flex align-items-center gap-3 min-w-0">
+            <button class="btn-icon d-md-none" data-bs-toggle="offcanvas" data-bs-target="#userOffcanvas"
+                aria-controls="userOffcanvas" aria-label="Open menu">
+                <i class="bi bi-list fs-5"></i>
+            </button>
+            <div class="min-w-0">
+                <div class="crumb">{{ authStore.isAdmin ? 'Owner workspace' : 'Scorer workspace' }}</div>
+                <h1 class="page-title text-truncate">{{ String(route.name ?? '') }}</h1>
             </div>
         </div>
-    </nav>
 
-
-
-
-    <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasExample"
-        aria-labelledby="offcanvasExampleLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasExampleLabel">SOCCER APP</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="list-group list-group-flush" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample">
-                <li class="list-group-item">
-                    <RouterLink to="/user/dashboard"><i class="bi bi-view-stacked"></i> Dashboard</RouterLink>
-                </li>
-                <li v-if="data.role == 'admin'" class="list-group-item">
-                    <RouterLink to="/user/teams"><i class="bi bi-people"></i> Teams</RouterLink>
-                </li>
-                <li class="list-group-item">
-                    <RouterLink to="/user/matches"><i class="bi bi-calendar2-event"></i> Matches</RouterLink>
-                </li>
-                <li class="list-group-item">
-                    <RouterLink to="/user/results"><i class="bi bi-list-check"></i> Results</RouterLink>
-                </li>
-                <li class="list-group-item">
-                    <RouterLink to="/user/live"><i class="bi bi-circle"></i> Live Update</RouterLink>
-                </li>
-
-                <li v-if="data.role == 'admin'" class="list-group-item">
-                    <RouterLink to="/user/predictions"><i class="bi bi-command"></i> Predictions</RouterLink>
-                </li>
-
-                <li class="list-group-item mt-5">
-                    <div class="cursor-pointer" @click="logOut"><i class="bi bi-box-arrow-left"></i> Logout </div>
-                </li>
+        <div class="dropdown">
+            <button class="user-chip" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="avatar">{{ initials }}</span>
+                <span class="d-none d-sm-flex flex-column text-start lh-sm">
+                    <span class="fw-semibold text-strong">{{ authStore.displayName }}</span>
+                    <span class="small text-muted">{{ authStore.isAdmin ? 'Owner' : 'Scorer' }}</span>
+                </span>
+                <i class="bi bi-chevron-down small text-muted"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                <li><RouterLink class="dropdown-item" to="/user/account"><i class="bi bi-person-gear me-2"></i>Account settings</RouterLink></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><button class="dropdown-item text-danger" @click="logOut"><i class="bi bi-box-arrow-right me-2"></i>Log out</button></li>
             </ul>
+        </div>
+    </header>
+
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="userOffcanvas" aria-labelledby="userOffcanvasLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title fw-bold" id="userOffcanvasLabel">SOCCER<span class="text-gradient">APP</span></h5>
+            <button ref="btnClose" type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <ComponentMenuList @navigate="btnClose?.click()" />
+            <button class="btn btn-soft mt-auto" @click="logOut"><i class="bi bi-box-arrow-right me-2"></i>Log out</button>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import api from '@/store/axiosManager'
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from '@/store/authStore'
+import ComponentMenuList from './ComponentMenuList.vue'
 
 const authStore = useAuthStore()
-
-const data: any = authStore.getUserData()
-
 const route = useRoute()
 const router = useRouter()
-const btnClose = ref<any>()
+const btnClose = ref<HTMLButtonElement | null>(null)
 
-// watch(() => route.path, () => {
-//     btnClose.value.click()
-// })
+const initials = computed(() =>
+    authStore.displayName.split(/[\s@.]+/).filter(Boolean).slice(0, 2).map((w) => w[0]!.toUpperCase()).join(''),
+)
 
-function logOut() {
-    btnClose.value.click()
+async function logOut() {
+    btnClose.value?.click()
     try {
-        api.logout()
-    } catch (error) {
-        // 
-    }
-    finally {
+        await api.logout()
+    } catch {
+        // token may already be invalid; signing out locally is enough
+    } finally {
         authStore.logout()
         router.replace({ path: '/' })
     }
-
 }
-
 </script>
 
 <style scoped>
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    margin-left: var(--sidebar-width);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1.75rem;
+    background: rgba(243, 246, 250, 0.82);
+    backdrop-filter: saturate(160%) blur(12px);
+    -webkit-backdrop-filter: saturate(160%) blur(12px);
+    border-bottom: 1px solid var(--surface-border);
+}
+
+.crumb {
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.page-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text-strong);
+    margin: 0;
+}
+
+.min-w-0 {
+    min-width: 0;
+}
+
+.user-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.3rem 0.75rem 0.3rem 0.3rem;
+    border-radius: 999px;
+    border: 1px solid var(--surface-border);
+    background: var(--surface-card);
+    box-shadow: var(--shadow-sm);
+}
+
+.avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #04212c;
+    background: linear-gradient(135deg, var(--brand-blue), var(--brand-cyan));
+}
+
+.text-strong {
+    color: var(--text-strong);
+}
+
 .dropdown-menu {
-    /* font-size: 14px; */
-    min-width: 100% !important;
-    border: 1px solid #eee;
-    /* border-top: 3px solid v-bind(ccThk); */
-    padding-top: 0px;
-    margin: 0px;
+    border-radius: var(--radius-md);
+    padding: 0.4rem;
+    min-width: 210px;
 }
 
-
-
-
-
-.navbar {
-    margin-left: 250px;
+.dropdown-item {
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
 }
 
-@media (max-width: 767px) {
-    .navbar {
-        margin-left: 0px;
+.offcanvas {
+    width: 280px !important;
+}
+
+@media (max-width: 767.98px) {
+    .topbar {
+        margin-left: 0;
+        padding: 0.75rem 1rem;
+    }
+
+    .page-title {
+        font-size: 1.1rem;
     }
 }
-
-
-@media (max-width: 768px) {
-    .offcanvas {
-        width: 250px !important;
-    }
-}
-
-
-.list-group {
-    margin-top: 20px;
-}
-
-.list-group-item {
-    border: 0px;
-    margin-block: 7px;
-}
-
-.list-group-item a {
-    text-decoration: none;
-    padding: 5px 50px 5px 5px;
-    font-size: 18px;
-    color: #000;
-}
-
-.list-group-item .active {
-    background-color: var(--bs-light);
-}
-
-.bg-admin {
-    /* background-color: var(--bs-light); */
-    background-color: #f5f6f8;
-}
-
-
-
-
-
-@media (min-width: 767px) {
-    .navbar-toggler-icon {
-        display: none;
-    }
-}
-
-/*  */
 </style>

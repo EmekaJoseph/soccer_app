@@ -2,310 +2,220 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller as BaseController;
-
-use Illuminate\Http\Request;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
-
-use App\Models\TournamentModel;
-use App\Models\Standings_LeagueModel;
-use App\Models\Standings_CupModel;
-use App\Models\ResultModel;
-use App\Models\TeamModel;
 use App\Models\FeedbackModel;
 use App\Models\MatchModel;
+use App\Models\PlayerModel;
+use App\Models\PredictionModel;
+use App\Models\ResultModel;
+use App\Models\TeamModel;
+use App\Models\TournamentModel;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
-class PublicViewController extends BaseController
+/**
+ * Read-only data for the public stats page (the link owners share with fans),
+ * plus the two things fans can submit: predictions and feedback.
+ */
+class PublicViewController extends Controller
 {
-    use AuthorizesRequests, ValidatesRequests;
-
-    // get tournament details
-    public function tourData(Request $req, $tour_id)
+    public function tournament(TournamentModel $tournament): JsonResponse
     {
-        $thisTournament = TournamentModel::find($tour_id);
-        return response()->json($thisTournament, 200);
+        return response()->json($tournament);
     }
 
-
-    // fucntion to get standings
-    public function standings(Request $req,  $tour_id)
+    public function standings(TournamentModel $tournament): JsonResponse
     {
-        // check if tournament exists
-        $thisTournament = TournamentModel::find($tour_id);
-        if (!$thisTournament) {
-            return response()->json('invalid tournament', 203);
-        }
+        $teams = $tournament->relatedTeams()->get()->keyBy('team_id');
 
-        $standings = ($thisTournament->tour_type == 'cup')
-            ? Standings_CupModel::where('tour_id', $tour_id)->get()
-            : Standings_LeagueModel::where('tour_id', $tour_id)->get();
-
-        if ($standings->isNotEmpty()) {
-            // Get all unique team IDs from standings
-            $teamIds = $standings->pluck('team_id')->unique();
-
-            // Fetch all teams in one query
-            $teams = TeamModel::whereIn('team_id', $teamIds)->get()->keyBy('team_id');
-
-            // Assign team details to standings
-            foreach ($standings as $result) {
-                if (isset($teams[$result->team_id])) {
-                    $team = $teams[$result->team_id];
-                    $result->team_name = $team->team_name;
-                    $result->team_color = $team->team_color;
-                    $result->team_badge = $team->team_badge;
-                }
-            }
-        }
-
-        // if tournament is a cup get from group standings table else get from league standings
-        if ($thisTournament->tour_type == 'cup') {
-
-            // Group standings by 'group_in'
-            $grouped = collect($standings)->groupBy('group_in');
-
-            // Create an array of sorted groups
-            $newObj = $grouped->map(function ($teams, $group) {
-                return (object) [
-                    'group' => $group,
-                    'teams' => collect($teams)->sortBy([
-                        ['points', 'desc'],
-                        ['goal_diff', 'desc'],
-                        ['team_name', 'asc'],
-                    ])->values()->all(),
-                ];
-            })->values();
-
-            // Sort by group name
-            $sortedByGroup = $newObj->sortBy('group')->values();
-
-            return response()->json($sortedByGroup, 200);
-        } else {
-            // sort by points and goal diff
-            $collection = collect($standings);
-            $sorted = $collection->sortBy([
-                ['points', 'desc'],
-                ['goal_diff', 'desc'],
-                ['team_name', 'asc'],
-            ])->values()->all();
-            return response()->json($sorted, 200);
-        }
-    }
-
-
-
-    // function to get results
-    public function results(Request $req, $tour_id)
-    {
-        $results = ResultModel::select(
-            'result_id',
-            'home_team',
-            'away_team',
-            'home_score',
-            'away_score',
-            'match_stage',
-            'date_played',
-            'away_score_pen',
-            'home_score_pen',
-            'match_id'
-        )->where('tour_id', $tour_id)->orderByDesc('date_played')->get();
-        if ($results->isNotEmpty()) {
-            // Get all unique team IDs from results
-            $teamIds = $results->pluck('home_team')->merge($results->pluck('away_team'))->unique();
-
-            // Fetch all teams in one query
-            $teams = TeamModel::whereIn('team_id', $teamIds)->get()->keyBy('team_id');
-
-            // Assign winner and team names
-            foreach ($results as $result) {
-                if ($result->away_score < $result->home_score) {
-                    $result->winner = $result->home_team;
-                } elseif ($result->away_score > $result->home_score) {
-                    $result->winner = $result->away_team;
-                } else {
-                    $result->winner = '';
-                }
-
-                $result->home_name = $teams[$result->home_team]->team_name ?? null;
-                $result->away_name = $teams[$result->away_team]->team_name ?? null;
-            }
-        }
-
-        return response()->json($results, 200);
-    }
-
-
-    // function to get matches
-    public function matches(Request $req, $tour_id)
-    {
-        $matches = MatchModel::with(['result', 'awayTeam', 'homeTeam'])->select(
-            'home_team',
-            'away_team',
-            'match_stage',
-            'venue',
-            'kick_off',
-            'match_id'
-        )->where('tour_id', $tour_id)->orderBy('kick_off', 'DESC')->get();
-
-        // determine winner
-        if (sizeof($matches) > 0) {
-            foreach ($matches as $match) {
-                if ($match->result) {
-                    $result = $match->result;
-                    if ($result->away_score < $result->home_score) {
-                        $result->winner =  $result->home_team;
-                    } else if ($result->away_score > $result->home_score) {
-                        $result->winner =  $result->away_team;
-                    } else {
-                        $result->winner =  '';
-                    }
-                }
-            }
-        }
-        return response()->json($matches, 200);
-    }
-
-
-
-    public function showLiveMatches(Request $req, $tour_id)
-    {
-        $live = DB::table('tbl_live')->where('tour_id', $tour_id)->get();
-
-        if ($live->isNotEmpty()) {
-            // Get all unique team IDs from live updates
-            $teamIds = $live->pluck('home_team')->merge($live->pluck('away_team'))->unique();
-
-            // Fetch all teams in one query and store them in an associative array
-            $teams = TeamModel::whereIn('team_id', $teamIds)->get()->keyBy('team_id');
-
-            // Assign team details to live updates
-            foreach ($live as $result) {
-                $result->home_team = $teams[$result->home_team] ?? null;
-                $result->away_team = $teams[$result->away_team] ?? null;
-            }
-        }
-
-
-        return response()->json($live, 200);
-    }
-
-    public function sendFeedBack(Request $req)
-    {
-        // check if tournament exists
-        $thisTournament = TournamentModel::find($req->input('tour_id'));
-        if (!$thisTournament) {
-            return response()->json('invalid tournament', 203);
-        }
-
-        try {
-            FeedbackModel::create([
-                'tour_id' => $req->input('tour_id'),
-                'name' => $req->input('name'),
-                'feedbackText' => $req->input('feedbackText'),
-                'created_at' => Carbon::now(),
-                'device_ip' => $req->ip(),
+        $rows = $tournament->standings()->get()
+            ->filter(fn ($row) => $teams->has($row->team_id))
+            ->map(fn ($row) => [
+                ...$row->toArray(),
+                'team_name' => $teams[$row->team_id]->team_name,
+                'team_color' => $teams[$row->team_id]->team_color,
+                'team_badge' => $teams[$row->team_id]->team_badge,
             ]);
-            return response()->json('saved', 200);
-        } catch (\Throwable $th) {
-            throw $th;
-        }
-    }
 
-    public function getFeedbacks(Request $req)
-    {
-        $data =  FeedbackModel::all();
-        return response()->json($data, 200);
-    }
+        $sort = fn (Collection $rows) => $rows->sortBy([
+            ['points', 'desc'],
+            ['goal_diff', 'desc'],
+            ['won', 'desc'],
+            ['team_name', 'asc'],
+        ])->values();
 
-
-    public function infomationCenter($tour_id)
-    {
-        $teams = TeamModel::where('tour_id', $tour_id)->get();
-        $results = ResultModel::where('tour_id', $tour_id)->get();
-
-        $data = array();
-
-        if ($results) {
-
-            // initialize wins, draws and losts
-            foreach ($teams as $team) {
-                $team->played = 0;
-                $team->won = 0;
-                $team->draw = 0;
-                $team->lost = 0;
-                $team->scored = 0;
-                $team->conceded = 0;
-                $team->goal_diff = 0;
-            }
-
-
-            // calculate wins, draws and losts
-            foreach ($teams as $team) {
-                foreach ($results as $result) {
-                    if ($result->home_team == $team->team_id) {
-                        if ($result->home_score > $result->away_score) {
-                            $team->won += 1;
-                        } else if ($result->home_score < $result->away_score) {
-                            $team->lost += 1;
-                        } else {
-                            $team->draw += 1;
-                        }
-                        $team->scored += $result->home_score;
-                        $team->conceded += $result->away_score;
-                        $team->played += 1;
-                    } else if ($result->away_team == $team->team_id) {
-                        if ($result->away_score > $result->home_score) {
-                            $team->won += 1;
-                        } else if ($result->away_score < $result->home_score) {
-                            $team->lost += 1;
-                        } else {
-                            $team->draw += 1;
-                        }
-                        $team->scored += $result->away_score;
-                        $team->conceded += $result->home_score;
-                        $team->played += 1;
-                    }
-                }
-                $team->goal_diff = $team->scored  - $team->conceded;
-            }
-
-
-            // calculate performance rating
-            foreach ($teams as $team) {
-                if ($team->played !== 0) {
-                    $rating = (($team->won * 3) + $team->draw) + ($team->goal_diff / 10);
-                    // $rating = ((($team->won * 3) + $team->draw) / ($team->played * 3)) * 100;
-                    $team->rating = ceil($rating);
-                }
-
-                array_push($data, $team);
-            }
-
-            // $collection = collect($data);
-            // $data = $collection->sortBy([
-            //     ['played', 'desc'],
-            //     ['rating', 'rating'],
-            // ]);
-
-            usort($data, function ($a, $b) {
-                return $b->rating - $a->rating;
-            });
-
-
-            // usort($objects, function($a, $b) {
-            //     // Compare by property1
-            //     if ($a->property1 == $b->property1) {
-            //         // If property1 is the same, compare by property2
-            //         return $a->property2 <=> $b->property2;
-            //     }
-            //     return $a->property1 <=> $b->property1;
-            // });
+        if (! $tournament->isCup()) {
+            return response()->json($sort($rows));
         }
 
+        $groups = $rows->groupBy('group_in')
+            ->map(fn (Collection $teams, $group) => ['group' => $group, 'teams' => $sort($teams)])
+            ->sortBy('group')
+            ->values();
 
-        return response()->json($data, 200);
+        return response()->json($groups);
+    }
+
+    public function results(TournamentModel $tournament): JsonResponse
+    {
+        $names = $tournament->relatedTeams()->get()->keyBy('team_id');
+
+        $results = $tournament->results()
+            ->orderByDesc('date_played')
+            ->get()
+            ->map(fn (ResultModel $result) => [
+                ...$result->only([
+                    'result_id', 'match_id', 'home_team', 'away_team', 'home_score', 'away_score',
+                    'home_score_pen', 'away_score_pen', 'match_stage', 'date_played',
+                ]),
+                'winner' => $result->winnerId(),
+                'home_name' => $names[$result->home_team]->team_name ?? null,
+                'away_name' => $names[$result->away_team]->team_name ?? null,
+                'home_color' => $names[$result->home_team]->team_color ?? null,
+                'away_color' => $names[$result->away_team]->team_color ?? null,
+                'home_badge' => $names[$result->home_team]->team_badge ?? null,
+                'away_badge' => $names[$result->away_team]->team_badge ?? null,
+            ]);
+
+        return response()->json($results);
+    }
+
+    /** Upcoming fixtures (matches without a result yet), soonest first. */
+    public function matches(TournamentModel $tournament): JsonResponse
+    {
+        $matches = $tournament->matches()
+            ->whereDoesntHave('result')
+            ->with(['homeTeam', 'awayTeam'])
+            ->orderBy('kick_off')
+            ->get()
+            ->filter(fn (MatchModel $m) => $m->homeTeam && $m->awayTeam)
+            ->values();
+
+        return response()->json($matches);
+    }
+
+    public function live(TournamentModel $tournament): JsonResponse
+    {
+        return response()->json(
+            $tournament->liveMatches()->with(['homeTeam', 'awayTeam'])->get()
+                ->map(fn ($live) => [
+                    ...$live->only(['live_id', 'match_id', 'match_stage', 'home_team_score', 'away_team_score', 'curr_time', 'isPaused']),
+                    'home_team' => $live->homeTeam,
+                    'away_team' => $live->awayTeam,
+                ])
+        );
+    }
+
+    /**
+     * Every team's record across all results (league, group and knock-out),
+     * with a performance rating: share of available points won, 0-100.
+     */
+    public function teams(TournamentModel $tournament): JsonResponse
+    {
+        $results = $tournament->results()->get();
+
+        $teams = $tournament->relatedTeams()->withCount('players')->get()->map(function (TeamModel $team) use ($results) {
+            $stats = ['played' => 0, 'won' => 0, 'draw' => 0, 'lost' => 0, 'scored' => 0, 'conceded' => 0];
+
+            foreach ($results as $result) {
+                $isHome = $result->home_team === $team->team_id;
+                if (! $isHome && $result->away_team !== $team->team_id) {
+                    continue;
+                }
+
+                [$for, $against] = $isHome
+                    ? [$result->home_score, $result->away_score]
+                    : [$result->away_score, $result->home_score];
+
+                $stats['played']++;
+                $stats['scored'] += $for;
+                $stats['conceded'] += $against;
+                $stats[match (true) {
+                    $for > $against => 'won', $for < $against => 'lost', default => 'draw'
+                }]++;
+            }
+
+            $stats['goal_diff'] = $stats['scored'] - $stats['conceded'];
+            $stats['rating'] = $stats['played'] > 0
+                ? (int) round(($stats['won'] * 3 + $stats['draw']) / ($stats['played'] * 3) * 100)
+                : null;
+
+            return [...$team->toArray(), ...$stats];
+        });
+
+        return response()->json(
+            $teams->sortBy([['rating', 'desc'], ['goal_diff', 'desc'], ['team_name', 'asc']])->values()
+        );
+    }
+
+    public function players(Request $request, TournamentModel $tournament): JsonResponse
+    {
+        $players = PlayerModel::with('team')
+            ->where('tour_id', $tournament->tour_id)
+            ->when($request->query('search'), function ($query, string $search) {
+                $query->where(fn ($q) => $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%"));
+            })
+            ->when($request->query('team_id'), fn ($query, string $teamId) => $query->where('team_id', $teamId))
+            ->orderBy('first_name')
+            ->get();
+
+        return response()->json($players);
+    }
+
+    public function storePrediction(Request $request, TournamentModel $tournament): JsonResponse
+    {
+        $data = $request->validate([
+            'first_place' => ['required', 'string'],
+            'second_place' => ['required', 'string', 'different:first_place'],
+            'third_place' => ['required', 'string', 'different:first_place', 'different:second_place'],
+            'full_name' => ['required', 'string', 'max:100'],
+            'phone_number' => ['required', 'string', 'regex:/^\+?[0-9 ]{7,20}$/'],
+            'email' => ['nullable', 'email', 'max:100'],
+        ], [
+            'second_place.different' => 'Pick a different team for each position.',
+            'third_place.different' => 'Pick a different team for each position.',
+            'phone_number.regex' => 'Enter a valid phone number.',
+        ]);
+
+        $teamIds = [$data['first_place'], $data['second_place'], $data['third_place']];
+        if ($tournament->relatedTeams()->whereKey($teamIds)->count() !== 3) {
+            throw ValidationException::withMessages(['first_place' => 'Pick teams from this tournament.']);
+        }
+
+        $phone = preg_replace('/\D/', '', $data['phone_number']);
+        if ($tournament->predictions()->where('phone_number', $phone)->exists()) {
+            throw new ConflictHttpException('This phone number has already made a prediction.');
+        }
+
+        PredictionModel::create([
+            ...$data,
+            'phone_number' => $phone,
+            'email' => $data['email'] ?? '',
+            'tour_id' => $tournament->tour_id,
+            'device_ip' => (string) $request->ip(),
+            'created_at' => now(),
+        ]);
+
+        return response()->json(['message' => 'Prediction saved.'], 201);
+    }
+
+    public function storeFeedback(Request $request, TournamentModel $tournament): JsonResponse
+    {
+        $data = $request->validate([
+            'name' => ['nullable', 'string', 'max:255'],
+            'feedbackText' => ['required', 'string', 'max:2000'],
+        ]);
+
+        FeedbackModel::create([
+            ...$data,
+            'tour_id' => $tournament->tour_id,
+            'device_ip' => (string) $request->ip(),
+            'created_at' => now(),
+        ]);
+
+        return response()->json(['message' => 'Thanks for the feedback!'], 201);
     }
 }

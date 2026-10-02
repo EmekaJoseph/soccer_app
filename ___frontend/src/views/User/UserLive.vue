@@ -1,148 +1,101 @@
 <template>
     <div class="container px-3">
-        <div v-if="userData.apiError">
-            <internetErrorComponent />
-        </div>
-        <div v-else>
-            <div class="row g-4">
+        <componentLoadingSpinner v-if="loading" />
+        <internetErrorComponent v-else-if="userData.apiError" />
+        <div v-else class="row g-4">
+            <tourDropdownSelect v-model="selectedTournament" @change="changed" />
 
-                <tourDropdownSelect @change="loadLiveMatches" v-model="selectedTournament" />
+            <div v-if="!selectedTournament" class="col-12">
+                <emptyDataComponent>Create a tournament on the dashboard first.</emptyDataComponent>
+            </div>
 
-                <div class="col-lg-12">
-                    <div class="row g-5">
-                        <!-- <div class="col-12 mb-5">
-                            <div class="float-lg-en">
-                                <button data-bs-toggle="modal" data-bs-target="#addLiveMatchModal"
-                                    class="btn btn-primary-theme btn-sm">
-                                    ADD LIVE MATCH <i class="bi bi-plus-lg"></i>
-                                </button>
-                            </div>
-                        </div> -->
-                        <div class="col-lg-12">
-                            <div v-if="!userData.tournamentLive.length">
-                                <emptyDataComponent>
-                                    No Live Matches Start a live match!
-                                </emptyDataComponent>
-                            </div>
-                            <div class="row  gy-5">
-                                <div v-if="userData.tournamentLive.length"
-                                    class="col-12 alert border-0 mb-0 text-danger alert-warning">
-                                    <b>Live Match is ON!, Do not logout or refresh page.</b>
-                                </div>
-                                <ComponentLive v-for="(liveData, i) in userData.tournamentLive" :key="i"
-                                    :team-data="liveData" />
-                            </div>
+            <div v-else class="col-lg-12">
+                <emptyDataComponent v-if="!userData.tournamentLive.length">
+                    No live matches. Press <i class="bi bi-plus-lg"></i> to start one.
+                </emptyDataComponent>
+                <div class="row gy-5">
+                    <div v-if="userData.tournamentLive.length" class="col-12">
+                        <div class="live-banner">
+                            <span class="live-dot"></span>
+                            <span><b>You are live.</b> Keep this page open so the match clock keeps running.</span>
                         </div>
                     </div>
-                </div>
-                <!-- <div v-if="userData.tournamentLive.length" class="col-lg-4 mt-lg-4 mb-4  border-0  p-3 card">
-                    <div class="card mt-lg-5 border-0 bg-transparent">
-                        <div class="card-header fw-bold border-0 bg-transparent ">LIVE COMMENTRY</div>
-                        <div class="card-body ">
-                            <div class="row gy-3">
-                                <div class="col-12">
-                                    <textarea placeholder="type here.." class="form-control" rows="4"></textarea>
-                                </div>
-                                <div class="col-12">
-                                    <button class="float-en btn btn-outline-dark w-100">Send</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-
-
-            </div>
-        </div>
-        <addLiveMatchModal :tour="selectedTournament" />
-        <otherLiveMatchesModal :tour="selectedTournament" :clicker="clicker" />
-
-        <div v-if="authStore.getUserData().role == 'admin'" class="fixed-bottom-btn" @click="clicker = !clicker">
-            <div class="justify-content-end floatPanel floatPanel-2 hover-tilt-Y">
-                <div class="card newLiveCard otherLiveCard shadow" data-bs-toggle="modal"
-                    data-bs-target="#otherLiveMatchesModal">
-                    <div><i class="bi bi-info"></i></div>
+                    <ComponentLive v-for="liveData in userData.tournamentLive" :key="liveData.live_id"
+                        :team-data="liveData" @ended="reload" />
                 </div>
             </div>
         </div>
 
-        <div v-if="userData.tournamentLive.length == 0" class="fixed-bottom-btn">
-            <div class="justify-content-end floatPanel hover-tilt-Y">
-                <div class="card newLiveCard shadow" data-bs-toggle="modal" data-bs-target="#addLiveMatchModal">
-                    <div><i class="bi bi-plus-lg"></i></div>
-                </div>
+        <addLiveMatchModal v-if="startModal" :tour="selectedTournament" @close="startModal = false" @started="reload" />
+        <otherLiveMatchesModal v-if="othersModal" :tour="selectedTournament" @close="othersModal = false" />
+
+        <template v-if="selectedTournament">
+            <div class="fab-stack">
+                <button v-if="authStore.isAdmin" class="fab secondary" title="All live matches in this tournament" @click="othersModal = true">
+                    <i class="bi bi-people"></i>
+                </button>
+                <button class="fab" title="Start a live match" @click="startModal = true">
+                    <i class="bi bi-plus-lg"></i>
+                </button>
             </div>
-        </div>
+        </template>
     </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import { useUserDataStore } from '@/store/userDataStore';
+import { ref } from 'vue'
+import { useUserDataStore } from '@/store/userDataStore'
+import { useAuthStore } from '@/store/authStore'
+import { useTournamentPicker } from '@/composables/useTournamentPicker'
 import ComponentLive from './ComponentLive.vue'
-import addLiveMatchModal from '@/components/modals/addLiveMatchModal.vue';
-import otherLiveMatchesModal from '@/components/modals/otherLiveMatchesModal.vue';
-import { useAuthStore } from '@/store/authStore';
+import addLiveMatchModal from '@/components/modals/addLiveMatchModal.vue'
+import otherLiveMatchesModal from '@/components/modals/otherLiveMatchesModal.vue'
 
 const userData = useUserDataStore()
-const selectedTournament = ref<any>('')
-const clicker = ref<boolean>(false)
-
 const authStore = useAuthStore()
+const startModal = ref(false)
+const othersModal = ref(false)
 
-onMounted(async () => {
-    await userData.getTournaments()
-    if (userData.tournaments.length) {
-        selectedTournament.value = userData.tournaments[0]
-        loadLiveMatches()
-    }
-})
+const { selectedTournament, changed, loading } = useTournamentPicker((tourId) => userData.getLiveMatchesByUser(tourId))
 
-function loadLiveMatches() {
-    userData.getTournamentTeams(selectedTournament.value.id)
-    userData.getLiveMatchesByUser(selectedTournament.value.id)
+function reload() {
+    userData.getLiveMatchesByUser(selectedTournament.value.tour_id)
 }
-
 </script>
 
 <style scoped>
-.fixed-bottom-btn {
+.fab-stack {
     position: fixed;
-    bottom: 0;
-    right: 0;
+    right: 24px;
+    bottom: 32px;
     z-index: 999;
-}
-
-
-.floatPanel {
-    margin-bottom: 60px;
-    padding-right: 24px;
     display: flex;
-    z-index: 999;
-    position: relative;
-    transition: all ease-in-out 0.4s;
-    font-size: 11px;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.floatPanel-2 {
-    margin-bottom: 130px !important;
-}
-
-.newLiveCard {
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
+.live-banner {
     display: flex;
-    justify-content: center;
     align-items: center;
-    font-size: 1.43rem;
-    color: #fff;
-    background-color: #27566d;
-    cursor: pointer;
+    gap: 0.75rem;
+    padding: 0.85rem 1.1rem;
+    border-radius: var(--radius-md);
+    background: #fff1f1;
+    color: #a61b20;
+    border: 1px solid #fbd0d1;
 }
 
-.otherLiveCard {
-    color: #fff;
-    background-color: #6c6d27 !important;
+.live-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--danger);
+    box-shadow: 0 0 0 0 rgba(229, 72, 77, 0.6);
+    animation: pulse 1.6s infinite;
+}
+
+@keyframes pulse {
+    70% { box-shadow: 0 0 0 10px rgba(229, 72, 77, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(229, 72, 77, 0); }
 }
 </style>

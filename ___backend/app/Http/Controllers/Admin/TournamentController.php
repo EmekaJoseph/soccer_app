@@ -2,157 +2,126 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Support\Facades\Validator;
-
-use Illuminate\Http\Request;
-use Carbon\Carbon;
-
+use App\Http\Controllers\Controller;
 use App\Models\TournamentModel;
 use App\Models\UserModel;
-use App\Models\TeamModel;
-use Illuminate\Support\Facades\Auth;
-use stdClass;
+use App\Support\ImageUploader;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
-class TournamentController extends BaseController
+class TournamentController extends Controller
 {
-    use AuthorizesRequests, ValidatesRequests;
+    private const LOGO_FOLDER = 'tour_logos';
 
-    private $folder_name = 'tour_logos';
+    public function __construct(private readonly ImageUploader $uploader) {}
 
-    // create Tournament
-    public function createTournament(Request $req)
+    public function index(Request $request): JsonResponse
     {
-        // validate varibles
-        $rules = [
-            'tour_title' => 'required',
-            'tour_type' => 'required | in:cup,league',
-        ];
+        $tournaments = $this->account($request)->tournaments()
+            ->withCount('relatedTeams as teams_count')
+            ->latest()
+            ->get()
+            ->map(fn (TournamentModel $tour) => [
+                ...$tour->toArray(),
+                // Aliases kept for the dashboard table and tournament picker.
+                'id' => $tour->tour_id,
+                'title' => $tour->tour_title,
+                'type' => $tour->tour_type,
+                'created' => $tour->created_at?->diffForHumans(),
+            ]);
 
-        $validator = Validator::make($req->all(),  $rules);
+        return response()->json($tournaments);
+    }
 
-        if ($validator->fails())
-            return response()->json($validator->errors(), 422);
+    public function store(Request $request): JsonResponse
+    {
+        $data = $this->validated($request);
+        $account = $this->account($request);
 
+        $this->ensureTitleIsFree($account->ownerId(), $data['tour_title']);
 
-        $tour_title = $req->input('tour_title');
-        $tour_type = $req->input('tour_type');
-        $tour_desc = $req->input('tour_desc', null);
-        $tour_logo = null;
-
-        if (TournamentModel::where(['user_id' => Auth::id(), 'tour_title' => $tour_title])->exists())
-            return response()->json('exists', 203);
-
-
-        if ($req->hasFile("tour_logo")) {
-            $image = $req->file("tour_logo");
-            $tour_logo = HelperUploadImageAndResize($this->folder_name, $image, 100, 100, 'logo_');
-        }
-
-        TournamentModel::create([
-            'tour_title' => $tour_title,
-            'user_id' => Auth::id(),
-            'tour_type' =>   $tour_type,
-            'tour_logo' =>   $tour_logo,
-            'tour_desc' =>   $tour_desc,
+        $tournament = TournamentModel::create([
+            'tour_title' => $data['tour_title'],
+            'tour_type' => $data['tour_type'],
+            'tour_desc' => $data['tour_desc'] ?? null,
+            'tour_logo' => $request->hasFile('tour_logo')
+                ? $this->uploader->store($request->file('tour_logo'), self::LOGO_FOLDER)
+                : null,
+            'user_id' => $account->ownerId(),
         ]);
 
-        $user = UserModel::find(Auth::id());
+        UserModel::whereKey($account->ownerId())
+            ->increment($tournament->isCup() ? 'no_of_cups' : 'no_of_leagues');
 
-        if ($tour_type == 'league')
-            $user->increment('no_of_leagues');
-        else
-            $user->increment('no_of_cups');
-
-        return response()->json('saved', 200);
+        return response()->json($tournament, 201);
     }
 
-
-    // get Tournaments
-    public function getTournaments(Request $req)
+    public function update(Request $request, TournamentModel $tournament): JsonResponse
     {
-        $tournaments = UserModel::find(Auth::id())->relatedTournaments->map(function ($list) {
-            $list->id = $list->tour_id;
-            $list->title = $list->tour_title;
-            $list->type = $list->tour_type;
-            $list->created = Carbon::parse($list->created_at)->diffForHumans();
-            return $list;
-        });
+        $this->authorizeTournament($request, $tournament);
+        $data = $this->validated($request, updating: true);
 
-        return response()->json($tournaments, 200);
-    }
+        $this->ensureTitleIsFree($tournament->user_id, $data['tour_title'], $tournament->tour_id);
 
-
-    public function updateImage(Request $req, $tour_id)
-    {
-        $tournament = TournamentModel::find($tour_id);
-        $tour_logo = null;
-        if ($tournament->tour_logo)
-            HelperUnlinkFile($tournament->tour_logo);
-
-        if ($req->hasFile("tour_logo")) {
-            $image = $req->file("tour_logo");
-            $tour_logo = HelperUploadImageAndResize($this->folder_name, $image, 50, 50, 'logo_');
+        $newType = $data['tour_type'] ?? $tournament->tour_type;
+        if ($newType !== $tournament->tour_type && $tournament->relatedTeams()->exists()) {
+            throw ValidationException::withMessages([
+                'tour_type' => 'The format cannot change once teams have been added.',
+            ]);
         }
 
-        $tournament->tour_logo = $tour_logo;
-        $tournament->save();
-    }
-
-
-    // update Tournament
-    public function update(Request $req)
-    {
-        $tour_title = $req->input('tour_title');
-        $tour_desc = $req->input('tour_desc', null);
-        $tour_type = $req->input('tour_type', null);
-        $tour_id = $req->tour_id;
-
-
-        if (TournamentModel::where('user_id', Auth::id())
-            ->whereNot('tour_id', $tour_id)
-            ->where('tour_title', $tour_title)
-            ->exists()
-        ) {
-            return response()->json('exists', 203);
-        }
-
-        $tournament = TournamentModel::find($tour_id);
         $tournament->update([
-            'tour_title' => $tour_title,
-            'tour_desc' => $tour_desc,
-            'tour_type' => $tour_type,
+            'tour_title' => $data['tour_title'],
+            'tour_desc' => $data['tour_desc'] ?? null,
+            'tour_type' => $newType,
+            'tour_logo' => $this->uploader->replace($request->file('tour_logo'), $tournament->tour_logo, self::LOGO_FOLDER),
         ]);
 
-        if ($req->hasFile("tour_logo")) {
-            // remove existing file
-            HelperUnlinkFile($tournament->tour_logo);
-
-            // add new file
-            $image = $req->file("tour_logo");
-            $tour_logo = HelperUploadImageAndResize($this->folder_name, $image, 100, 100, 'logo_');
-            $tournament->update(['tour_logo' => $tour_logo]);
-        }
-
-        return response()->json('updated', 200);
+        return response()->json($tournament);
     }
 
-
-    public function deleteTournament($tour_id)
+    public function destroy(Request $request, TournamentModel $tournament): JsonResponse
     {
-        $tournamentHasTeams = TeamModel::where('tour_id', $tour_id)->first();
-        if ($tournamentHasTeams)
-            return response()->json('tournament has teams', 203);
+        $this->authorizeTournament($request, $tournament);
 
-        $tour = TournamentModel::find($tour_id);
+        if ($tournament->relatedTeams()->exists()) {
+            throw new ConflictHttpException('Delete the teams in this tournament first.');
+        }
 
-        if ($tour->tour_logo)
-            HelperUnlinkFile($tour->tour_logo);
+        $this->uploader->delete($tournament->tour_logo);
+        $tournament->predictions()->delete();
+        $tournament->feedback()->delete();
+        $tournament->delete();
 
-        $tour->delete();
+        UserModel::whereKey($tournament->user_id)
+            ->where($tournament->isCup() ? 'no_of_cups' : 'no_of_leagues', '>', 0)
+            ->decrement($tournament->isCup() ? 'no_of_cups' : 'no_of_leagues');
 
-        return response()->json('deleted', 200);
+        return response()->json(['message' => 'Tournament deleted.']);
+    }
+
+    private function validated(Request $request, bool $updating = false): array
+    {
+        return $request->validate([
+            'tour_title' => ['required', 'string', 'min:2', 'max:255'],
+            'tour_type' => [$updating ? 'sometimes' : 'required', Rule::in([TournamentModel::TYPE_CUP, TournamentModel::TYPE_LEAGUE])],
+            'tour_desc' => ['nullable', 'string', 'max:2000'],
+            'tour_logo' => ['nullable', 'image', 'max:4096'],
+        ]);
+    }
+
+    private function ensureTitleIsFree(int $ownerId, string $title, ?string $exceptId = null): void
+    {
+        $taken = TournamentModel::where('user_id', $ownerId)
+            ->where('tour_title', $title)
+            ->when($exceptId, fn ($q) => $q->whereKeyNot($exceptId))
+            ->exists();
+
+        if ($taken) {
+            throw ValidationException::withMessages(['tour_title' => 'You already have a tournament with this name.']);
+        }
     }
 }

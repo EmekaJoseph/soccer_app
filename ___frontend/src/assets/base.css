@@ -1,60 +1,94 @@
-/* color palette from <https://github.com/vuejs/theme> */
+/* Design tokens shared by the public pages and the admin area. */
 :root {
   scroll-behavior: smooth;
-  --vt-c-white: #ffffff;
-  --vt-c-white-soft: #f8f8f8;
-  --vt-c-white-mute: #f2f2f2;
 
-  --theme-color-1: #2790C5;
-  --theme-color-2: #C55C27;
-  --theme-color-3: #3C708A;
+  /* Brand */
+  --brand-navy-900: #0b1620;
+  --brand-navy-800: #0f2027;
+  --brand-navy-700: #16303b;
+  --brand-navy-600: #203a43;
+  --brand-cyan: #00f2fe;
+  --brand-blue: #4facfe;
+
+  /* Surfaces (admin) */
+  --surface-canvas: #f3f6fa;
+  --surface-card: #ffffff;
+  --surface-muted: #f6f8fb;
+  --surface-border: #e6ebf1;
+
+  /* Text */
+  --text-strong: #0f1b24;
+  --text-body: #3d4b57;
+  --text-muted: #7b8a97;
+
+  /* Status */
+  --success: #16a34a;
+  --danger: #e5484d;
+  --warning: #f59e0b;
+
+  /* Shape & depth */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow-md: 0 1px 3px rgba(16, 24, 40, 0.06), 0 8px 24px -6px rgba(16, 24, 40, 0.08);
+  --shadow-lg: 0 20px 48px -12px rgba(16, 24, 40, 0.25);
+
+  --font-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Outfit', 'Inter', system-ui, sans-serif;
+
+  /* Legacy names still referenced by older components */
+  --theme-color-1: #1f8fd1;
+  --theme-color-2: #0f2027;
+  --theme-color-3: #3c708a;
   --theme-color-3b: #0c384e;
-  --theme-color-3bb: #0a3144;
-  --theme-color-4: #C59E27;
-  --theme-color-5: #274EC5;
-  --theme-color-5: #AD392D;
-  --theme-color-6: #220e04;
-  --theme-color-7: #04141bf0;
-  --btn-color:#27566d;
-  --btn-color-hover:#193f52;
+  --theme-color-4: var(--brand-cyan);
+  --theme-color-7: var(--brand-navy-900);
+  --btn-color: #27566d;
+  --btn-color-hover: #193f52;
 }
 
-
-html * {
-  font-family: 'Rubik', 'Encode Sans Semi Condensed', sans-serif;
+html,
+body {
+  font-family: var(--font-ui);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* color: var(--color-text); */
 }
 
+h1, h2, h3, h4, h5, .display-font {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  font-weight: lighter;
-  /* transition: all ease-in-out 0.4s; */
 }
 
 body {
   margin: 0;
   position: relative;
   min-height: 100vh;
-  font-size: 1rem;
+  font-size: 0.95rem;
+  color: var(--text-body);
 }
 
-
 ::-webkit-scrollbar {
-  width: 7px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background-color: #ffffff;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #a7a6a6;
-  border-radius: 5px;
+  background-color: rgba(120, 135, 150, 0.45);
+  border-radius: 8px;
+}
+
+::selection {
+  background: rgba(0, 242, 254, 0.25);
 }

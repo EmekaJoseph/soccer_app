@@ -1,52 +1,30 @@
-// import HomeView from '../views/HomeView.vue'
+import type { RouteRecordRaw } from 'vue-router'
 import HomeView from '../views/HomePage/index.vue'
 import GeneralLayout from '../views/GeneralLayout.vue'
-import { useAuthStore } from '@/store/authStore';
-
-// @ts-ignore
-const GUARD = (to, from, next) => {
-    const authStore = useAuthStore()
-    if (authStore.isLoggedIn) {
-        next({ path: '/user/dashboard' });
-    }
-    else {
-        next();
-    }
-}
 
 export default [
     {
         path: '/',
         component: GeneralLayout,
         children: [
-            {
-                path: '', name: 'Home',
-                component: HomeView
-            },
+            { path: '', name: 'Home', component: HomeView },
+            { path: 'login', name: 'Account Login', component: HomeView, meta: { guestOnly: true } },
+            { path: 'register', name: 'Account Register', component: HomeView, meta: { guestOnly: true } },
+            { path: 'forgot-password', name: 'Forgot Password', component: HomeView, meta: { guestOnly: true } },
+            { path: 'reset-password', name: 'Reset Password', component: HomeView, meta: { guestOnly: true } },
             {
                 path: 'stats/:tour_id', name: 'Tournament Stats',
-                component: () => import('../views/StatsView/index.vue')
+                component: () => import('../views/StatsView/index.vue'),
             },
             {
                 path: 'anthem', name: 'Diocesan Anthem',
-                component: () => import('../views/anthem.vue')
-            },
-            {
-                path: 'login', beforeEnter: GUARD,
-                name: 'Account Login', component: HomeView
-            },
-
-            {
-                path: 'register', beforeEnter: GUARD,
-                name: 'Account Register', component: HomeView
+                component: () => import('../views/anthem.vue'),
             },
         ],
     },
-
-
     {
         path: '/:pathMatch(.*)*',
-        name: 'Invalid',
-        component: () => import('../views/PageNotFound.vue')
+        name: 'Page Not Found',
+        component: () => import('../views/PageNotFound.vue'),
     },
-]
+] satisfies RouteRecordRaw[]

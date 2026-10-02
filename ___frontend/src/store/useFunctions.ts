@@ -1,154 +1,93 @@
 import Swal from 'sweetalert2'
-import { useDateFormat, useOnline } from '@vueuse/core';
+import { useToast } from 'vue-toast-notification'
+import { hostURL } from '@/store/axiosManager'
 
-type DebounceFunction<T extends (...args: any[]) => any> = (...args: Parameters<T>) => void;
+type DebounceFunction<T extends (...args: any[]) => any> = ((...args: Parameters<T>) => void) & { cancel: () => void }
+
+const toaster = () => useToast({ position: 'top-right' })
 
 export default {
-    isValidEmail: (email: string) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
+    isValidEmail: (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+
+    truncateStr: (str: string, num: number) => (str.length > num ? str.slice(0, num) + '...' : str),
+
+    toast: {
+        success: (text: string) => toaster().success(text),
+        error: (text: string) => toaster().error(text),
+        info: (text: string) => toaster().default(text),
+        warning: (text: string) => toaster().warning(text),
     },
 
-    isExtension: (fileName: string, requiredFormats: string[]) => {
-        const regex = new RegExp('[^.]+$');
-        const ext: any = fileName.match(regex);
-        // get the extension
-        const fileExtension = ext[0].toLowerCase()
-        //make sure the file is a valid  format
-        return !(requiredFormats.some(x => x == fileExtension.toLowerCase())) ? false : true
-    },
-
-    truncateStr(str: string, num: number) {
-        if (str.length > num) {
-            return str.slice(0, num) + "...";
-        } else {
-            return str;
-        }
-    },
-
-    toast: (text: string, icon = '') => {
-        // @ts-expect-error
+    confirm: (text: string, btnText: string) =>
         Swal.fire({
-            toast: true,
-            icon: `${icon}`,
-            iconColor: icon == 'error' ? '#dc3545' : (icon == 'success' ? '#198754 ' : '#ffc107'),
-            title: `${text}`,
-            position: 'top-right',
-            // background: icon == 'error' ? '#f8d7da' : (icon == 'success' ? '#d1e7dd' : '#fff3cd'),
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: false,
-            padding: 10,
-            // iconColor: '#2c3e50',
-        })
-    },
-
-    confirm: (text: string, btnText: string) => {
-        return Swal.fire({
-            // title: `${title}`,
-            text: `${text}`,
-            // icon: 'question',
-            iconColor: '#60148f',
+            text,
             showCancelButton: true,
-            confirmButtonText: `${btnText}`,
-            cancelButtonText: 'cancel',
+            confirmButtonText: btnText,
+            cancelButtonText: 'Cancel',
             reverseButtons: true,
-            width: '300px',
-            customClass: {
-                confirmButton: 'swal-confirm-button',
-                cancelButton: 'swal-cancel-button',
-            },
-        })
-    },
+            width: '320px',
+            customClass: { confirmButton: 'swal-confirm-button', cancelButton: 'swal-cancel-button' },
+        }),
 
-    confirmDelete: (text: string, btnText: string) => {
-        return Swal.fire({
-            // title: `${title}`,
-            text: `${text}`,
-            // icon: 'warning',
-            iconColor: '#dc3545',
+    confirmDelete: (text: string, btnText: string) =>
+        Swal.fire({
+            text,
             showCancelButton: true,
-            confirmButtonText: `${btnText}`,
-            cancelButtonText: 'cancel',
+            confirmButtonText: btnText,
+            cancelButtonText: 'Cancel',
             confirmButtonColor: '#dc3545',
             reverseButtons: true,
-            width: '300px',
-            customClass: {
-                confirmButton: 'swal-confirm-button-delete',
-                cancelButton: 'swal-cancel-button',
-            },
-        })
-    },
+            width: '320px',
+            customClass: { confirmButton: 'swal-confirm-button-delete', cancelButton: 'swal-cancel-button' },
+        }),
 
-    confirmOptions: (text: string, btnTextConfirm: string, btnTextDeny: string) => {
-        return Swal.fire({
-            text: `${text}`,
+    confirmOptions: (text: string, btnTextConfirm: string, btnTextDeny: string) =>
+        Swal.fire({
+            text,
             showDenyButton: true,
             showCancelButton: true,
-            confirmButtonText: `${btnTextConfirm}`,
-            denyButtonText: `${btnTextDeny}`,
+            confirmButtonText: btnTextConfirm,
+            denyButtonText: btnTextDeny,
             reverseButtons: true,
             customClass: {
                 confirmButton: 'swal-confirm-button',
                 cancelButton: 'swal-cancel-button',
                 denyButton: 'swal-confirm-button-delete',
             },
-        })
-    },
+        }),
 
+    capsFirstLetter: (value: string) => value.charAt(0).toUpperCase() + value.slice(1),
 
-    addCommas: (numb: number) => {
-        const str = !numb ? ['0'] : numb.toString().split(".");
-        str[0] = str[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        return str.join(".");
-    },
+    /** "Quarter_Final" -> "Quarter Final" */
+    stageLabel: (stage?: string | null, fallback = 'Match') => (stage ? stage.replaceAll('_', ' ') : fallback),
 
-    isOnline: () => {
-        const online = useOnline()
-        return online.value;
-    },
-
-    capsFirstLetter: (string: string) => {
-        return string.charAt(0).toUpperCase() + string.slice(1)
-    },
-
-    debounce: <T extends (...args: any[]) => any>(func: T, delay: number): DebounceFunction<T> => {
-        let timer: ReturnType<typeof setTimeout> | undefined;
-        return (...args: Parameters<T>) => {
-            if (timer) {
-                clearTimeout(timer);
-            }
-            timer = setTimeout(() => {
-                func(...args);
-            }, delay);
-        };
+    debounce<T extends (...args: any[]) => any>(func: T, delay: number): DebounceFunction<T> {
+        let timer: ReturnType<typeof setTimeout> | undefined
+        const debounced = (...args: Parameters<T>) => {
+            clearTimeout(timer)
+            timer = setTimeout(() => func(...args), delay)
+        }
+        debounced.cancel = () => clearTimeout(timer)
+        return debounced
     },
 
     greet: () => {
-        const currentTime = new Date().getHours();
-        if (currentTime < 12) {
-            return "Good morning";
-        } else if (currentTime < 18) {
-            return "Good afternoon";
-        } else {
-            return "Good evening";
-        }
+        const hour = new Date().getHours()
+        return hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
     },
 
-    dateDisplay: (date: Date, options?: string) => {
-        if (options) {
-            if (options == 'm,y') {
-                const dd = useDateFormat(date, 'MMM, YYYY')
-                return dd.value
-            }
-        }
-        const dd = useDateFormat(date, 'MMM D, YYYY')
-        return dd.value
+    dateDisplay: (date: string | Date, withTime = false) =>
+        new Date(date).toLocaleString(undefined, {
+            month: 'short', day: 'numeric', year: 'numeric',
+            ...(withTime ? { hour: '2-digit', minute: '2-digit' } : {}),
+        }),
+
+    /** ISO string -> value for <input type="datetime-local"> in the viewer's timezone. */
+    toDatetimeLocal: (date: string | Date) => {
+        const d = new Date(date)
+        return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16)
     },
 
-    resolvePhotoSrc: (picture: string, folder_name: string) => {
-        const hostURL = import.meta.env.VITE_API_URL;
-        const folder = `${hostURL}/${folder_name}`
-        return `${folder}/${picture ?? 'default_photo.png'}`
-    }
+    /** Full URL of an uploaded image (paths are stored relative to the API's public folder). */
+    resolvePhotoSrc: (path?: string | null) => (path ? `${hostURL}/${path}` : ''),
 }

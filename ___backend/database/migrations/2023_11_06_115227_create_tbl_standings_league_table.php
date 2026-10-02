@@ -4,19 +4,22 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTblStandingsLeagueTable extends Migration
+return new class extends Migration
 {
     /**
-     * Run the migrations.
-     *
-     * @return void
+     * Skipped when the table already exists: production databases were created
+     * from an SQL dump, so their migrations table does not list this migration.
      */
-    public function up()
+    public function up(): void
     {
+        if (Schema::hasTable('tbl_standings_league')) {
+            return;
+        }
+
         Schema::create('tbl_standings_league', function (Blueprint $table) {
             $table->string('standing_id', 100)->primary();
-            $table->string('team_id', 100);
-            $table->string('tour_id', 100);
+            $table->string('team_id', 100)->index();
+            $table->string('tour_id', 100)->index();
             $table->string('group_in', 100)->nullable();
             $table->integer('played')->default(0);
             $table->integer('won')->default(0);
@@ -29,13 +32,8 @@ class CreateTblStandingsLeagueTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('tbl_standings_league');
     }
-}
+};

@@ -2,50 +2,56 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Interfaces\MatchResultsServiceInterface;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Support\Facades\Validator;
-
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\PublicViewController;
+use App\Models\MatchModel;
+use App\Models\ResultModel;
+use App\Models\TournamentModel;
+use App\Services\MatchResultsService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
-use Exception;
-
-class ResultsController extends BaseController
+class ResultsController extends Controller
 {
-    use AuthorizesRequests, ValidatesRequests;
+    public function __construct(private readonly MatchResultsService $results) {}
 
-    protected $matchResultService;
-
-    public function __construct(MatchResultsServiceInterface $matchResultService)
+    public function index(Request $request, TournamentModel $tournament): JsonResponse
     {
-        $this->matchResultService = $matchResultService;
+        $this->authorizeTournament($request, $tournament);
+
+        return app(PublicViewController::class)->results($tournament);
     }
 
-    public function saveResult(Request $req)
+    public function store(Request $request): JsonResponse
     {
-        try {
-            $result = $this->matchResultService->saveResult($req);
-            if (isset($result['status']))
-                return response()->json(['message' => $result['message']], $result['status']);
-            return response()->json($result, 200);
-        } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
-        }
+        $data = $request->validate([
+            'match_id' => ['required', 'string'],
+            'homeTeam_score' => ['required', 'integer', 'min:0', 'max:99'],
+            'awayTeam_score' => ['required', 'integer', 'min:0', 'max:99'],
+            'home_score_pen' => ['nullable', 'integer', 'min:0', 'max:99'],
+            'away_score_pen' => ['nullable', 'integer', 'min:0', 'max:99'],
+        ]);
+
+        $match = MatchModel::findOrFail($data['match_id']);
+        $this->authorizeMatch($request, $match);
+
+        $result = $this->results->saveResult(
+            $match,
+            (int) $data['homeTeam_score'],
+            (int) $data['awayTeam_score'],
+            isset($data['home_score_pen']) ? (int) $data['home_score_pen'] : null,
+            isset($data['away_score_pen']) ? (int) $data['away_score_pen'] : null,
+        );
+
+        return response()->json($result, 201);
     }
 
-
-    public function undoResult(Request $req)
+    public function destroy(Request $request, ResultModel $result): JsonResponse
     {
-        try {
-            $result = $this->matchResultService->undoResult($req);
-            if (isset($result['status']))
-                return response()->json(['message' => $result['message']], $result['status']);
-            return response()->json($result, 200);
-        } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
-        }
+        $this->authorizeRecord($request, $result);
+
+        $this->results->undoResult($result);
+
+        return response()->json(['message' => 'Result undone.']);
     }
 }

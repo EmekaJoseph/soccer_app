@@ -1,129 +1,112 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import api from '@/store/axiosManager'
 import { useOnline } from '@vueuse/core'
+import api from '@/store/axiosManager'
+import type { LiveScorePayload } from '@/lib/echo'
 
+/** Everything shown on the public stats page of one tournament. */
 export const useStatsStore = defineStore('stats', () => {
-  const isOnline: any = useOnline()
-  const tour_id = ref<any>('')
-  const tour_title = ref<any>('')
-  const tour_type = ref<any>('')
+  const isOnline = useOnline()
+  const tour_id = ref('')
+  const tour_title = ref('')
+  const tour_type = ref<'cup' | 'league' | ''>('')
+  const tour_logo = ref<string | null>(null)
+  const tour_desc = ref<string | null>(null)
   const tourStandings = ref<any[]>([])
   const tourResults = ref<any[]>([])
   const tourMatches = ref<any[]>([])
   const tourTeamsInfo = ref<any[]>([])
+  const tourPlayers = ref<any[]>([])
   const tourLives = ref<any[]>([])
-  const apiError = ref<boolean>(false)
-  const statsLoaded = ref<boolean>(false)
-  const apiLoading = ref<boolean>(true)
-  // const doubleCount = computed(() => count.value * 2)
+  const apiError = ref(false)
+  const notFound = ref(false)
+  const apiLoading = ref(true)
 
-
-  async function getTourDetails() {
-    tour_type.value = ''
-    tour_title.value = ''
+  async function fetchInto(target: { value: any }, request: () => Promise<{ data: any }>) {
     try {
-      apiError.value = false
-      let resp = await api.tour_data(tour_id.value)
-      if (resp.status == 200) {
-        tour_title.value = resp.data.tour_title
-        tour_type.value = resp.data.tour_type
-      }
-      // console.log(resp);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async function getStandings() {
-    try {
-      apiError.value = false
-      let resp = await api.standings(tour_id.value)
-      tourStandings.value = resp.data
-      apiLoading.value = false
-      // console.log(resp);
-
-    } catch (error) {
-      apiLoading.value = false
-      apiError.value = true
-      console.log(error);
-    }
-  }
-
-  async function getResults() {
-    try {
-      apiError.value = false
-      let resp = await api.results(tour_id.value)
-      tourResults.value = resp.data
-      apiLoading.value = false
-      // console.log(resp);
-    } catch (error) {
-      apiLoading.value = false
-      apiError.value = true
-      console.log(error);
-
-    }
-  }
-
-  async function getMatches() {
-    try {
-      apiError.value = false
-      let resp = await api.matches(tour_id.value)
-      tourMatches.value = resp.data
-      apiLoading.value = false
-      // console.log(resp);
-    } catch (error) {
-      apiLoading.value = false
+      target.value = (await request()).data
+    } catch {
       apiError.value = true
     }
   }
 
+  const getStandings = () => fetchInto(tourStandings, () => api.standings(tour_id.value))
+  const getResults = () => fetchInto(tourResults, () => api.results(tour_id.value))
+  const getMatches = () => fetchInto(tourMatches, () => api.matches(tour_id.value))
+  const getLiveMatches = () => fetchInto(tourLives, () => api.getLiveMatches(tour_id.value))
+  const getTourTeamsInfo = () => fetchInto(tourTeamsInfo, () => api.infomationCenter(tour_id.value))
+  const getPlayers = () => fetchInto(tourPlayers, () => api.publicPlayers(tour_id.value))
 
-  async function getLiveMatches() {
+  /** Refresh the panels that change as matches are played. */
+  async function refresh() {
+    await Promise.all([getStandings(), getMatches(), getResults(), getLiveMatches(), getTourTeamsInfo()])
+  }
+
+  /** Load a tournament from scratch (also clears whatever tournament was open before). */
+  async function load(id: string) {
+    tour_id.value = id
+    apiLoading.value = true
+    apiError.value = false
+    notFound.value = false
+    for (const list of [tourStandings, tourResults, tourMatches, tourTeamsInfo, tourPlayers, tourLives]) list.value = []
+
     try {
-      let resp = await api.getLiveMatches(tour_id.value)
-      tourLives.value = resp.data
-      console.log('live', resp);
-    } catch (error) {
+      const { data } = await api.tour_data(id)
+      tour_title.value = data.tour_title
+      tour_type.value = data.tour_type
+      tour_logo.value = data.tour_logo
+      tour_desc.value = data.tour_desc
+      await Promise.all([refresh(), getPlayers()])
+    } catch (error: any) {
+      notFound.value = error?.response?.status === 404
       apiError.value = true
-    }
-    finally {
+    } finally {
       apiLoading.value = false
     }
   }
 
-  async function getTourTeamsInfo() {
-    try {
-      let resp = await api.infomationCenter(tour_id.value)
-      tourTeamsInfo.value = resp.data
+  /** Apply a live score push; returns true when a goal was scored. */
+  function applyLiveUpdate(e: LiveScorePayload): boolean {
+    const live = tourLives.value.find((x) => x.live_id === e.live_id)
+    if (!live) {
+      getLiveMatches()
+      return false
+    }
 
-      // console.log(resp);
-    } catch (error) {
-      apiError.value = true
-    }
-    finally {
-      apiLoading.value = false
-    }
+    const goal = e.results.home_team_score > live.home_team_score || e.results.away_team_score > live.away_team_score
+    Object.assign(live, e.results)
+    return goal
+  }
+
+  function removeLive(liveId: number) {
+    tourLives.value = tourLives.value.filter((x) => x.live_id !== liveId)
   }
 
   return {
     apiError,
     apiLoading,
+    notFound,
+    isOnline,
+    tour_id,
     tour_title,
     tour_type,
-    tour_id,
+    tour_logo,
+    tour_desc,
     tourStandings,
     tourResults,
     tourMatches,
     tourTeamsInfo,
+    tourPlayers,
     tourLives,
-    statsLoaded,
-    isOnline,
+    load,
+    refresh,
     getStandings,
     getResults,
     getMatches,
-    getTourDetails,
     getLiveMatches,
-    getTourTeamsInfo
+    getTourTeamsInfo,
+    getPlayers,
+    applyLiveUpdate,
+    removeLive,
   }
 })

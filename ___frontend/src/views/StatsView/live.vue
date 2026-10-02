@@ -1,19 +1,20 @@
 <template>
-    <div v-if="!stats.tourLives.length" class="min-vh-100 d-flex align-items-center justify-content-center">
+    <div v-if="!stats.tourLives.length" class="py-5 d-flex align-items-center justify-content-center">
         <emptyDataComponent>
             <div class="text-white">No Live Matches at the moment.</div>
         </emptyDataComponent>
     </div>
     <div v-else class="min-vh-50 pb-5">
         <div class="row g-4">
-            <div v-for="({ match_stage, home_team, away_team, home_team_score, away_team_score, curr_time }, i) in stats.tourLives"
-                :key="i" class="col-12 col-lg-6">
+            <div v-for="({ match_stage, home_team, away_team, home_team_score, away_team_score, curr_time, isPaused, live_id }) in stats.tourLives"
+                :key="live_id" class="col-12 col-lg-6">
                 <div class="glass-card live-card h-100 p-3 p-md-4 transition-all">
                     <div
                         class="d-flex justify-content-between align-items-center mb-4 border-bottom border-white border-opacity-10 pb-2">
                         <div class="d-flex align-items-center">
                             <span class="live-dot me-2"></span>
                             <span class="text-success fw-bold caps-ls-1">LIVE: {{ curr_time }}'</span>
+                            <span v-if="isPaused" class="badge bg-warning text-dark ms-2">PAUSED</span>
                         </div>
                         <span class="badge bg-white bg-opacity-10 text-white-50 caps-ls-1 small">
                             {{ match_stage ? match_stage.replaceAll('_', ' ') : 'MATCH' }}
@@ -23,10 +24,7 @@
                     <div class="live-score-display d-flex align-items-center justify-content-between px-md-3">
                         <div class="team text-center flex-1">
                             <div class="shield-modern mb-2 mx-auto">
-                                <span v-if="home_team?.team_badge" class="badge-text fs-4">{{ home_team.team_badge
-                                }}</span>
-                                <i v-else :style="{ color: home_team?.team_color || '#eee' }"
-                                    class="bi bi-shield-fill fs-2"></i>
+                                <TeamBadge :badge="home_team?.team_badge" :color="home_team?.team_color" :size="36" />
                             </div>
                             <div class="name-modern text-white fw-bold text-uppercase small">{{ home_team?.team_name }}
                             </div>
@@ -42,10 +40,7 @@
 
                         <div class="team text-center flex-1">
                             <div class="shield-modern mb-2 mx-auto">
-                                <span v-if="away_team?.team_badge" class="badge-text fs-4">{{ away_team.team_badge
-                                }}</span>
-                                <i v-else :style="{ color: away_team?.team_color || '#eee' }"
-                                    class="bi bi-shield-fill fs-2"></i>
+                                <TeamBadge :badge="away_team?.team_badge" :color="away_team?.team_color" :size="36" />
                             </div>
                             <div class="name-modern text-white fw-bold text-uppercase small">{{ away_team?.team_name }}
                             </div>
@@ -58,6 +53,7 @@
 </template>
 
 <script setup lang="ts">
+import TeamBadge from '@/components/TeamBadge.vue'
 import { useStatsStore } from '@/store/statsStore';
 const stats = useStatsStore();
 </script>

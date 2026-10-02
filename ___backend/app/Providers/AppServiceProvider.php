@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
-use App\Interfaces\MatchResultsServiceInterface;
-use App\Services\MatchResultsService;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,10 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // $this->app->singleton(MatchResultsService::class, function ($app) {
-        //     return new MatchResultsService();
-        // });
-        app()->bind(MatchResultsServiceInterface::class, MatchResultsService::class);
+        //
     }
 
     /**
@@ -24,6 +23,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // The test suite fails on lazy-loading N+1s and typos in attribute names.
+        Model::shouldBeStrict($this->app->runningUnitTests());
+
+        // Live scorers send an update on every score/minute change, so allow a generous rate.
+        RateLimiter::for('api', fn (Request $request) => Limit::perMinute(120)->by(
+            $request->user() ? $request->user()::class.':'.$request->user()->getKey() : $request->ip()
+        ));
     }
 }

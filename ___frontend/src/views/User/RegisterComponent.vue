@@ -1,160 +1,109 @@
 <template>
-    <div class="animate__animated animate__fadeIn">
-        <div class="glass-card p-4 p-md-5">
-            <div class="text-center mb-4">
-                <img src="/icons/soccer.svg" width="50" alt="" class="mb-3 animate-float">
-                <h2 class="text-white fw-bold mb-1">Create Account</h2>
-                <p class="text-white-50 small">Join our community and manage your tournaments like a pro</p>
+    <AuthCard title="Create Account" subtitle="Join our community and manage your tournaments like a pro">
+        <div v-if="formError" class="alert auth-alert small text-center py-2" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-2"></i> {{ formError }}
+        </div>
+
+        <form @submit.prevent="register" class="row g-3" novalidate>
+            <div class="col-12">
+                <div class="form-floating">
+                    <input v-model.trim="form.name" :class="{ 'is-invalid': errors.name }" type="text"
+                        class="form-control" id="nameInput" placeholder="John Doe" autocomplete="name">
+                    <label for="nameInput">Full Name</label>
+                </div>
+                <div class="small text-danger mt-1" v-if="errors.name">{{ errors.name }}</div>
             </div>
 
-            <form @submit.prevent="register" class="row g-3">
-                <div class="col-12">
-                    <div class="form-floating custom-form-floating">
-                        <input v-model="form.name" :class="{ 'is-invalid': form.nameError }" type="text"
-                            class="form-control" id="nameInput" placeholder="John Doe">
-                        <label for="nameInput" class="text-white-50">Full Name</label>
-                    </div>
+            <div class="col-12">
+                <div class="form-floating">
+                    <input v-model.trim="form.email" :class="{ 'is-invalid': errors.email }" type="email"
+                        class="form-control" id="regEmailInput" placeholder="name@example.com" autocomplete="email">
+                    <label for="regEmailInput">Email address</label>
                 </div>
+                <div class="small text-danger mt-1" v-if="errors.email">{{ errors.email }}</div>
+            </div>
 
-                <div class="col-12">
-                    <div class="form-floating custom-form-floating">
-                        <input v-model="form.email" :class="{ 'is-invalid': form.emailError }" type="email"
-                            class="form-control" id="emailInput" placeholder="name@example.com">
-                        <label for="emailInput" class="text-white-50">Email address</label>
-                    </div>
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input v-model="form.password" type="password" class="form-control" :class="{ 'is-invalid': errors.password }"
+                        id="regPasswInput" placeholder="password" autocomplete="new-password">
+                    <label for="regPasswInput">Password</label>
                 </div>
+            </div>
 
-                <div class="col-md-6">
-                    <div class="form-floating custom-form-floating">
-                        <input v-model="form.password" :type="form.pswordType" class="form-control"
-                            :class="{ 'is-invalid': form.passwError }" id="passwInput" placeholder="password">
-                        <label for="passwInput" class="text-white-50">Password</label>
-                    </div>
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input v-model="form.password_confirmation" type="password" class="form-control" :class="{ 'is-invalid': errors.password }"
+                        id="repeatPasswInput" placeholder="password" autocomplete="new-password">
+                    <label for="repeatPasswInput">Repeat Password</label>
                 </div>
+            </div>
+            <div class="col-12 small text-danger" v-if="errors.password">{{ errors.password }}</div>
 
-                <div class="col-md-6">
-                    <div class="form-floating custom-form-floating">
-                        <input v-model="form.password_confirmation" :type="form.pswordType" class="form-control"
-                            :class="{ 'is-invalid': form.passwError }" id="repeatPasswInput" placeholder="password">
-                        <label for="repeatPasswInput" class="text-white-50">Repeat Password</label>
-                    </div>
-                </div>
+            <div class="col-12 mt-4">
+                <button :disabled="isLoading" type="submit"
+                    class="btn btn-primary-theme w-100 py-3 fw-bold rounded-3 shadow-sm hover-tilt-Y">
+                    <span v-if="isLoading" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+                    {{ isLoading ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT' }}
+                </button>
+            </div>
 
-                <div class="col-12 mt-4">
-                    <button :disabled="form.isLoading" type="submit"
-                        class="btn btn-primary-theme w-100 py-3 fw-bold rounded-3 shadow-sm hover-tilt-Y">
-                        <span v-if="!form.isLoading">CREATE ACCOUNT</span>
-                        <span v-else>
-                            <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-                            CREATING ACCOUNT...
-                        </span>
-                    </button>
-                </div>
-
-                <div class="col-12 mt-4 text-center">
-                    <p class="text-white-50 small mb-0">
-                        Already have an account?
-                        <RouterLink class="text-gradient fw-bold text-decoration-none ms-1" to="/login">
-                            Login
-                        </RouterLink>
-                    </p>
-                </div>
-            </form>
-        </div>
-    </div>
+            <div class="col-12 mt-4 text-center">
+                <p class="text-white-50 small mb-0">
+                    Already have an account?
+                    <RouterLink class="text-gradient fw-bold text-decoration-none ms-1" to="/login">Login</RouterLink>
+                </p>
+            </div>
+        </form>
+    </AuthCard>
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
-import { useRouter } from 'vue-router';
-import api from '@/store/axiosManager'
-import { useAuthStore } from '@/store/authStore';
+import { reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import api, { apiErrorMessage } from '@/store/axiosManager'
+import { useAuthStore } from '@/store/authStore'
+import fx from '@/store/useFunctions'
+import AuthCard from './AuthCard.vue'
 
 const authStore = useAuthStore()
-const router = useRouter();
+const router = useRouter()
 
-const form = reactive({
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
-    pswordType: 'password',
-    isLoading: false,
-    nameError: '',
-    emailError: '',
-    passwError: ''
-})
+const form = reactive({ name: '', email: '', password: '', password_confirmation: '' })
+const errors = reactive({ name: '', email: '', password: '' })
+const formError = ref('')
+const isLoading = ref(false)
+
+function validate() {
+    errors.name = form.name ? '' : 'Name is required'
+    errors.email = !form.email ? 'Email is required' : !fx.isValidEmail(form.email) ? 'Enter a valid email' : ''
+    errors.password = form.password.length < 8
+        ? 'Password must be at least 8 characters'
+        : form.password !== form.password_confirmation ? 'Passwords do not match' : ''
+    return !errors.name && !errors.email && !errors.password
+}
 
 async function register() {
-    form.nameError = '';
-    form.emailError = '';
-    form.passwError = '';
+    formError.value = ''
+    if (!validate()) return
 
-    if (!form.name) {
-        form.nameError = 'Name is required';
-        return;
-    }
-    if (!form.email) {
-        form.emailError = 'Email is required';
-        return;
-    }
-    if (!form.password) {
-        form.passwError = 'Password is required';
-        return;
-    }
-
-    form.isLoading = true
+    const [firstname, ...rest] = form.name.split(/\s+/)
+    isLoading.value = true
     try {
-        let resp = await api.login({
+        const { data } = await api.register({
+            firstname,
+            lastname: rest.join(' ') || null,
             email: form.email,
-            password: form.password
+            password: form.password,
+            password_confirmation: form.password_confirmation,
         })
-
-        if (resp.status === 203) {
-            alert('invalid details')
-            form.isLoading = false
-            return;
-        }
-
-        authStore.login(resp.data)
-        router.replace({ path: '/user/dashboard' })
+        authStore.login(data)
+        fx.toast.success('Welcome! Create your first tournament to get started.')
+        router.replace('/user/dashboard')
     } catch (error) {
-        alert('Network Error')
+        formError.value = apiErrorMessage(error)
     } finally {
-        form.isLoading = false
+        isLoading.value = false
     }
 }
 </script>
-
-<style scoped>
-.custom-form-floating .form-control {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    color: white !important;
-    border-radius: 12px;
-}
-
-.custom-form-floating .form-control:focus {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border-color: var(--accent-color) !important;
-    box-shadow: 0 0 0 4px rgba(0, 242, 254, 0.1) !important;
-}
-
-.is-invalid {
-    border-color: #ff4d4d !important;
-}
-
-.btn-primary-theme {
-    background: var(--accent-gradient) !important;
-    border: none !important;
-    color: #000 !important;
-    letter-spacing: 0.5px;
-}
-
-.text-gradient {
-    background: var(--accent-gradient);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-</style>
