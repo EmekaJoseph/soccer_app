@@ -16,10 +16,6 @@ export default [
                 path: 'stats/:tour_id', name: 'Tournament Stats',
                 component: () => import('../views/StatsView/index.vue'),
             },
-            {
-                path: 'anthem', name: 'Diocesan Anthem',
-                component: () => import('../views/anthem.vue'),
-            },
         ],
     },
     {
