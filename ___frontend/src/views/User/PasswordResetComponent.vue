@@ -1,6 +1,6 @@
 <template>
     <!-- Step 1: ask for the e-mail -->
-    <AuthCard v-if="!hasToken" title="Forgot Password" subtitle="We'll e-mail you a link to choose a new password">
+    <AuthCard v-if="!hasToken" title="Forgot your password?" subtitle="We'll e-mail you a link to choose a new password">
         <div v-if="message" class="alert auth-success small text-center py-2">{{ message }}</div>
         <div v-if="formError" class="alert auth-alert small text-center py-2">{{ formError }}</div>
 
@@ -12,18 +12,18 @@
                 </div>
             </div>
             <div class="col-12 mt-4">
-                <button type="submit" :disabled="isLoading" class="btn btn-primary-theme w-100 py-3 fw-bold rounded-3">
-                    {{ isLoading ? 'SENDING...' : 'SEND RESET LINK' }}
+                <button type="submit" :disabled="isLoading" class="ui-btn ui-btn-primary ui-btn-lg w-100">
+                    {{ isLoading ? 'Sending…' : 'Send reset link' }}
                 </button>
             </div>
             <div class="col-12 text-center">
-                <RouterLink to="/login" class="small text-gradient fw-bold text-decoration-none">Back to login</RouterLink>
+                <RouterLink to="/login" class="small auth-link">Back to login</RouterLink>
             </div>
         </form>
     </AuthCard>
 
     <!-- Step 2: arrived from the e-mailed link -->
-    <AuthCard v-else title="Choose a New Password" :subtitle="`For ${route.query.email}`">
+    <AuthCard v-else title="Choose a new password" :subtitle="`For ${route.query.email}`">
         <div v-if="formError" class="alert auth-alert small text-center py-2">{{ formError }}</div>
 
         <form class="row g-3" @submit.prevent="resetPassword">
@@ -40,8 +40,8 @@
                 </div>
             </div>
             <div class="col-12 mt-4">
-                <button type="submit" :disabled="isLoading" class="btn btn-primary-theme w-100 py-3 fw-bold rounded-3">
-                    {{ isLoading ? 'SAVING...' : 'RESET PASSWORD' }}
+                <button type="submit" :disabled="isLoading" class="ui-btn ui-btn-primary ui-btn-lg w-100">
+                    {{ isLoading ? 'Saving…' : 'Reset password' }}
                 </button>
             </div>
         </form>

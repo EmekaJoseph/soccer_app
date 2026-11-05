@@ -1,32 +1,17 @@
 <template>
-    <main class="main general-body">
+    <main class="public-page" data-bs-theme="dark">
+        <ComponentNav />
         <ComponentHero />
-        <ComponentInfo />
+        <ComponentSteps />
         <ComponentFeatures />
+        <ComponentCta />
     </main>
 </template>
 
 <script setup lang="ts">
+import ComponentCta from './componentCta.vue';
 import ComponentFeatures from './componentFeatures.vue';
 import ComponentHero from './componentHero.vue';
-import ComponentInfo from './componentInfo.vue';
+import ComponentNav from './componentNav.vue';
+import ComponentSteps from './componentSteps.vue';
 </script>
-
-<style lang="css" scoped>
-section,
-.section {
-    /* color: var(--default-color); */
-    /* background-color: var(--background-color); */
-    padding: 60px 0;
-    scroll-margin-top: 100px;
-    overflow: clip;
-}
-
-@media (max-width: 1199px) {
-
-    section,
-    .section {
-        scroll-margin-top: 66px;
-    }
-}
-</style>

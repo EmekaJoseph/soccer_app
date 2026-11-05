@@ -3,14 +3,12 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable animate__animated animate__slideInDown animate__faster">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5 fw-bolder"><i class="bi bi-trophy"></i> PREDICT THE TOP 3</h1>
+                    <h1 class="modal-title fs-5">Predict the top 3</h1>
                     <button type="button" class="btn-close" aria-label="Close" @click="emit('close')"></button>
                 </div>
                 <form @submit.prevent="submit">
                     <div class="modal-body p-4">
-                        <div class="alert alert-warning text-center border-0 py-2 small">
-                            <i class="bi bi-exclamation-circle"></i> One prediction per phone number.
-                        </div>
+                        <p class="small mb-3">One prediction per phone number.</p>
                         <div class="row gy-3">
                             <div v-for="(slot, i) in slots" :key="slot.key" class="col-12">
                                 <label class="w-100">{{ slot.label }}:
@@ -36,8 +34,8 @@
                         <div v-if="error" class="text-center text-danger mt-3 small">{{ error }}</div>
                     </div>
                     <div class="modal-footer border-0">
-                        <button type="button" class="btn btn-soft" @click="emit('close')">Not now</button>
-                        <button type="submit" style="width: 120px;" class="btn btn-primary-theme" :disabled="isLoading">
+                        <button type="button" class="ui-btn ui-btn-ghost" @click="emit('close')">Not now</button>
+                        <button type="submit" style="width: 120px;" class="ui-btn ui-btn-primary" :disabled="isLoading">
                             <span v-if="isLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
                             <span v-else>Submit</span>
                         </button>

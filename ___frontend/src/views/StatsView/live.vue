@@ -1,149 +1,148 @@
 <template>
-    <div v-if="!stats.tourLives.length" class="py-5 d-flex align-items-center justify-content-center">
-        <emptyDataComponent>
-            <div class="text-white">No Live Matches at the moment.</div>
-        </emptyDataComponent>
-    </div>
-    <div v-else class="min-vh-50 pb-5">
-        <div class="row g-4">
-            <div v-for="({ match_stage, home_team, away_team, home_team_score, away_team_score, curr_time, isPaused, live_id }) in stats.tourLives"
-                :key="live_id" class="col-12 col-lg-6">
-                <div class="glass-card live-card h-100 p-3 p-md-4 transition-all">
-                    <div
-                        class="d-flex justify-content-between align-items-center mb-4 border-bottom border-white border-opacity-10 pb-2">
-                        <div class="d-flex align-items-center">
-                            <span class="live-dot me-2"></span>
-                            <span class="text-success fw-bold caps-ls-1">LIVE: {{ curr_time }}'</span>
-                            <span v-if="isPaused" class="badge bg-warning text-dark ms-2">PAUSED</span>
-                        </div>
-                        <span class="badge bg-white bg-opacity-10 text-white-50 caps-ls-1 small">
-                            {{ match_stage ? match_stage.replaceAll('_', ' ') : 'MATCH' }}
-                        </span>
-                    </div>
+    <emptyDataComponent v-if="!stats.tourLives.length" icon="bi bi-broadcast">
+        No matches are live right now.
+    </emptyDataComponent>
 
-                    <div class="live-score-display d-flex align-items-center justify-content-between px-md-3">
-                        <div class="team text-center flex-1">
-                            <div class="shield-modern mb-2 mx-auto">
-                                <TeamBadge :badge="home_team?.team_badge" :color="home_team?.team_color" :size="36" />
-                            </div>
-                            <div class="name-modern text-white fw-bold text-uppercase small">{{ home_team?.team_name }}
-                            </div>
-                        </div>
-
-                        <div class="score-center px-4">
-                            <div class="d-flex align-items-center gap-3">
-                                <span class="score-digit text-gradient fs-1 fw-black">{{ home_team_score }}</span>
-                                <span class="score-divider fs-3 text-white-50">:</span>
-                                <span class="score-digit text-gradient fs-1 fw-black">{{ away_team_score }}</span>
-                            </div>
-                        </div>
-
-                        <div class="team text-center flex-1">
-                            <div class="shield-modern mb-2 mx-auto">
-                                <TeamBadge :badge="away_team?.team_badge" :color="away_team?.team_color" :size="36" />
-                            </div>
-                            <div class="name-modern text-white fw-bold text-uppercase small">{{ away_team?.team_name }}
-                            </div>
-                        </div>
-                    </div>
+    <div v-else class="live-list">
+        <article v-for="live in stats.tourLives" :key="live.live_id" class="live-card">
+            <header class="live-head">
+                <span v-if="live.isPaused" class="clock paused"><i class="bi bi-pause-fill" aria-hidden="true"></i>Paused {{ live.curr_time }}'</span>
+                <span v-else class="clock"><span class="ui-live-dot"></span>Live {{ live.curr_time }}'</span>
+                <span v-if="live.match_stage" class="stage">{{ fx.stageLabel(live.match_stage) }}</span>
+            </header>
+            <div class="board">
+                <div class="team">
+                    <span class="crest"><TeamBadge :badge="live.home_team?.team_badge" :color="live.home_team?.team_color" :size="36" /></span>
+                    {{ live.home_team?.team_name }}
+                </div>
+                <!-- Keyed by score so the digit replays its animation on every goal. -->
+                <div class="score" :aria-label="`${live.home_team_score} to ${live.away_team_score}`">
+                    <span :key="live.home_team_score" class="digit">{{ live.home_team_score }}</span>
+                    <span class="sep">–</span>
+                    <span :key="live.away_team_score" class="digit">{{ live.away_team_score }}</span>
+                </div>
+                <div class="team">
+                    <span class="crest"><TeamBadge :badge="live.away_team?.team_badge" :color="live.away_team?.team_color" :size="36" /></span>
+                    {{ live.away_team?.team_name }}
                 </div>
             </div>
-        </div>
+        </article>
     </div>
 </template>
 
 <script setup lang="ts">
 import TeamBadge from '@/components/TeamBadge.vue'
-import { useStatsStore } from '@/store/statsStore';
-const stats = useStatsStore();
+import { useStatsStore } from '@/store/statsStore'
+import fx from '@/store/useFunctions'
+
+const stats = useStatsStore()
 </script>
 
 <style scoped>
+.live-list {
+    display: grid;
+    gap: 12px;
+}
+
 .live-card {
-    border: 1px solid rgba(0, 242, 254, 0.2);
-    box-shadow: 0 0 20px rgba(0, 242, 254, 0.1);
-    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--line-strong);
+    border-radius: 16px;
+    background: var(--ink-900);
 }
 
-.caps-ls-1 {
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.flex-1 {
-    flex: 1;
-}
-
-.fw-black {
-    font-weight: 900;
-}
-
-.live-dot {
-    width: 8px;
-    height: 8px;
-    background: #4caf50;
-    border-radius: 50%;
-    box-shadow: 0 0 10px #4caf50;
-    animation: blink 1s infinite;
-}
-
-@keyframes blink {
-    0% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.3;
-    }
-
-    100% {
-        opacity: 1;
-    }
-}
-
-.shield-modern {
-    width: 50px;
-    height: 50px;
+.live-head {
     display: flex;
     align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--line);
 }
 
-.name-modern {
-    font-size: 11px;
-    letter-spacing: 0.5px;
-    max-width: 100px;
-    margin: 0 auto;
+.clock {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--volt);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 500;
 }
 
-.score-digit {
-    min-width: 40px;
+.clock.paused {
+    gap: 4px;
+    color: var(--fg-muted);
+}
+
+.stage {
+    font-size: 0.8125rem;
+    text-align: right;
+    text-transform: capitalize;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: start;
+    gap: 8px;
+    padding: 32px 12px;
+}
+
+.team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    color: var(--fg);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
     text-align: center;
-    filter: drop-shadow(0 0 10px rgba(0, 242, 254, 0.3));
 }
 
-.text-gradient {
-    background: var(--accent-gradient);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.crest {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: var(--ink-800);
 }
 
-@media (max-width: 576px) {
-    .score-digit {
-        font-size: 2rem !important;
-    }
+.score {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    color: var(--fg);
+    font-family: var(--font-mono);
+    font-size: clamp(2.5rem, 9vw, 3.5rem);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+}
 
-    .shield-modern {
-        width: 40px;
-        height: 40px;
-    }
+.sep {
+    margin-inline: 8px;
+    color: var(--fg-muted);
+    font-weight: 400;
+}
 
-    .score-center {
-        padding: 0 1rem !important;
+.digit {
+    animation: score-change 0.45s ease-out;
+}
+
+@keyframes score-change {
+    from {
+        color: var(--volt);
+        transform: translateY(-6px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .digit {
+        animation: none;
     }
 }
 </style>

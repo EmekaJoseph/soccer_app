@@ -4,73 +4,98 @@ defineProps<{ title: string; subtitle: string }>()
 
 <template>
     <div class="auth-card animate__animated animate__fadeIn">
-        <div class="glass-card p-4 p-md-5">
-            <div class="text-center mb-4">
-                <img src="/icons/soccer.svg" width="50" alt="" class="mb-3 animate-float">
-                <h2 class="text-white fw-bold mb-1">{{ title }}</h2>
-                <p class="text-white-50 small">{{ subtitle }}</p>
-            </div>
-            <slot />
+        <div class="mb-4">
+            <h2 class="auth-title">{{ title }}</h2>
+            <p class="auth-subtitle">{{ subtitle }}</p>
         </div>
+        <slot />
     </div>
 </template>
 
 <style>
 /* Not scoped: shared by the login, register and password forms rendered inside. */
+.auth-card {
+    padding: clamp(24px, 4vw, 40px);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--ink-900);
+    box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.8);
+}
+
+.auth-card .auth-title {
+    margin-bottom: 6px;
+    font-size: 1.75rem;
+}
+
+.auth-card .auth-subtitle {
+    margin: 0;
+    font-size: 0.9375rem;
+}
+
 .auth-card .form-floating .form-control {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    color: white !important;
-    border-radius: 12px;
+    background: var(--ink-950);
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    color: var(--fg);
 }
 
 .auth-card .form-floating .form-control:focus {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border-color: var(--accent-color) !important;
-    box-shadow: 0 0 0 4px rgba(0, 242, 254, 0.1) !important;
+    background: var(--ink-950);
+    border-color: var(--volt) !important;
+}
+
+.auth-card .form-floating .form-control:-webkit-autofill {
+    -webkit-text-fill-color: var(--fg);
+    box-shadow: inset 0 0 0 100px var(--ink-950);
 }
 
 .auth-card .form-floating > label {
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--fg-muted);
+}
+
+/* Bootstrap paints a solid chip behind the floated label. */
+.auth-card .form-floating > label::after {
+    background: transparent !important;
 }
 
 .auth-card .input-group-text {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 0 12px 12px 0;
+    background: var(--ink-950);
+    border: 1px solid var(--line-strong);
+    border-radius: 0 10px 10px 0;
+    color: var(--fg-muted);
 }
 
 .auth-card .form-floating .form-control.border-end-0 {
-    border-radius: 12px 0 0 12px;
+    border-radius: 10px 0 0 10px;
 }
 
-.auth-card .is-invalid {
-    border-color: #ff4d4d !important;
+.auth-card .form-control.is-invalid {
+    border-color: #ff8a80 !important;
 }
 
-.auth-card .btn-primary-theme {
-    background: var(--accent-gradient) !important;
-    border: none !important;
-    color: #000 !important;
-    letter-spacing: 0.5px;
+.auth-card .text-danger {
+    color: #ff8a80 !important;
 }
 
-.auth-card .text-gradient {
-    background: var(--accent-gradient);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.auth-card .auth-link {
+    color: var(--volt);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.auth-card .auth-link:hover {
+    text-decoration: underline;
 }
 
 .auth-card .auth-alert {
-    background: rgba(220, 53, 69, 0.1);
-    color: #ff6b6b;
     border: 0;
+    background: rgba(255, 138, 128, 0.12);
+    color: #ff8a80;
 }
 
 .auth-card .auth-success {
-    background: rgba(25, 135, 84, 0.15);
-    color: #75e0a7;
     border: 0;
+    background: var(--volt-soft);
+    color: var(--volt);
 }
 </style>

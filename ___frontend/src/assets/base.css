@@ -37,6 +37,20 @@
   --font-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-display: 'Outfit', 'Inter', system-ui, sans-serif;
 
+  /* Redesign palette: home page, auth forms and footer so far */
+  --ink-950: #0a0c0b;
+  --ink-900: #111412;
+  --ink-800: #191d1a;
+  --line: rgba(255, 255, 255, 0.09);
+  --line-strong: rgba(255, 255, 255, 0.18);
+  --fg: #f2f5f0;
+  --fg-muted: #a0a8a2;
+  --volt: #c8f31d;
+  --volt-soft: rgba(200, 243, 29, 0.12);
+  --on-volt: #0a0c0b;
+  --font-sans: 'Geist', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
   /* Legacy names still referenced by older components */
   --theme-color-1: #1f8fd1;
   --theme-color-2: #0f2027;

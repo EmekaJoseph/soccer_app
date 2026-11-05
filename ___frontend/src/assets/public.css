@@ -1,0 +1,180 @@
+/* Dark theme shared by the public pages: home, auth forms and tournament stats. */
+.public-page {
+  --accent-color: var(--volt);
+  background: var(--ink-950);
+  color: var(--fg-muted);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  overflow-x: clip;
+}
+
+.public-page h1,
+.public-page h2,
+.public-page h3 {
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.public-page section {
+  scroll-margin-top: 64px;
+}
+
+/* custom.css forces a cyan ring on every focused control. */
+.public-page input:focus,
+.public-page button:focus {
+  box-shadow: 0 0 0 3px var(--volt-soft) !important;
+}
+
+.public-page a:focus-visible,
+.public-page button:focus-visible {
+  outline: 2px solid var(--volt) !important;
+  outline-offset: 2px;
+}
+
+.ui-section {
+  padding-block: clamp(72px, 10vw, 128px);
+  border-top: 1px solid var(--line);
+}
+
+.ui-section-head {
+  max-width: 640px;
+  margin-bottom: clamp(40px, 6vw, 64px);
+}
+
+.ui-section-head h2 {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.08;
+  margin-bottom: 0;
+}
+
+.ui-eyebrow {
+  display: block;
+  margin-bottom: 16px;
+  color: var(--volt);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ui-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.ui-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ui-btn-lg {
+  padding: 14px 22px;
+  font-size: 0.95rem;
+}
+
+.ui-btn-primary {
+  background: var(--volt);
+  color: var(--on-volt);
+}
+
+.ui-btn-primary:hover:not(:disabled) {
+  background: #d8ff3f;
+  color: var(--on-volt);
+}
+
+.ui-btn-ghost {
+  background: transparent;
+  border-color: var(--line-strong);
+  color: var(--fg);
+}
+
+.ui-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--fg);
+}
+
+.ui-live-dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--volt);
+  animation: ui-pulse 2s ease-out infinite;
+}
+
+@keyframes ui-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(200, 243, 29, 0.55); }
+  100% { box-shadow: 0 0 0 9px rgba(200, 243, 29, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:has(.public-page) {
+    scroll-behavior: auto;
+  }
+
+  .ui-live-dot {
+    animation: none;
+  }
+}
+
+/* Bootstrap pieces rendered inside public pages: buttons, inputs and modals. */
+.public-page .btn-primary-theme,
+.public-page .btn-primary-theme:hover {
+  border: 0;
+  background: var(--volt) !important;
+  color: var(--on-volt) !important;
+}
+
+.public-page .modal-content {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--ink-900);
+}
+
+.public-page .modal-header,
+.public-page .modal-footer {
+  border-color: var(--line);
+}
+
+.public-page .modal .form-control,
+.public-page .modal .form-select {
+  border-color: var(--line-strong);
+  border-radius: 10px;
+  background-color: var(--ink-950);
+  color: var(--fg);
+}
+
+.public-page .modal .form-select:focus {
+  box-shadow: 0 0 0 3px var(--volt-soft) !important;
+}
+
+.public-page .text-danger {
+  color: #ff8a80 !important;
+}
+
+/* A dark team colour would otherwise vanish against the page. */
+.public-page .bi-shield-fill {
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.55));
+}
+
+/* admin.css colours modal headings for its light theme. */
+.public-page .modal-header .modal-title,
+.public-page .modal-header .fw-bold {
+  color: var(--fg);
+}

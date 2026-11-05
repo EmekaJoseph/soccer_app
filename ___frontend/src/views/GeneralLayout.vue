@@ -1,6 +1,6 @@
 <template>
     <div class="d-flex flex-column min-vh-100">
-        <div class="flex-grow-1">
+        <div class="flex-grow-1 layout-body">
             <RouterView />
         </div>
         <footerVue />
@@ -14,5 +14,10 @@ import footerVue from '@/components/Footer.vue';
 <style scoped>
 .min-vh-100 {
     min-height: 100vh;
+}
+
+/* Keeps short pages from showing a white band above the footer. */
+.layout-body {
+    background: var(--ink-950);
 }
 </style>

@@ -1,54 +1,19 @@
 <template>
-    <div v-if="!stats.tourStandings.length" class="py-5 text-white">
-        <emptyDataComponent>
-            No standings
-        </emptyDataComponent>
-    </div>
-    <!-- <div v-else class="animate__animated  animate__bounceInUp"> -->
-    <div v-else class="min-vh-100">
-        <div v-if="stats.tour_type == 'cup'">
-            <standings_cupTable :data="stats.tourStandings" />
-        </div>
-        <div v-else-if="stats.tour_type == 'league'">
-            <standings_leagueTable :data="stats.tourStandings" />
-        </div>
-        <div v-else>
+    <emptyDataComponent v-if="!stats.tourStandings.length" icon="bi bi-list-ol">
+        Standings will appear once teams are added.
+    </emptyDataComponent>
 
-        </div>
-        <!-- <div class="backdrop "></div> -->
-        <div class="py-4 text-center">
-            <span class="text-white-50 small caps-ls-1 opacity-50">• END OF STANDINGS •</span>
-        </div>
-    </div>
+    <template v-else-if="stats.tour_type == 'cup'">
+        <StandingsTable v-for="{ group, teams } in stats.tourStandings" :key="group"
+            :title="group ? `Group ${group}` : 'Teams'" :rows="teams" />
+    </template>
+
+    <StandingsTable v-else :rows="stats.tourStandings" />
 </template>
 
 <script setup lang="ts">
-import { useStatsStore } from '@/store/statsStore';
-import standings_cupTable from './standings_cupTable.vue';
-import standings_leagueTable from './standings_leagueTable.vue';
+import { useStatsStore } from '@/store/statsStore'
+import StandingsTable from './StandingsTable.vue'
 
-const stats = useStatsStore();
-
+const stats = useStatsStore()
 </script>
-
-<style scoped>
-@media screen and (max-width: 992px) {
-    .card {
-        font-size: 12px;
-    }
-}
-
-.bg-transparen {
-    background-color: rgba(136, 53, 53, 0.938);
-}
-
-/* .backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1050;
-    width: 100vw;
-    height: 100%;
-    background-color: #00000000;
-} */
-</style>

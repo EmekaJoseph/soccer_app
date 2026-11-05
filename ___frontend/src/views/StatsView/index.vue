@@ -1,78 +1,53 @@
 <template>
-    <div class="main general-body stats-page">
-        <!-- Modern Header -->
-        <div class="fixed-top glass-header">
-            <div class="container py-3">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center">
-                        <RouterLink class="text-white me-3 hover-scale" to="/">
-                            <i class="bi bi-chevron-left fs-4"></i>
-                        </RouterLink>
-                        <RouterLink to="/" class="d-none d-sm-block">
-                            <img v-if="stats.tour_logo" class="logo-modern rounded-3" :src="fx.resolvePhotoSrc(stats.tour_logo)" alt="">
-                            <img v-else class="logo-modern" src="/icons/soccer.svg" alt="">
-                        </RouterLink>
-                    </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <button v-if="stats.tourTeamsInfo.length >= 3 && !hasPredicted" class="btn btn-sm btn-outline-info rounded-pill"
-                            @click="predictionOpen = true">
-                            <i class="bi bi-trophy"></i> <span class="d-none d-sm-inline">Predict</span>
-                        </button>
-                        <button class="btn btn-sm btn-outline-light rounded-pill" title="Send feedback" @click="feedbackOpen = true">
-                            <i class="bi bi-chat-heart"></i>
-                        </button>
-                        <div class="text-end ms-2">
-                            <div class="fw-bold text-gradient text-uppercase small ls-1">{{ stats.tour_title }}</div>
-                            <div class="small text-white-50 mt-1 d-none d-md-block">{{ today_date }}</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Modern Navigation Pills -->
-                <div class="navigation-wrapper mt-4">
-                    <div class="nav-pills-modern">
-                        <div @click="showPanel(1)" :class="{ 'active': currentShowing == 1 }" class="nav-pill">
-                            <i class="bi bi-calendar-event me-2"></i> FIXTURES
-                        </div>
-                        <div @click="showPanel(2)" :class="{ 'active': currentShowing == 2 }" class="nav-pill">
-                            <i class="bi bi-broadcast me-2"></i> LIVE
-                            <span v-if="stats.tourLives.length" class="pulse-indicator"></span>
-                        </div>
-                        <div @click="showPanel(3)" :class="{ 'active': currentShowing == 3 }" class="nav-pill">
-                            <i class="bi bi-trophy me-2"></i> RESULTS
-                        </div>
-                        <div @click="showPanel(4)" :class="{ 'active': currentShowing == 4 }" class="nav-pill">
-                            <i class="bi bi-people me-2"></i> TEAMS
-                        </div>
-                        <div @click="showPanel(0)" :class="{ 'active': currentShowing == 0 }" class="nav-pill">
-                            <i class="bi bi-grid me-2"></i> {{ stats.tour_type == 'league' ? 'TABLE' : 'GROUPS' }}
-                        </div>
-                    </div>
-                </div>
+    <main class="public-page stats-page" data-bs-theme="dark">
+        <div class="stats-wrap topbar">
+            <RouterLink to="/" class="d-inline-flex text-decoration-none" aria-label="SoccerApp home">
+                <BrandMark />
+            </RouterLink>
+            <div class="d-flex gap-2">
+                <button v-if="stats.tourTeamsInfo.length >= 3 && !hasPredicted" class="ui-btn ui-btn-ghost" @click="predictionOpen = true">
+                    <i class="bi bi-trophy" aria-hidden="true"></i> Predict
+                </button>
+                <button class="ui-btn ui-btn-ghost" title="Send feedback" aria-label="Send feedback" @click="feedbackOpen = true">
+                    <i class="bi bi-chat" aria-hidden="true"></i>
+                </button>
             </div>
         </div>
 
-        <div class="content-area container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <StatsLayout>
-                        <div class="panel-container animate__animated animate__fadeIn">
-                            <SchedulePanel v-if="currentShowing == 1" />
-                            <LivePanel v-if="currentShowing == 2" />
-                            <ResultsPanel v-if="currentShowing == 3" />
-                            <InfoPanel v-if="currentShowing == 4" />
-                            <StandingsPanel v-if="currentShowing == 0" />
-                        </div>
-                    </StatsLayout>
+        <template v-if="!stats.notFound">
+            <header v-if="!stats.apiLoading" class="stats-wrap tour-head">
+                <img v-if="stats.tour_logo" class="tour-logo" :src="fx.resolvePhotoSrc(stats.tour_logo)" alt="">
+                <div class="tour-text">
+                    <h1>{{ stats.tour_title }}</h1>
+                    <p class="tour-meta"><span class="tour-type">{{ stats.tour_type }}</span> · {{ today_date }}</p>
+                    <p v-if="stats.tour_desc" class="tour-desc">{{ stats.tour_desc }}</p>
                 </div>
-            </div>
+            </header>
+
+            <nav class="tabs" aria-label="Tournament sections">
+                <div class="stats-wrap tabs-inner">
+                    <button v-for="tab in tabs" :key="tab.id" type="button" class="tab" :class="{ active: currentShowing == tab.id }"
+                        :aria-current="currentShowing == tab.id ? 'page' : undefined" @click="showPanel(tab.id)">
+                        <span v-if="tab.id == 'live' && stats.tourLives.length" class="ui-live-dot"></span>
+                        {{ tab.label }}
+                    </button>
+                </div>
+            </nav>
+        </template>
+
+        <div class="stats-wrap content">
+            <StatsLayout>
+                <div :key="currentShowing" class="animate__animated animate__fadeIn animate__faster">
+                    <component :is="panels[currentShowing]" />
+                </div>
+            </StatsLayout>
         </div>
 
         <predictionModal v-if="predictionOpen" :teams="stats.tourTeamsInfo" :tour_id="stats.tour_id"
             @close="predictionOpen = false" @done="onPredicted" />
         <feedbackModal v-if="feedbackOpen" :tour_id="stats.tour_id" :name="visitorName"
             @close="feedbackOpen = false" @done="feedbackOpen = false" />
-    </div>
+    </main>
 </template>
 
 <script setup lang="ts">
@@ -82,6 +57,7 @@ import { useNow, useDateFormat, useStorage, useVibrate } from '@vueuse/core'
 import { useStatsStore } from '@/store/statsStore'
 import { listenToTournament } from '@/lib/echo'
 import fx from '@/store/useFunctions'
+import BrandMark from '@/components/BrandMark.vue'
 import StatsLayout from './StatsLayout.vue'
 import StandingsPanel from './standings.vue'
 import ResultsPanel from './results.vue'
@@ -93,14 +69,25 @@ import feedbackModal from '@/components/modals/feedbackModal.vue'
 
 const REFRESH_EVERY_MS = 3 * 60 * 1000
 
-const today_date = useDateFormat(useNow(), 'dddd, DD/MM/YYYY')
+const panels = { live: LivePanel, fixtures: SchedulePanel, results: ResultsPanel, table: StandingsPanel, teams: InfoPanel }
+type PanelId = keyof typeof panels
+
+const today_date = useDateFormat(useNow(), 'ddd D MMM YYYY')
 const { vibrate } = useVibrate({ pattern: [300, 100, 300] })
 
 const stats = useStatsStore()
 const route = useRoute()
-const currentShowing = ref(3)
+const currentShowing = ref<PanelId>('results')
 const predictionOpen = ref(false)
 const feedbackOpen = ref(false)
+
+const tabs = computed<{ id: PanelId; label: string }[]>(() => [
+    { id: 'live', label: 'Live' },
+    { id: 'fixtures', label: 'Fixtures' },
+    { id: 'results', label: 'Results' },
+    { id: 'table', label: stats.tour_type == 'league' ? 'Table' : 'Groups' },
+    { id: 'teams', label: 'Teams' },
+])
 
 // Remember per tournament whether this browser already predicted.
 const predictedTournaments = useStorage<string[]>('socc_predicted', [])
@@ -114,8 +101,8 @@ function onPredicted(name: string) {
     fx.toast.success(`Prediction saved. Good luck, ${name}!`)
 }
 
-function showPanel(index: number) {
-    currentShowing.value = index
+function showPanel(id: PanelId) {
+    currentShowing.value = id
     window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
@@ -131,7 +118,7 @@ watch(() => route.params.tour_id as string, async (tourId) => {
     if (!tourId) return
     stopListening()
     await stats.load(tourId)
-    if (stats.tourLives.length) currentShowing.value = 2
+    if (stats.tourLives.length) currentShowing.value = 'live'
 
     stopListening = listenToTournament(tourId, {
         started: () => stats.getLiveMatches(),
@@ -155,121 +142,135 @@ onUnmounted(() => {
 
 <style scoped>
 .stats-page {
-    background: var(--primary-gradient);
     min-height: 100vh;
-    padding-bottom: 50px;
+    padding-bottom: 72px;
 }
 
-.glass-header {
-    background: rgba(15, 32, 39, 0.8);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+.stats-wrap {
+    width: 100%;
+    max-width: 800px;
+    margin-inline: auto;
+    padding-inline: 16px;
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+}
+
+.tour-head {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding-block: 24px 28px;
+}
+
+.tour-logo {
+    flex: none;
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    object-fit: cover;
+}
+
+.tour-text {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.public-page .tour-text h1 {
+    margin: 0;
+    font-size: clamp(1.75rem, 5vw, 2.75rem);
+    line-height: 1.08;
+    letter-spacing: -0.04em;
+}
+
+.tour-meta {
+    margin: 8px 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+}
+
+.tour-type {
+    color: var(--volt);
+    text-transform: capitalize;
+}
+
+.tour-desc {
+    max-width: 60ch;
+    margin: 12px 0 0;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+}
+
+.tabs {
+    position: sticky;
+    top: 0;
     z-index: 1020;
+    border-block: 1px solid var(--line);
+    background: rgba(10, 12, 11, 0.82);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 }
 
-.logo-modern {
-    height: 40px;
-    filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.3));
-}
-
-.navigation-wrapper {
+.tabs-inner {
+    display: flex;
+    gap: 4px;
     overflow-x: auto;
-    -ms-overflow-style: none;
     scrollbar-width: none;
 }
 
-.navigation-wrapper::-webkit-scrollbar {
+.tabs-inner::-webkit-scrollbar {
     display: none;
 }
 
-.nav-pills-modern {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    padding: 4px;
-}
-
-@media (max-width: 768px) {
-    .nav-pills-modern {
-        justify-content: flex-start;
-    }
-}
-
-.nav-pill {
-    padding: 8px 20px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.6);
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 600;
-    white-space: nowrap;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
+.tab {
+    display: inline-flex;
+    flex: none;
     align-items: center;
+    gap: 8px;
+    padding: 14px 12px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: none;
+    color: var(--fg-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: color 0.15s ease;
 }
 
-.nav-pill.active {
-    background: var(--accent-gradient);
-    border-color: transparent;
-    color: #0f2027;
-    box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
-    transform: translateY(-2px);
+.tab:hover {
+    color: var(--fg);
 }
 
-.nav-pill:hover:not(.active) {
-    background: rgba(255, 255, 255, 0.12);
-    color: white;
+.tab.active {
+    border-bottom-color: var(--volt);
+    color: var(--fg);
 }
 
-.pulse-indicator {
-    width: 8px;
-    height: 8px;
-    background: #4caf50;
-    border-radius: 50%;
-    margin-left: 8px;
-    box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
-    animation: pulse 1.5s infinite;
+/* Inset, so the tab strip's scroll container cannot clip the ring. */
+.public-page .tab:focus-visible {
+    outline-offset: -3px;
 }
 
-@keyframes pulse {
-    0% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+.public-page .tab:focus {
+    box-shadow: none !important;
+}
+
+.content {
+    padding-top: 28px;
+}
+
+@media (max-width: 575.98px) {
+    .tab {
+        padding-inline: 10px;
     }
 
-    70% {
-        transform: scale(1);
-        box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
-    }
-
-    100% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
-    }
-}
-
-.content-area {
-    padding-top: 180px;
-}
-
-.ls-1 {
-    letter-spacing: 1px;
-}
-
-.hover-scale:hover {
-    transform: scale(1.1);
-}
-
-@media (max-width: 768px) {
-    .content-area {
-        padding-top: 160px;
-    }
-
-    .logo-modern {
-        height: 30px;
+    .tour-logo {
+        width: 52px;
+        height: 52px;
     }
 }
 </style>

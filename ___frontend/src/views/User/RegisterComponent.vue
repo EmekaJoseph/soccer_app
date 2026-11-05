@@ -1,5 +1,5 @@
 <template>
-    <AuthCard title="Create Account" subtitle="Join our community and manage your tournaments like a pro">
+    <AuthCard title="Create your account" subtitle="Set up your first tournament in minutes">
         <div v-if="formError" class="alert auth-alert small text-center py-2" role="alert">
             <i class="bi bi-exclamation-circle-fill me-2"></i> {{ formError }}
         </div>
@@ -9,7 +9,7 @@
                 <div class="form-floating">
                     <input v-model.trim="form.name" :class="{ 'is-invalid': errors.name }" type="text"
                         class="form-control" id="nameInput" placeholder="John Doe" autocomplete="name">
-                    <label for="nameInput">Full Name</label>
+                    <label for="nameInput">Full name</label>
                 </div>
                 <div class="small text-danger mt-1" v-if="errors.name">{{ errors.name }}</div>
             </div>
@@ -35,23 +35,23 @@
                 <div class="form-floating">
                     <input v-model="form.password_confirmation" type="password" class="form-control" :class="{ 'is-invalid': errors.password }"
                         id="repeatPasswInput" placeholder="password" autocomplete="new-password">
-                    <label for="repeatPasswInput">Repeat Password</label>
+                    <label for="repeatPasswInput">Repeat password</label>
                 </div>
             </div>
             <div class="col-12 small text-danger" v-if="errors.password">{{ errors.password }}</div>
 
             <div class="col-12 mt-4">
                 <button :disabled="isLoading" type="submit"
-                    class="btn btn-primary-theme w-100 py-3 fw-bold rounded-3 shadow-sm hover-tilt-Y">
+                    class="ui-btn ui-btn-primary ui-btn-lg w-100">
                     <span v-if="isLoading" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-                    {{ isLoading ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT' }}
+                    {{ isLoading ? 'Creating account…' : 'Create account' }}
                 </button>
             </div>
 
             <div class="col-12 mt-4 text-center">
-                <p class="text-white-50 small mb-0">
+                <p class="small mb-0">
                     Already have an account?
-                    <RouterLink class="text-gradient fw-bold text-decoration-none ms-1" to="/login">Login</RouterLink>
+                    <RouterLink class="auth-link ms-1" to="/login">Log in</RouterLink>
                 </p>
             </div>
         </form>

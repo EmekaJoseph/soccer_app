@@ -1,53 +1,43 @@
 <template>
-    <div v-if="stats.apiLoading"
-        class="loading-state d-flex flex-column justify-content-center align-items-center mt-5">
-        <div class="spinner-modern mb-3"></div>
-        <div class="text-white-50 small caps-ls-1">Syncing Live Stats...</div>
+    <div v-if="stats.apiLoading" class="loading" role="status">
+        <div class="spinner"></div>
+        Loading tournament…
     </div>
-    <div v-else>
-        <div v-if="stats.notFound" class="mt-5 text-white">
-            <emptyDataComponent>
-                This tournament does not exist (anymore). Check the link you were given.
-            </emptyDataComponent>
-        </div>
-        <div v-else-if="stats.apiError" class="mt-5 text-white">
-            <internetErrorComponent />
-        </div>
-        <div v-else>
-            <slot></slot>
-        </div>
-    </div>
+    <emptyDataComponent v-else-if="stats.notFound">
+        This tournament doesn't exist anymore. Check the link you were given.
+    </emptyDataComponent>
+    <internetErrorComponent v-else-if="stats.apiError" />
+    <slot v-else />
 </template>
 
 <script setup lang="ts">
-import { useStatsStore } from '@/store/statsStore';
-const stats = useStatsStore();
+import { useStatsStore } from '@/store/statsStore'
+
+const stats = useStatsStore()
 </script>
 
 <style scoped>
-.loading-state {
-    min-height: 200px;
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding-block: 72px;
+    font-size: 0.875rem;
 }
 
-.spinner-modern {
-    width: 50px;
-    height: 50px;
-    border: 3px solid rgba(255, 255, 255, 0.1);
+.spinner {
+    width: 32px;
+    height: 32px;
+    border: 2px solid var(--line-strong);
+    border-top-color: var(--volt);
     border-radius: 50%;
-    border-top-color: var(--accent-color);
-    animation: spin 1s ease-in-out infinite;
-    filter: drop-shadow(0 0 10px rgba(0, 242, 254, 0.4));
+    animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
     to {
         transform: rotate(360deg);
     }
-}
-
-.caps-ls-1 {
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-size: 10px;
 }
 </style>

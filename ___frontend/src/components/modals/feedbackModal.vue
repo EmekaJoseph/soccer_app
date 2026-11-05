@@ -2,15 +2,13 @@
     <div class="modal fade bg-faint show d-block" tabindex="-1" role="dialog" aria-modal="true">
         <div class="modal-dialog modal-dialog-centered modal-sm animate__animated animate__slideInDown animate__faster">
             <div class="modal-content">
-                <div class="modal-header border-0 bg-primary py-3 text-white">
+                <div class="modal-header py-3">
                     <span class="fw-bold">Feedback</span>
-                    <button type="button" class="btn-close btn-close-white" aria-label="Close" @click="emit('close')"></button>
+                    <button type="button" class="btn-close" aria-label="Close" @click="emit('close')"></button>
                 </div>
                 <form class="modal-body row justify-content-center g-3" @submit.prevent="sendFeedBack">
                     <div class="small">{{ fx.greet() }}{{ name ? `, ${name}` : '' }}!</div>
-                    <div class="fs-6 alert alert-light border-0 m-0 py-1">
-                        What do you think of this page? Tell the organisers 😊
-                    </div>
+                    <p class="m-0">What do you think of this page? Tell the organisers.</p>
                     <div class="col-12">
                         <textarea v-model.trim="form.feedbackText" placeholder="Type here…" class="form-control" rows="4" maxlength="2000" required></textarea>
                     </div>
@@ -19,7 +17,7 @@
                     </div>
                     <div v-if="error" class="col-12 small text-danger">{{ error }}</div>
                     <div class="col-12">
-                        <button type="submit" :disabled="isSending" class="btn btn-lg btn-primary-theme w-100">
+                        <button type="submit" :disabled="isSending" class="ui-btn ui-btn-primary ui-btn-lg w-100">
                             {{ isSending ? 'Sending…' : 'Send' }}
                         </button>
                     </div>

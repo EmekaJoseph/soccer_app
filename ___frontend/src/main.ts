@@ -15,6 +15,7 @@ import 'vue-toast-notification/dist/theme-sugar.css'
 import 'vue3-easy-data-table/dist/style.css'
 import './assets/custom.css'
 import './assets/admin.css'
+import './assets/public.css'
 
 import internetErrorComponent from '@/components/InternetError.vue'
 import emptyDataComponent from '@/components/emptyData.vue'

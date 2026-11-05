@@ -1,122 +1,191 @@
 <template>
-    <section id="services" class="services section bg-primary-theme position-relative overflow-hidden">
-        <!-- Section Title -->
-        <div class="container section-title text-center mb-5" data-aos="fade-up">
-            <div
-                class="badge bg-info bg-opacity-10 text-info px-3 py-2 mb-3 rounded-pill border border-info border-opacity-25">
-                Superior Features
+    <section id="features" class="ui-section">
+        <div class="container">
+            <div class="ui-section-head">
+                <span class="ui-eyebrow">Features</span>
+                <h2>Everything matchday needs.</h2>
             </div>
-            <h2 class="display-5 fw-bold text-white mb-3">Everything You Need To <span class="text-gradient">Win</span>
-            </h2>
-            <p class="text-white-50 max-width-700 mx-auto">Manage all your favorite tournaments, live scores, team
-                standings, and breaking news in a single, convenient platform.</p>
-        </div>
 
-        <div class="container position-relative z-1">
-            <div class="row gy-4">
-                <div class="col-lg-4 col-md-6" v-for="(feature, index) in features" :key="index" :data-aos="'fade-up'"
-                    :data-aos-delay="index * 100">
-                    <div class="service-item glass-card h-100 p-4 transition-all hover-tilt-Y">
-                        <div class="icon-box mb-4 d-inline-flex align-items-center justify-content-center rounded-3"
-                            :style="{ backgroundColor: feature.bgColor }">
-                            <i :class="['bi', feature.icon]" :style="{ color: feature.iconColor }"></i>
-                        </div>
-                        <h4 class="title text-white mb-3">{{ feature.title }}</h4>
-                        <p class="description text-white-50">{{ feature.description }}</p>
+            <div class="bento">
+                <article class="cell cell-wide">
+                    <i class="bi bi-broadcast" aria-hidden="true"></i>
+                    <h3>Live match control</h3>
+                    <p>Start a match, keep the clock running and update the score in a tap. Fans see each change as it
+                        happens.</p>
+                    <div class="live-demo" aria-hidden="true">
+                        <span class="live-time"><span class="ui-live-dot"></span>67'</span>
+                        <span class="live-score">HC <b>2</b> – <b>1</b> NU</span>
                     </div>
-                </div>
+                </article>
+
+                <article class="cell cell-narrow">
+                    <i class="bi bi-bar-chart-line" aria-hidden="true"></i>
+                    <h3>Standings that keep up</h3>
+                    <p>Publish a result and your league table or cup groups update without any manual counting.</p>
+                    <div class="table-demo" aria-hidden="true">
+                        <div><span>1</span><span class="table-name">Harbour City</span><b>17</b></div>
+                        <div><span>2</span><span class="table-name">Riverside</span><b>14</b></div>
+                    </div>
+                </article>
+
+                <article v-for="feature in features" :key="feature.title" class="cell cell-third">
+                    <i :class="['bi', feature.icon]" aria-hidden="true"></i>
+                    <h3>{{ feature.title }}</h3>
+                    <p>{{ feature.body }}</p>
+                </article>
             </div>
         </div>
-
-        <!-- Decorative backgrounds -->
-        <div class="decoration top-50 start-50 translate-middle bg-info opacity-5 rounded-circle"
-            style="width: 800px; height: 800px; filter: blur(120px);"></div>
     </section>
 </template>
 
 <script setup lang="ts">
 const features = [
     {
-        title: "Live Match Engine",
-        description: "Follow every kick with real-time score tracking, substitutions, and detailed match event updates.",
-        icon: "bi-lightning-fill",
-        iconColor: "#f57813",
-        bgColor: "rgba(245, 120, 19, 0.1)"
+        title: 'Teams and players',
+        body: 'Keep every squad in one place, with team logos and player positions.',
+        icon: 'bi-shield',
     },
     {
-        title: "Automated Standings",
-        description: "Watch your league tables and tournament brackets update instantly as match results are published.",
-        icon: "bi-bar-chart-fill",
-        iconColor: "#15a04a",
-        bgColor: "rgba(21, 160, 74, 0.1)"
+        title: 'A page for your fans',
+        body: 'Copy your tournament link and share it anywhere. It works on any screen.',
+        icon: 'bi-link-45deg',
     },
     {
-        title: "Professional Rosters",
-        description: "Manage complete player profiles, including positions, jersey numbers, and career statistics history.",
-        icon: "bi-people-fill",
-        iconColor: "#d90769",
-        bgColor: "rgba(217, 7, 105, 0.1)"
+        title: 'Fan predictions',
+        body: 'Let fans predict how the tournament finishes, and review every entry yourself.',
+        icon: 'bi-trophy',
     },
-    {
-        title: "Team Management",
-        description: "Comprehensive tools for organizing squads, uploading logos, and tracking all-time team performance.",
-        icon: "bi-shield-shaded",
-        iconColor: "#15bfbc",
-        bgColor: "rgba(21, 191, 188, 0.1)"
-    },
-    {
-        title: "Public Live Centers",
-        description: "Share beautiful, responsive live links automatically for fans to follow matches from anywhere.",
-        icon: "bi-share-fill",
-        iconColor: "#f5cf13",
-        bgColor: "rgba(245, 207, 19, 0.1)"
-    },
-    {
-        title: "Instant Results",
-        description: "Publish final scores and match reports immediately to keep your tournament history accurate and up-to-date.",
-        icon: "bi-check-circle-fill",
-        iconColor: "#4facfe",
-        bgColor: "rgba(79, 172, 254, 0.1)"
-    }
 ];
 </script>
 
-<style lang="css" scoped>
-.services {
-    padding: 100px 0;
+<style scoped>
+.bento {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 12px;
 }
 
-.service-item {
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    background: rgba(255, 255, 255, 0.03);
+.cell {
+    display: flex;
+    flex-direction: column;
+    padding: 28px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--ink-900);
+    transition: border-color 0.2s ease;
 }
 
-.service-item:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(0, 242, 254, 0.3);
+.cell:hover {
+    border-color: var(--line-strong);
 }
 
-.icon-box {
-    width: 60px;
-    height: 60px;
-    font-size: 28px;
+.cell-wide {
+    grid-column: span 7;
 }
 
-.max-width-700 {
-    max-width: 700px;
+.cell-narrow {
+    grid-column: span 5;
 }
 
-.decoration {
-    position: absolute;
-    pointer-events: none;
-    z-index: 0;
+.cell-third {
+    grid-column: span 4;
 }
 
-.z-1 {
-    z-index: 1;
+.cell i {
+    margin-bottom: 40px;
+    color: var(--volt);
+    font-size: 1.375rem;
+    line-height: 1;
 }
 
-.transition-all {
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+.cell h3 {
+    margin-bottom: 10px;
+    font-size: 1.25rem;
+    letter-spacing: -0.025em;
+}
+
+.cell p {
+    max-width: 44ch;
+    margin: 0 0 28px;
+    line-height: 1.6;
+}
+
+.cell-third p {
+    margin-bottom: 0;
+}
+
+.table-demo {
+    margin-top: auto;
+    padding-top: 28px;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+}
+
+.table-demo > div {
+    display: flex;
+    gap: 14px;
+    padding-block: 8px;
+    border-top: 1px solid var(--line);
+}
+
+.table-name {
+    flex: 1;
+    color: var(--fg);
+    font-family: var(--font-sans);
+}
+
+.table-demo b {
+    color: var(--fg);
+    font-weight: 600;
+}
+
+.live-demo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding: 14px 18px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--ink-950);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+}
+
+.live-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--volt);
+}
+
+.live-score b {
+    color: var(--fg);
+    font-weight: 600;
+}
+
+@media (max-width: 991.98px) {
+    .cell-wide,
+    .cell-narrow {
+        grid-column: span 12;
+    }
+
+    .cell-third {
+        grid-column: span 6;
+    }
+
+    .cell-third:last-child {
+        grid-column: span 12;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .cell-third {
+        grid-column: span 12;
+    }
+
+    .cell i {
+        margin-bottom: 24px;
+    }
 }
 </style>
