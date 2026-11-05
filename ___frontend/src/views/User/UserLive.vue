@@ -16,7 +16,7 @@
             <div class="col-12">
                 <div class="live-banner">
                     <span class="ui-live-dot"></span>
-                    <span><b>You are live.</b> Keep this page open so the match clock keeps running.</span>
+                    <span><b>You are live.</b> The match clock keeps running even if you leave this page. Come back here to update the score.</span>
                 </div>
             </div>
             <ComponentLive v-for="liveData in userData.tournamentLive" :key="liveData.live_id"
@@ -25,7 +25,7 @@
     </TournamentPage>
 
     <addLiveMatchModal v-if="startModal" :tour="selectedTournament" @close="startModal = false" @started="reload" />
-    <otherLiveMatchesModal v-if="othersModal" :tour="selectedTournament" @close="othersModal = false" />
+    <otherLiveMatchesModal v-if="othersModal" :tour="selectedTournament" @close="othersModal = false" @changed="reload" />
 </template>
 
 <script setup lang="ts">

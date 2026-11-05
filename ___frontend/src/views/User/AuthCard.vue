@@ -58,17 +58,6 @@ defineProps<{ title: string; subtitle: string }>()
     background: transparent !important;
 }
 
-.auth-card .input-group-text {
-    background: var(--bg);
-    border: 1px solid var(--line-strong);
-    border-radius: 0 10px 10px 0;
-    color: var(--fg-muted);
-}
-
-.auth-card .form-floating .form-control.border-end-0 {
-    border-radius: 10px 0 0 10px;
-}
-
 .auth-card .form-control.is-invalid {
     border-color: var(--danger) !important;
 }

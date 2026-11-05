@@ -63,8 +63,6 @@ import { useUserDataStore } from '@/store/userDataStore'
 import api, { apiErrorMessage } from '@/store/axiosManager'
 import fx from '@/store/useFunctions'
 
-const NO_PENALTY_STAGES = ['Group_Stage', 'Friendly']
-
 const props = defineProps<{
     tournament: any
     /** Match to preselect. */
@@ -92,8 +90,7 @@ const pendingMatches = computed(() => userData.tournamentMatches.filter((m) => !
 
 const canHavePenalties = computed(() =>
     props.tournament?.type == 'cup'
-    && selectedMatch.value?.match_stage
-    && !NO_PENALTY_STAGES.includes(selectedMatch.value.match_stage)
+    && fx.allowsPenalties(selectedMatch.value?.match_stage)
     && form.homeTeam_score === form.awayTeam_score,
 )
 
@@ -131,35 +128,3 @@ async function save() {
     }
 }
 </script>
-
-<style scoped>
-.score-entry {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    width: 100%;
-    padding-block: 0.4rem;
-}
-
-.score-entry span {
-    min-width: 0;
-    color: var(--fg);
-    overflow-wrap: anywhere;
-}
-
-.modal .score-entry .form-control {
-    flex: none;
-    width: 76px;
-    margin: 0;
-    font-family: var(--font-mono);
-    text-align: center;
-}
-
-.penalties {
-    margin-top: 0.75rem;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-sm);
-}
-</style>

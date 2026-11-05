@@ -15,18 +15,7 @@
             </div>
 
             <div class="col-12">
-                <div class="input-group">
-                    <div class="form-floating flex-grow-1">
-                        <input v-model="form.password" :type="showPassword ? 'text' : 'password'" class="form-control border-end-0"
-                            :class="{ 'is-invalid': errors.password }" id="passwInput" placeholder="password" autocomplete="current-password">
-                        <label for="passwInput">Password</label>
-                    </div>
-                    <button type="button" @click="showPassword = !showPassword"
-                        class="input-group-text bg-transparent border-start-0"
-                        :aria-label="showPassword ? 'Hide password' : 'Show password'">
-                        <i :class="showPassword ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
-                    </button>
-                </div>
+                <PasswordField id="passwInput" v-model="form.password" label="Password" autocomplete="current-password" :invalid="!!errors.password" />
                 <div class="small text-danger mt-1 text-start" v-if="errors.password">{{ errors.password }}</div>
             </div>
 
@@ -58,6 +47,7 @@ import { useRoute, useRouter } from 'vue-router'
 import api, { apiErrorMessage } from '@/store/axiosManager'
 import { useAuthStore } from '@/store/authStore'
 import fx from '@/store/useFunctions'
+import PasswordField from '@/components/PasswordField.vue'
 import AuthCard from './AuthCard.vue'
 
 const authStore = useAuthStore()
@@ -67,7 +57,6 @@ const route = useRoute()
 const form = reactive({ email: '', password: '' })
 const errors = reactive({ email: '', password: '' })
 const formError = ref('')
-const showPassword = ref(false)
 const isLoading = ref(false)
 
 async function login() {

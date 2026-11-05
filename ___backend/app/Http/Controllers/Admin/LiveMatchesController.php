@@ -12,6 +12,7 @@ use App\Models\TournamentModel;
 use App\Services\MatchResultsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
@@ -83,6 +84,7 @@ class LiveMatchesController extends Controller
             'away_team_score' => 0,
             'curr_time' => 0,
             'isPaused' => false,
+            'clock_synced_at' => now(),
         ]);
 
         $this->broadcast(new LiveMatchStarted($live->tour_id, $live->live_id));
@@ -101,12 +103,20 @@ class LiveMatchesController extends Controller
             'isPaused' => ['sometimes', 'boolean'],
         ]);
 
-        $live->update($data);
+        // Only restart the clock when it really changed; otherwise each goal would lose part of a minute.
+        $clockUntouched = $live->clock_synced_at
+            && ! $live->isPaused
+            && ! ($data['isPaused'] ?? false)
+            && $data['curr_time'] === $live->currentMinute();
+
+        $live->update($clockUntouched
+            ? Arr::except($data, 'curr_time')
+            : [...$data, 'clock_synced_at' => now()]);
 
         $this->broadcast(new LiveMatchUpdated($live->tour_id, $live->live_id, [
             'home_team_score' => $live->home_team_score,
             'away_team_score' => $live->away_team_score,
-            'curr_time' => $live->curr_time,
+            'curr_time' => $live->currentMinute(),
             'isPaused' => $live->isPaused,
         ]));
 
@@ -119,12 +129,23 @@ class LiveMatchesController extends Controller
         $this->authorizeLive($request, $live);
         $save = $request->boolean('save');
 
-        $result = DB::transaction(function () use ($live, $save) {
+        $penalties = $request->validate([
+            'home_score_pen' => ['nullable', 'integer', 'min:0', 'max:99'],
+            'away_score_pen' => ['nullable', 'integer', 'min:0', 'max:99'],
+        ]);
+
+        $result = DB::transaction(function () use ($live, $save, $penalties) {
             $result = null;
 
             if ($save) {
                 $match = $live->match ?? abort(404, 'The scheduled match no longer exists.');
-                $result = $this->results->saveResult($match, $live->home_team_score, $live->away_team_score);
+                $result = $this->results->saveResult(
+                    $match,
+                    $live->home_team_score,
+                    $live->away_team_score,
+                    isset($penalties['home_score_pen']) ? (int) $penalties['home_score_pen'] : null,
+                    isset($penalties['away_score_pen']) ? (int) $penalties['away_score_pen'] : null,
+                );
             }
 
             $live->delete();
@@ -152,7 +173,8 @@ class LiveMatchesController extends Controller
     private function present(LiveMatchModel $live): array
     {
         return [
-            ...$live->only(['live_id', 'match_id', 'tour_id', 'match_stage', 'home_team_score', 'away_team_score', 'curr_time', 'isPaused']),
+            ...$live->only(['live_id', 'match_id', 'tour_id', 'match_stage', 'home_team_score', 'away_team_score', 'isPaused']),
+            'curr_time' => $live->currentMinute(),
             'home_team' => $live->homeTeam?->team_name,
             'away_team' => $live->awayTeam?->team_name,
         ];

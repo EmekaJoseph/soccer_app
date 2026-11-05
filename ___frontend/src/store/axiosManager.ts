@@ -108,7 +108,8 @@ export default {
     // ---------------------------------------------------------------- live scoring
     startLiveMatch: (matchId: Id) => http.post('live', { match_id: matchId }),
     updateLiveMatch: (liveId: Id, data: object) => http.put(`live/${liveId}`, data),
-    endLiveMatch: (liveId: Id, save: boolean) => http.post(`live/${liveId}/end`, { save }),
+    endLiveMatch: (liveId: Id, save: boolean, penalties: { home_score_pen?: number; away_score_pen?: number } = {}) =>
+        http.post(`live/${liveId}/end`, { save, ...penalties }),
     getLiveMatchesByUser: (tour: Id) => http.get(`tournaments/${tour}/live`),
     getLiveMatchesForAdmin: (tour: Id) => http.get(`tournaments/${tour}/live/all`),
 

@@ -10,7 +10,7 @@ import MatchFormModal from '@/components/modals/userModals/MatchFormModal.vue'
 import predictionModal from '@/components/modals/predictionModal.vue'
 
 const teamData = { live_id: 9, match_stage: 'Final', home_team: 'Home', away_team: 'Away', home_team_score: 0, away_team_score: 0, curr_time: 10, isPaused: false }
-const mountLive = () => mount(ComponentLive, { props: { teamData }, global: { stubs: { OverlayLoading: true } } })
+const mountLive = () => mount(ComponentLive, { props: { teamData } })
 const goalButton = 'button[aria-label="Goal for Home"]'
 const modalStub = { BaseModal: { template: '<div><slot /></div>' } }
 
@@ -79,22 +79,6 @@ describe('live scoring keeps fans up to date', () => {
         wrapper.unmount()
     })
 
-    it('sends nothing more once the match has ended', async () => {
-        const update = vi.spyOn(api, 'updateLiveMatch').mockResolvedValue({ data: {} } as any)
-        vi.spyOn(api, 'endLiveMatch').mockResolvedValue({ data: {} } as any)
-        vi.spyOn(fx, 'confirmOptions').mockResolvedValue({ isConfirmed: true, isDenied: false } as any)
-        const wrapper = mountLive()
-
-        await wrapper.find(goalButton).trigger('click')
-        await wrapper.find('.ui-btn-danger').trigger('click')
-        await vi.advanceTimersByTimeAsync(0)
-        const sent = update.mock.calls.length
-        expect(update.mock.calls[sent - 1]![1]).toMatchObject({ home_team_score: 1 }) // final score saved first
-
-        wrapper.unmount()
-        await vi.advanceTimersByTimeAsync(10000)
-        expect(update).toHaveBeenCalledTimes(sent)
-    })
 })
 
 describe('admin data', () => {

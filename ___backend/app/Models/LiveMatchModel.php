@@ -13,6 +13,8 @@ class LiveMatchModel extends Model
 {
     use HasFactory;
 
+    public const MAX_MINUTE = 200;
+
     protected $table = 'tbl_live';
 
     protected $primaryKey = 'live_id';
@@ -28,7 +30,22 @@ class LiveMatchModel extends Model
             'away_team_score' => 'integer',
             'curr_time' => 'integer',
             'isPaused' => 'boolean',
+            'clock_synced_at' => 'datetime',
         ];
+    }
+
+    /** The match minute right now: runs by itself from when the clock was last set, unless paused. */
+    public function currentMinute(): int
+    {
+        $minute = (int) $this->curr_time;
+
+        if ($this->isPaused || ! $this->clock_synced_at) {
+            return $minute;
+        }
+
+        $elapsed = (int) floor(max(0, $this->clock_synced_at->diffInSeconds(now())) / 60);
+
+        return min(self::MAX_MINUTE, $minute + $elapsed);
     }
 
     public function match(): BelongsTo

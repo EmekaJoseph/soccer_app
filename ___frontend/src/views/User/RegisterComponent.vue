@@ -23,20 +23,12 @@
                 <div class="small text-danger mt-1" v-if="errors.email">{{ errors.email }}</div>
             </div>
 
-            <div class="col-md-6">
-                <div class="form-floating">
-                    <input v-model="form.password" type="password" class="form-control" :class="{ 'is-invalid': errors.password }"
-                        id="regPasswInput" placeholder="password" autocomplete="new-password">
-                    <label for="regPasswInput">Password</label>
-                </div>
+            <div class="col-12">
+                <PasswordField id="regPasswInput" v-model="form.password" label="Password" autocomplete="new-password" :invalid="!!errors.password" />
             </div>
 
-            <div class="col-md-6">
-                <div class="form-floating">
-                    <input v-model="form.password_confirmation" type="password" class="form-control" :class="{ 'is-invalid': errors.password }"
-                        id="repeatPasswInput" placeholder="password" autocomplete="new-password">
-                    <label for="repeatPasswInput">Repeat password</label>
-                </div>
+            <div class="col-12">
+                <PasswordField id="repeatPasswInput" v-model="form.password_confirmation" label="Repeat password" autocomplete="new-password" :invalid="!!errors.password" />
             </div>
             <div class="col-12 small text-danger" v-if="errors.password">{{ errors.password }}</div>
 
@@ -64,6 +56,7 @@ import { useRouter } from 'vue-router'
 import api, { apiErrorMessage } from '@/store/axiosManager'
 import { useAuthStore } from '@/store/authStore'
 import fx from '@/store/useFunctions'
+import PasswordField from '@/components/PasswordField.vue'
 import AuthCard from './AuthCard.vue'
 
 const authStore = useAuthStore()

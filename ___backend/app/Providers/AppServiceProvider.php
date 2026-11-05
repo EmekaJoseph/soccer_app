@@ -30,5 +30,8 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('api', fn (Request $request) => Limit::perMinute(120)->by(
             $request->user() ? $request->user()::class.':'.$request->user()->getKey() : $request->ip()
         ));
+
+        // Fans on one mobile network or venue Wi-Fi can share an IP, and a page load makes 7 requests.
+        RateLimiter::for('public-read', fn (Request $request) => Limit::perMinute(1200)->by($request->ip()));
     }
 }

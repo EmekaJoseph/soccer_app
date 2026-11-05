@@ -1,5 +1,6 @@
 <template>
-    <BaseModal title="All live matches" @close="emit('close')">
+    <EndLiveMatchModal v-if="ending" :live="ending" @close="ending = null" @ended="onEnded" />
+    <BaseModal v-else title="All live matches" @close="emit('close')">
         <div class="modal-body">
             <componentLoadingSpinner v-if="isLoading" />
             <div v-else-if="error" class="text-danger text-center my-4">{{ error }}</div>
@@ -7,7 +8,10 @@
                 <li v-for="live in liveMatchesList" :key="live.live_id">
                     <div class="live-teams">{{ live.home_team }} v {{ live.away_team }} <span class="tag tag-live">{{ live.curr_time }}'</span></div>
                     <div class="live-score">{{ live.home_team_score }}–{{ live.away_team_score }}</div>
-                    <small>Scored by {{ live.isMe ?? live.creator?.email ?? 'unknown' }}</small>
+                    <small>Scored by {{ live.isMe ?? live.creator?.email ?? 'a removed scorer' }}</small>
+                    <div class="mt-2">
+                        <button type="button" class="ui-btn ui-btn-danger ui-btn-sm" @click="ending = live">End match</button>
+                    </div>
                 </li>
             </ul>
             <emptyDataComponent v-else icon="bi bi-broadcast">No live matches</emptyDataComponent>
@@ -18,15 +22,27 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import api, { apiErrorMessage } from '@/store/axiosManager'
+import EndLiveMatchModal from './EndLiveMatchModal.vue'
 
 const props = defineProps<{ tour: any }>()
-const emit = defineEmits<{ close: [] }>()
+const emit = defineEmits<{ close: []; changed: [] }>()
 
 const liveMatchesList = ref<any[]>([])
 const isLoading = ref(true)
 const error = ref('')
+const ending = ref<any>(null)
 
-onMounted(async () => {
+onMounted(loadList)
+
+function onEnded() {
+    ending.value = null
+    emit('changed')
+    loadList()
+}
+
+async function loadList() {
+    error.value = ''
+    isLoading.value = true
     try {
         liveMatchesList.value = (await api.getLiveMatchesForAdmin(props.tour.tour_id)).data
     } catch (e) {
@@ -34,7 +50,7 @@ onMounted(async () => {
     } finally {
         isLoading.value = false
     }
-})
+}
 </script>
 
 <style scoped>

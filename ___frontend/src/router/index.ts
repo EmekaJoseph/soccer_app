@@ -29,7 +29,10 @@ router.beforeEach((to) => {
     return { path: '/login', query: { redirect: to.fullPath } }
   }
 
-  if (to.meta.guestOnly && auth.isLoggedIn) {
+  // A reset link has to work whoever is signed in on this device.
+  const isResetLink = to.path === '/reset-password' && typeof to.query.token === 'string'
+
+  if (to.meta.guestOnly && auth.isLoggedIn && !isResetLink) {
     return { path: '/user/dashboard' }
   }
 

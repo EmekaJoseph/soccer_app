@@ -24,15 +24,17 @@ Route::controller(AccountController::class)->middleware('throttle:10,1')->group(
 });
 
 Route::prefix('view/tournaments/{tournament}')->controller(PublicViewController::class)->group(function () {
-    Route::get('/', 'tournament');
-    Route::get('standings', 'standings');
-    Route::get('results', 'results');
-    Route::get('matches', 'matches');
-    Route::get('live', 'live');
-    Route::get('teams', 'teams');
-    Route::get('players', 'players');
+    Route::withoutMiddleware('throttle:api')->middleware('throttle:public-read')->group(function () {
+        Route::get('/', 'tournament');
+        Route::get('standings', 'standings');
+        Route::get('results', 'results');
+        Route::get('matches', 'matches');
+        Route::get('live', 'live');
+        Route::get('teams', 'teams');
+        Route::get('players', 'players');
+    });
 
-    Route::middleware('throttle:10,1')->group(function () {
+    Route::middleware('throttle:30,1')->group(function () {
         Route::post('predictions', 'storePrediction');
         Route::post('feedback', 'storeFeedback');
     });

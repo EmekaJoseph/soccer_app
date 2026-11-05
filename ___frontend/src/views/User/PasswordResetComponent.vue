@@ -24,20 +24,15 @@
 
     <!-- Step 2: arrived from the e-mailed link -->
     <AuthCard v-else title="Choose a new password" :subtitle="`For ${route.query.email}`">
+        <p v-if="authStore.isLoggedIn" class="small">Resetting your password will sign you out on every device, including this one.</p>
         <div v-if="formError" class="alert auth-alert small text-center py-2">{{ formError }}</div>
 
         <form class="row g-3" @submit.prevent="resetPassword">
-            <div class="col-md-6">
-                <div class="form-floating">
-                    <input v-model="password" type="password" class="form-control" id="resetPass" placeholder="password" minlength="8" required autocomplete="new-password">
-                    <label for="resetPass">New password</label>
-                </div>
+            <div class="col-12">
+                <PasswordField id="resetPass" v-model="password" label="New password" autocomplete="new-password" :minlength="8" required />
             </div>
-            <div class="col-md-6">
-                <div class="form-floating">
-                    <input v-model="passwordConfirmation" type="password" class="form-control" id="resetPass2" placeholder="password" minlength="8" required autocomplete="new-password">
-                    <label for="resetPass2">Repeat password</label>
-                </div>
+            <div class="col-12">
+                <PasswordField id="resetPass2" v-model="passwordConfirmation" label="Repeat password" autocomplete="new-password" :minlength="8" required />
             </div>
             <div class="col-12 mt-4">
                 <button type="submit" :disabled="isLoading" class="ui-btn ui-btn-primary ui-btn-lg w-100">
@@ -52,11 +47,16 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api, { apiErrorMessage } from '@/store/axiosManager'
+import { useAuthStore } from '@/store/authStore'
+import { useUserDataStore } from '@/store/userDataStore'
 import fx from '@/store/useFunctions'
+import PasswordField from '@/components/PasswordField.vue'
 import AuthCard from './AuthCard.vue'
 
 const route = useRoute()
 const router = useRouter()
+const authStore = useAuthStore()
+const userData = useUserDataStore()
 
 const hasToken = computed(() => typeof route.query.token === 'string' && typeof route.query.email === 'string')
 const email = ref('')
@@ -94,7 +94,12 @@ async function resetPassword() {
             password: password.value,
             password_confirmation: passwordConfirmation.value,
         })
-        fx.toast.success('Password reset — you can log in now.')
+        // The server has just revoked every session of this account.
+        if (authStore.isLoggedIn) {
+            authStore.logout()
+            userData.reset()
+        }
+        fx.toast.success('Password reset. You can log in now.')
         router.replace('/login')
     } catch (error) {
         formError.value = apiErrorMessage(error)

@@ -43,7 +43,11 @@ export const useStatsStore = defineStore('stats', () => {
   const getStandings = () => fetchInto(tourStandings, () => api.standings(tour_id.value))
   const getResults = () => fetchInto(tourResults, () => api.results(tour_id.value))
   const getMatches = () => fetchInto(tourMatches, () => api.matches(tour_id.value))
-  const getLiveMatches = () => fetchInto(tourLives, () => api.getLiveMatches(tour_id.value))
+  // syncedAt lets the page keep the minute ticking between updates.
+  const getLiveMatches = () => fetchInto(tourLives, async () => {
+    const { data } = await api.getLiveMatches(tour_id.value)
+    return { data: data.map((live: any) => ({ ...live, syncedAt: Date.now() })) }
+  })
   const getTourTeamsInfo = () => fetchInto(tourTeamsInfo, () => api.infomationCenter(tour_id.value))
   const getPlayers = () => fetchInto(tourPlayers, () => api.publicPlayers(tour_id.value))
 
@@ -88,7 +92,7 @@ export const useStatsStore = defineStore('stats', () => {
     }
 
     const goal = e.results.home_team_score > live.home_team_score || e.results.away_team_score > live.away_team_score
-    Object.assign(live, e.results)
+    Object.assign(live, e.results, { syncedAt: Date.now() })
     return goal
   }
 

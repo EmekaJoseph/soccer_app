@@ -1,5 +1,6 @@
 <template>
-    <OverlayLoading v-if="ending" />
+    <EndLiveMatchModal v-if="endOpen" :live="{ ...teamData, ...live }" :before-end="saveFinalScore"
+        @close="endOpen = false" @failed="carryOn" @ended="onEnded" />
     <div class="col-12 col-md-6 col-xxl-4">
         <div class="scoreboard">
             <div class="board-head">
@@ -10,12 +11,12 @@
 
             <div class="clock">{{ live.curr_time }}<span>'</span></div>
             <div class="clock-controls">
-                <button class="ui-btn ui-btn-ghost" aria-label="Minus one minute" @click="live.curr_time = Math.max(0, live.curr_time - 1)">−1'</button>
-                <button class="ui-btn ui-btn-ghost" @click="live.isPaused = !live.isPaused">
+                <button class="ui-btn ui-btn-ghost" aria-label="Minus one minute" @click="setMinute(live.curr_time - 1)">−1'</button>
+                <button class="ui-btn ui-btn-ghost" @click="togglePause">
                     <i :class="live.isPaused ? 'bi bi-play-fill' : 'bi bi-pause-fill'"></i>
                     {{ live.isPaused ? 'Resume' : 'Pause' }}
                 </button>
-                <button class="ui-btn ui-btn-ghost" aria-label="Plus one minute" @click="live.curr_time = Math.min(200, live.curr_time + 1)">+1'</button>
+                <button class="ui-btn ui-btn-ghost" aria-label="Plus one minute" @click="setMinute(live.curr_time + 1)">+1'</button>
             </div>
 
             <div v-for="side in sides" :key="side.key" class="team-row">
@@ -36,7 +37,7 @@
                 <span v-else-if="syncState === 'saved'" class="synced"><i class="bi bi-check2-circle"></i> Fans are up to date</span>
             </div>
 
-            <button class="ui-btn ui-btn-danger w-100" @click="endLive">
+            <button class="ui-btn ui-btn-danger w-100" @click="endOpen = true">
                 <i class="bi bi-stop-circle"></i> End match
             </button>
         </div>
@@ -46,9 +47,9 @@
 <script setup lang="ts">
 import { onUnmounted, reactive, ref, watch } from 'vue'
 import { isAxiosError } from 'axios'
-import api, { apiErrorMessage } from '@/store/axiosManager'
+import api from '@/store/axiosManager'
 import fx from '@/store/useFunctions'
-import OverlayLoading from '@/components/overlayLoading.vue'
+import EndLiveMatchModal from '@/components/modals/EndLiveMatchModal.vue'
 
 const props = defineProps<{ teamData: any }>()
 const emit = defineEmits<{ ended: [] }>()
@@ -67,7 +68,7 @@ const sides = [
 
 const RETRY_AFTER_MS = 5000
 
-const ending = ref(false)
+const endOpen = ref(false)
 const syncState = ref<'idle' | 'saving' | 'saved' | 'error'>('idle')
 
 let unsaved = false // the score on screen differs from what the server has
@@ -93,12 +94,24 @@ async function sendUpdate() {
         await api.updateLiveMatch(props.teamData.live_id, { ...live })
         syncState.value = 'saved'
     } catch (error) {
+        // The tournament owner can end a match from their side; there is nothing left to update.
+        if (isAxiosError(error) && error.response?.status === 404) {
+            const leftPage = stopped
+            unsaved = false
+            stopped = true
+            if (!leftPage) {
+                fx.toast.info('The tournament owner has ended this match.')
+                emit('ended')
+            }
+            return
+        }
+
         unsaved = true
         syncState.value = 'error'
         if (!stopped && worthRetrying(error)) retryTimer = setTimeout(sendUpdate, RETRY_AFTER_MS)
     } finally {
         sending = false
-        if (unsaved && syncState.value === 'saved' && !ending.value) sendUpdate()
+        if (unsaved && syncState.value === 'saved' && !stopped) sendUpdate()
     }
 }
 
@@ -106,16 +119,37 @@ async function sendUpdate() {
 const queueUpdate = fx.debounce(sendUpdate, 800)
 watch(live, () => {
     unsaved = true
-    queueUpdate()
+    if (!stopped) queueUpdate()
 })
 
-// The match clock advances by itself once a minute unless paused.
-const clock = setInterval(() => {
-    if (!live.isPaused) live.curr_time = Math.min(200, live.curr_time + 1)
-}, 60_000)
+// The minute comes from elapsed time, not from counting ticks: phones freeze timers while locked.
+const MAX_MINUTE = 200
+let clockMinute = live.curr_time
+let clockStartedAt = Date.now()
+
+function setMinute(minute: number) {
+    live.curr_time = Math.min(MAX_MINUTE, Math.max(0, minute))
+    clockMinute = live.curr_time
+    clockStartedAt = Date.now()
+}
+
+function togglePause() {
+    live.isPaused = !live.isPaused
+    if (!live.isPaused) setMinute(live.curr_time)
+}
+
+function updateClock() {
+    if (live.isPaused || stopped) return
+    const minute = Math.min(MAX_MINUTE, clockMinute + Math.floor((Date.now() - clockStartedAt) / 60_000))
+    if (minute !== live.curr_time) live.curr_time = minute
+}
+
+const clock = setInterval(updateClock, 5000)
+document.addEventListener('visibilitychange', updateClock)
 
 onUnmounted(() => {
     clearInterval(clock)
+    document.removeEventListener('visibilitychange', updateClock)
     queueUpdate.cancel()
     // A goal tapped just before leaving the page must still reach the fans.
     if (unsaved && !stopped) {
@@ -126,31 +160,23 @@ onUnmounted(() => {
     clearTimeout(retryTimer)
 })
 
-async function endLive() {
-    const tap = await fx.confirmOptions(
-        `End ${props.teamData.home_team} ${live.home_team_score} - ${live.away_team_score} ${props.teamData.away_team}?`,
-        'End & save result',
-        'End only',
-    )
-    if (!tap.isConfirmed && !tap.isDenied) return
-
-    ending.value = true
+/** Stop background updates and make sure the score on screen is what gets saved. */
+async function saveFinalScore() {
     stopped = true
     queueUpdate.cancel()
     clearTimeout(retryTimer)
-    try {
-        // Make sure the final score is stored before it is saved as the result.
-        await api.updateLiveMatch(props.teamData.live_id, { ...live })
-        await api.endLiveMatch(props.teamData.live_id, tap.isConfirmed)
-        unsaved = false
-        fx.toast.success(tap.isConfirmed ? 'Match ended and result saved' : 'Match ended')
-        emit('ended')
-    } catch (error) {
-        stopped = false
-        fx.toast.error(apiErrorMessage(error))
-    } finally {
-        ending.value = false
-    }
+    await api.updateLiveMatch(props.teamData.live_id, { ...live })
+    unsaved = false
+}
+
+function carryOn() {
+    stopped = false
+    if (unsaved) queueUpdate()
+}
+
+function onEnded() {
+    endOpen.value = false
+    emit('ended')
 }
 </script>
 

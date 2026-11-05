@@ -10,9 +10,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class AccountController extends Controller
 {
@@ -124,7 +126,12 @@ class AccountController extends Controller
                 'email' => $email,
             ]);
 
-            $account->notify(new ResetPasswordNotification($url, self::RESET_TOKEN_MINUTES));
+            // A mail failure must look like any other request, or it would reveal the account exists.
+            try {
+                $account->notify(new ResetPasswordNotification($url, self::RESET_TOKEN_MINUTES));
+            } catch (Throwable $e) {
+                Log::error('Password reset e-mail failed: '.$e->getMessage());
+            }
         }
 
         // Same answer whether or not the account exists, so e-mails cannot be probed.

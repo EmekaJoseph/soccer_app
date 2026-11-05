@@ -6,8 +6,8 @@
     <div v-else class="live-list">
         <article v-for="live in stats.tourLives" :key="live.live_id" class="live-card">
             <header class="live-head">
-                <span v-if="live.isPaused" class="clock paused"><i class="bi bi-pause-fill" aria-hidden="true"></i>Paused {{ live.curr_time }}'</span>
-                <span v-else class="clock"><span class="ui-live-dot"></span>Live {{ live.curr_time }}'</span>
+                <span v-if="live.isPaused" class="clock paused"><i class="bi bi-pause-fill" aria-hidden="true"></i>Paused {{ liveMinute(live, now) }}'</span>
+                <span v-else class="clock"><span class="ui-live-dot"></span>Live {{ liveMinute(live, now) }}'</span>
                 <span v-if="live.match_stage" class="stage">{{ fx.stageLabel(live.match_stage) }}</span>
             </header>
             <div class="board">
@@ -31,11 +31,16 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useIntervalFn } from '@vueuse/core'
 import TeamBadge from '@/components/TeamBadge.vue'
 import { useStatsStore } from '@/store/statsStore'
 import fx from '@/store/useFunctions'
+import { liveMinute } from './liveClock'
 
 const stats = useStatsStore()
+const now = ref(Date.now())
+useIntervalFn(() => { now.value = Date.now() }, 5000)
 </script>
 
 <style scoped>

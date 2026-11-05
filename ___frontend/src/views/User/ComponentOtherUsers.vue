@@ -3,10 +3,13 @@
         hint="Helpers who can schedule matches, record results and run live scores.">
         <form class="row g-3" @submit.prevent="submitUser">
             <div class="col-12">
-                <input v-model="usersForm.email" type="email" class="form-control" placeholder="E-mail" aria-label="Scorer e-mail" required>
+                <div class="form-floating">
+                    <input id="scorerEmail" v-model="usersForm.email" type="email" class="form-control" placeholder=" " autocomplete="off" required>
+                    <label for="scorerEmail">Scorer's e-mail</label>
+                </div>
             </div>
             <div class="col-12">
-                <input v-model="usersForm.password" type="text" class="form-control" placeholder="Password (min. 8 characters)" aria-label="Scorer password" minlength="8" required>
+                <PasswordField id="scorerPassword" v-model="usersForm.password" label="Password (min. 8 characters)" autocomplete="new-password" :minlength="8" required />
             </div>
             <div v-if="usersForm.error" class="col-12 small text-danger">{{ usersForm.error }}</div>
             <div class="col-12">
@@ -33,6 +36,7 @@ import { onMounted, reactive } from 'vue'
 import { useUserDataStore } from '@/store/userDataStore'
 import api, { apiErrorMessage } from '@/store/axiosManager'
 import fx from '@/store/useFunctions'
+import PasswordField from '@/components/PasswordField.vue'
 
 const userData = useUserDataStore()
 

@@ -185,3 +185,34 @@ button:focus-visible {
 .modal-actions > * {
   margin: 0;
 }
+
+/* Team name beside a number, for scores and penalties. */
+.score-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding-block: 0.4rem;
+}
+
+.score-entry span {
+  min-width: 0;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+
+.modal .score-entry .form-control {
+  flex: none;
+  width: 76px;
+  margin: 0;
+  font-family: var(--font-mono);
+  text-align: center;
+}
+
+.penalties {
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}

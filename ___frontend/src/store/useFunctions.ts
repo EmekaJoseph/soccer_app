@@ -40,25 +40,13 @@ export default {
             customClass: { confirmButton: 'swal-confirm-button-delete', cancelButton: 'swal-cancel-button' },
         }),
 
-    confirmOptions: (text: string, btnTextConfirm: string, btnTextDeny: string) =>
-        Swal.fire({
-            text,
-            showDenyButton: true,
-            showCancelButton: true,
-            confirmButtonText: btnTextConfirm,
-            denyButtonText: btnTextDeny,
-            reverseButtons: true,
-            customClass: {
-                confirmButton: 'swal-confirm-button',
-                cancelButton: 'swal-cancel-button',
-                denyButton: 'swal-confirm-button-delete',
-            },
-        }),
-
     capsFirstLetter: (value: string) => value.charAt(0).toUpperCase() + value.slice(1),
 
     /** "Quarter_Final" -> "Quarter Final" */
     stageLabel: (stage?: string | null, fallback = 'Match') => (stage ? stage.replaceAll('_', ' ') : fallback),
+
+    /** Knock-out matches can be decided on penalties; group, friendly and league games cannot. */
+    allowsPenalties: (stage?: string | null) => Boolean(stage) && !['Group_Stage', 'Friendly'].includes(stage as string),
 
     debounce<T extends (...args: any[]) => any>(func: T, delay: number): DebounceFunction<T> {
         let timer: ReturnType<typeof setTimeout> | undefined

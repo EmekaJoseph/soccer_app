@@ -106,7 +106,8 @@ class PublicViewController extends Controller
         return response()->json(
             $tournament->liveMatches()->with(['homeTeam', 'awayTeam'])->get()
                 ->map(fn ($live) => [
-                    ...$live->only(['live_id', 'match_id', 'match_stage', 'home_team_score', 'away_team_score', 'curr_time', 'isPaused']),
+                    ...$live->only(['live_id', 'match_id', 'match_stage', 'home_team_score', 'away_team_score', 'isPaused']),
+                    'curr_time' => $live->currentMinute(),
                     'home_team' => $live->homeTeam,
                     'away_team' => $live->awayTeam,
                 ])
