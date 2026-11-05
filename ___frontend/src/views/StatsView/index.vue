@@ -59,7 +59,7 @@ import { computed, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useNow, useDateFormat, useStorage, useVibrate } from '@vueuse/core'
 import { useStatsStore } from '@/store/statsStore'
-import { listenToTournament } from '@/lib/echo'
+import { isLiveConnected, listenToTournament } from '@/lib/echo'
 import fx from '@/store/useFunctions'
 import BrandMark from '@/components/BrandMark.vue'
 import StatsLayout from './StatsLayout.vue'
@@ -73,6 +73,7 @@ import feedbackModal from '@/components/modals/feedbackModal.vue'
 
 const REFRESH_EVERY_MS = 3 * 60 * 1000
 const RETRY_EVERY_MS = 30 * 1000
+const LIVE_FALLBACK_EVERY_MS = 30 * 1000
 
 const panels = { live: LivePanel, fixtures: SchedulePanel, results: ResultsPanel, table: StandingsPanel, teams: InfoPanel }
 type PanelId = keyof typeof panels
@@ -118,11 +119,13 @@ function goalAlert() {
 }
 
 let stopListening = () => {}
+let leftPage = false
 
 watch(() => route.params.tour_id as string, async (tourId) => {
     if (!tourId) return
     stopListening()
     await stats.load(tourId)
+    if (leftPage || tourId !== route.params.tour_id) return // moved on while this was loading
     if (stats.tourLives.length) currentShowing.value = 'live'
 
     stopListening = listenToTournament(tourId, {
@@ -139,7 +142,6 @@ watch(() => route.params.tour_id as string, async (tourId) => {
 
 // Refreshes stay on a slow schedule until one fails, then retry sooner until they recover.
 let refreshTimer: ReturnType<typeof setTimeout> | undefined
-let leftPage = false
 
 function scheduleRefresh() {
     refreshTimer = setTimeout(async () => {
@@ -149,6 +151,11 @@ function scheduleRefresh() {
 }
 
 scheduleRefresh()
+
+// Without the realtime connection, fans would otherwise wait minutes between live scores.
+const liveFallbackTimer = setInterval(() => {
+    if (stats.tourLives.length && !stats.apiError && !isLiveConnected()) stats.getLiveMatches()
+}, LIVE_FALLBACK_EVERY_MS)
 
 const retrying = ref(false)
 
@@ -168,6 +175,7 @@ watch(() => stats.isOnline, (online) => {
 onUnmounted(() => {
     leftPage = true
     clearTimeout(refreshTimer)
+    clearInterval(liveFallbackTimer)
     stopListening()
 })
 </script>

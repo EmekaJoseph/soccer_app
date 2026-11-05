@@ -10,6 +10,7 @@ use App\Models\TournamentModel;
 use App\Services\MatchResultsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 class ResultsController extends Controller
 {
@@ -34,6 +35,10 @@ class ResultsController extends Controller
 
         $match = MatchModel::findOrFail($data['match_id']);
         $this->authorizeMatch($request, $match);
+
+        if ($match->live()->exists()) {
+            throw new ConflictHttpException('This match is being scored live. End it there to save the result.');
+        }
 
         $result = $this->results->saveResult(
             $match,

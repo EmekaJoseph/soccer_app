@@ -25,27 +25,42 @@ export const useUserDataStore = defineStore('dataStore', () => {
   const match_stages = ref<readonly string[]>(MATCH_STAGES)
   const valid_groups = ref<readonly string[]>(GROUPS)
 
-  async function load<T>(request: () => Promise<{ data: T }>, assign: (data: T) => void) {
+  // Only the newest request for each kind of data may fill it: admins can switch tournaments mid-load.
+  const newestRequest = new Map<string, number>()
+
+  async function load<T>(key: string, request: () => Promise<{ data: T }>, assign: (data: T) => void) {
+    const ticket = (newestRequest.get(key) ?? 0) + 1
+    newestRequest.set(key, ticket)
     try {
-      assign((await request()).data)
-      apiError.value = false
+      const { data } = await request()
+      if (newestRequest.get(key) === ticket) assign(data)
     } catch {
-      apiError.value = true
+      if (newestRequest.get(key) === ticket) apiError.value = true
     }
   }
 
-  const getTournaments = () => load(api.getTournaments, (d: any[]) => (tournaments.value = d))
-  const getTournamentTeams = (id: string) => load(() => api.getTournamentTeams(id), (d: any[]) => (tournamentTeams.value = d))
-  const getTournamentMatches = (id: string) => load(() => api.getTournamentMatches(id), (d: any[]) => (tournamentMatches.value = d))
-  const getTournamentResults = (id: string) => load(() => api.getTournamentResults(id), (d: any[]) => (tournamentResults.value = d))
-  const getLiveMatchesByUser = (id: string) => load(() => api.getLiveMatchesByUser(id), (d: any[]) => (tournamentLive.value = d))
-  const getPlayers = (id: string) => load(() => api.getPlayers(id), (d: any[]) => (tournamentPlayers.value = d))
-  const getPredictions = (id: string) => load(() => api.getPredictions(id), (d: any[]) => (predictions.value = d))
-  const getDashboardFigures = () => load(api.dashboard, (d: Record<string, number>) => (dashboardFigures.value = d))
-  const getSubUsers = () => load(api.subUsersList, (d: any[]) => (subUsers.value = d))
-  const getFeedbacks = () => load(api.getFeedbacks, (d: any[]) => (feedback.value = d))
+  /** Forget everything on sign-out, so the next account never sees this one's data. */
+  function reset() {
+    newestRequest.clear()
+    for (const list of [tournaments, tournamentTeams, tournamentMatches, tournamentResults, tournamentLive, tournamentPlayers, subUsers, predictions, feedback]) list.value = []
+    dashboardFigures.value = null
+    apiError.value = false
+    pageError.value = false
+  }
+
+  const getTournaments = () => load('tournaments', api.getTournaments, (d: any[]) => (tournaments.value = d))
+  const getTournamentTeams = (id: string) => load('teams', () => api.getTournamentTeams(id), (d: any[]) => (tournamentTeams.value = d))
+  const getTournamentMatches = (id: string) => load('matches', () => api.getTournamentMatches(id), (d: any[]) => (tournamentMatches.value = d))
+  const getTournamentResults = (id: string) => load('results', () => api.getTournamentResults(id), (d: any[]) => (tournamentResults.value = d))
+  const getLiveMatchesByUser = (id: string) => load('live', () => api.getLiveMatchesByUser(id), (d: any[]) => (tournamentLive.value = d))
+  const getPlayers = (id: string) => load('players', () => api.getPlayers(id), (d: any[]) => (tournamentPlayers.value = d))
+  const getPredictions = (id: string) => load('predictions', () => api.getPredictions(id), (d: any[]) => (predictions.value = d))
+  const getDashboardFigures = () => load('dashboard', api.dashboard, (d: Record<string, number>) => (dashboardFigures.value = d))
+  const getSubUsers = () => load('subUsers', api.subUsersList, (d: any[]) => (subUsers.value = d))
+  const getFeedbacks = () => load('feedback', api.getFeedbacks, (d: any[]) => (feedback.value = d))
 
   return {
+    reset,
     apiLoading,
     apiError,
     pageError,

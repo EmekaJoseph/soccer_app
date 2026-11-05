@@ -94,6 +94,10 @@ class MatchController extends Controller
             'match_stage' => $tournament->isCup() ? ($data['match_stage'] ?? $match->match_stage) : null,
         ]);
 
+        // These copies of the match's details are what fans see.
+        $match->result()->update(['date_played' => $match->kick_off]);
+        $match->live()->update(['match_stage' => $match->match_stage]);
+
         return response()->json($match->load(['homeTeam', 'awayTeam', 'result']));
     }
 

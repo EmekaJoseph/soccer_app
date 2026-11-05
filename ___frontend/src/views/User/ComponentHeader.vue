@@ -48,11 +48,13 @@ import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/store/axiosManager'
 import { useAuthStore } from '@/store/authStore'
+import { useUserDataStore } from '@/store/userDataStore'
 import BrandMark from '@/components/BrandMark.vue'
 import { menuItems } from '@/router/user_routes'
 import ComponentMenuList from './ComponentMenuList.vue'
 
 const authStore = useAuthStore()
+const userData = useUserDataStore()
 const route = useRoute()
 const router = useRouter()
 const btnClose = ref<HTMLButtonElement | null>(null)
@@ -71,6 +73,7 @@ async function logOut() {
         // token may already be invalid; signing out locally is enough
     } finally {
         authStore.logout()
+        userData.reset()
         router.replace({ path: '/' })
     }
 }

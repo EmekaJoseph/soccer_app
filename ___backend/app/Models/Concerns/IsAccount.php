@@ -6,6 +6,7 @@ use App\Models\SubUserModel;
 use App\Models\TournamentModel;
 use App\Models\UserModel;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 /**
  * Shared behaviour for the two account types (owners and sub-users).
@@ -53,6 +54,8 @@ trait IsAccount
 
     public static function emailIsTaken(string $email): bool
     {
+        $email = Str::lower($email);
+
         return UserModel::where('email', $email)->exists()
             || SubUserModel::where('email', $email)->exists();
     }

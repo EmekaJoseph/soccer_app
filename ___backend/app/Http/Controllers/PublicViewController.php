@@ -9,6 +9,7 @@ use App\Models\PredictionModel;
 use App\Models\ResultModel;
 use App\Models\TeamModel;
 use App\Models\TournamentModel;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -82,11 +83,15 @@ class PublicViewController extends Controller
         return response()->json($results);
     }
 
-    /** Upcoming fixtures (matches without a result yet), soonest first. */
+    /** Upcoming fixtures (matches neither finished nor in play), soonest first. */
     public function matches(TournamentModel $tournament): JsonResponse
     {
+        // Ids are fetched separately: some production tables differ in collation, which rules out a join.
+        $liveIds = $tournament->liveMatches()->whereNotNull('match_id')->pluck('match_id');
+
         $matches = $tournament->matches()
             ->whereDoesntHave('result')
+            ->whereNotIn('match_id', $liveIds)
             ->with(['homeTeam', 'awayTeam'])
             ->orderBy('kick_off')
             ->get()
@@ -152,7 +157,13 @@ class PublicViewController extends Controller
 
     public function players(Request $request, TournamentModel $tournament): JsonResponse
     {
-        $players = PlayerModel::with('team')
+        // Dates of birth (often of minors) stay private to the tournament owner.
+        return response()->json($this->playerList($request, $tournament)->makeHidden('dob'));
+    }
+
+    public function playerList(Request $request, TournamentModel $tournament): EloquentCollection
+    {
+        return PlayerModel::with('team')
             ->where('tour_id', $tournament->tour_id)
             ->when($request->query('search'), function ($query, string $search) {
                 $query->where(fn ($q) => $q->where('first_name', 'like', "%{$search}%")
@@ -161,8 +172,6 @@ class PublicViewController extends Controller
             ->when($request->query('team_id'), fn ($query, string $teamId) => $query->where('team_id', $teamId))
             ->orderBy('first_name')
             ->get();
-
-        return response()->json($players);
     }
 
     public function storePrediction(Request $request, TournamentModel $tournament): JsonResponse

@@ -3,7 +3,7 @@
         <div class="mb-2 small">{{ label }}</div>
         <label class="image-circle cursor-pointer" :style="{ width: `${size}px`, height: `${size}px`, backgroundImage: src ? `url(${src})` : 'none' }">
             <i v-if="!src" class="bi bi-camera"></i>
-            <input type="file" accept="image/*" class="d-none" @change="pick">
+            <input type="file" accept="image/*" class="visually-hidden" :aria-label="label" @change="pick">
         </label>
         <div v-if="error" class="small text-danger mt-1">{{ error }}</div>
     </div>
@@ -62,7 +62,8 @@ onBeforeUnmount(() => URL.revokeObjectURL(previewUrl.value))
     transition: border-color 0.15s ease;
 }
 
-.image-circle:hover {
+.image-circle:hover,
+.image-circle:focus-within {
     border-color: var(--accent);
 }
 </style>

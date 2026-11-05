@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { useClipboard } from '@vueuse/core'
 
-const { copy, isSupported, copied } = useClipboard()
+const { copy, copied } = useClipboard({ legacy: true })
 
 const emit = defineEmits(['close'])
 defineProps(['linkToCopy'])

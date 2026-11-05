@@ -50,6 +50,7 @@ class PredictionsController extends Controller
 
         return $predictions->map(fn (PredictionModel $p) => [
             ...$p->toArray(),
+            'created_at' => Carbon::parse($p->created_at)->toIso8601ZuluString(),
             'first_place_id' => $p->first_place,
             'first_place' => $names[$p->first_place] ?? 'Removed team',
             'second_place' => $names[$p->second_place] ?? 'Removed team',

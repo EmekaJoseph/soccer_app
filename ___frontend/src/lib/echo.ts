@@ -32,6 +32,11 @@ export function getEcho(): Echo<'pusher'> | null {
     return echo
 }
 
+/** Whether pushed live scores are actually arriving. */
+export function isLiveConnected(): boolean {
+    return (echo?.connector as any)?.pusher?.connection?.state === 'connected'
+}
+
 export interface TournamentLiveHandlers {
     started: (e: LiveScorePayload) => void
     updated: (e: LiveScorePayload) => void

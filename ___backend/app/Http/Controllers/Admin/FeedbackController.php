@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\FeedbackModel;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class FeedbackController extends Controller
 {
@@ -18,7 +19,11 @@ class FeedbackController extends Controller
             ->orderByDesc('created_at')
             ->limit(500)
             ->get()
-            ->map(fn (FeedbackModel $f) => [...$f->toArray(), 'tour_title' => $tournaments[$f->tour_id] ?? null]);
+            ->map(fn (FeedbackModel $f) => [
+                ...$f->toArray(),
+                'created_at' => Carbon::parse($f->created_at)->toIso8601ZuluString(),
+                'tour_title' => $tournaments[$f->tour_id] ?? null,
+            ]);
 
         return response()->json($feedback);
     }

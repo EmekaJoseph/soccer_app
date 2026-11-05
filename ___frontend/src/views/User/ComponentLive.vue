@@ -45,6 +45,7 @@
 
 <script setup lang="ts">
 import { onUnmounted, reactive, ref, watch } from 'vue'
+import { isAxiosError } from 'axios'
 import api, { apiErrorMessage } from '@/store/axiosManager'
 import fx from '@/store/useFunctions'
 import OverlayLoading from '@/components/overlayLoading.vue'
@@ -64,22 +65,49 @@ const sides = [
     { key: 'away_team_score', name: props.teamData.away_team },
 ] as const
 
+const RETRY_AFTER_MS = 5000
+
 const ending = ref(false)
 const syncState = ref<'idle' | 'saving' | 'saved' | 'error'>('idle')
 
+let unsaved = false // the score on screen differs from what the server has
+let sending = false
+let stopped = false // the match is ending or this scorer has left the page
+let retryTimer: ReturnType<typeof setTimeout> | undefined
+
+/** Retrying only helps if the problem may pass: not when the match is gone or belongs to someone else. */
+const worthRetrying = (error: unknown) => {
+    const status = isAxiosError(error) ? error.response?.status : undefined
+    return status === undefined || status >= 500 || status === 429 || status === 408
+}
+
+/** One update at a time, so a slow older request can never overwrite a newer score. */
 async function sendUpdate() {
+    clearTimeout(retryTimer)
+    if (sending) return // whatever changed goes out when this one finishes
+
+    sending = true
+    unsaved = false
     syncState.value = 'saving'
     try {
         await api.updateLiveMatch(props.teamData.live_id, { ...live })
         syncState.value = 'saved'
-    } catch {
+    } catch (error) {
+        unsaved = true
         syncState.value = 'error'
+        if (!stopped && worthRetrying(error)) retryTimer = setTimeout(sendUpdate, RETRY_AFTER_MS)
+    } finally {
+        sending = false
+        if (unsaved && syncState.value === 'saved' && !ending.value) sendUpdate()
     }
 }
 
 // Batch rapid taps into one request.
 const queueUpdate = fx.debounce(sendUpdate, 800)
-watch(live, queueUpdate)
+watch(live, () => {
+    unsaved = true
+    queueUpdate()
+})
 
 // The match clock advances by itself once a minute unless paused.
 const clock = setInterval(() => {
@@ -89,6 +117,13 @@ const clock = setInterval(() => {
 onUnmounted(() => {
     clearInterval(clock)
     queueUpdate.cancel()
+    // A goal tapped just before leaving the page must still reach the fans.
+    if (unsaved && !stopped) {
+        stopped = true
+        sendUpdate()
+    }
+    stopped = true
+    clearTimeout(retryTimer)
 })
 
 async function endLive() {
@@ -100,14 +135,18 @@ async function endLive() {
     if (!tap.isConfirmed && !tap.isDenied) return
 
     ending.value = true
+    stopped = true
     queueUpdate.cancel()
+    clearTimeout(retryTimer)
     try {
         // Make sure the final score is stored before it is saved as the result.
         await api.updateLiveMatch(props.teamData.live_id, { ...live })
         await api.endLiveMatch(props.teamData.live_id, tap.isConfirmed)
+        unsaved = false
         fx.toast.success(tap.isConfirmed ? 'Match ended and result saved' : 'Match ended')
         emit('ended')
     } catch (error) {
+        stopped = false
         fx.toast.error(apiErrorMessage(error))
     } finally {
         ending.value = false

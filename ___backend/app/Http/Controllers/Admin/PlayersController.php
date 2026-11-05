@@ -22,7 +22,7 @@ class PlayersController extends Controller
     {
         $this->authorizeTournament($request, $tournament);
 
-        return app(PublicViewController::class)->players($request, $tournament);
+        return response()->json(app(PublicViewController::class)->playerList($request, $tournament));
     }
 
     public function store(Request $request): JsonResponse

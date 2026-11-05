@@ -49,6 +49,12 @@ class MatchResultsService
         }
 
         return DB::transaction(function () use ($match, $homeScore, $awayScore, $homePens, $awayPens) {
+            MatchModel::whereKey($match->getKey())->lockForUpdate()->first();
+
+            if ($match->result()->exists()) {
+                throw new ConflictHttpException('A result has already been saved for this match.');
+            }
+
             $tournament = $match->relatedTournament;
 
             if ($this->countsTowardsStandings($tournament, $match)) {
@@ -75,6 +81,10 @@ class MatchResultsService
     public function undoResult(ResultModel $result): void
     {
         DB::transaction(function () use ($result) {
+            if (! ResultModel::whereKey($result->getKey())->lockForUpdate()->first()) {
+                return; // already undone by another request
+            }
+
             $tournament = $result->relatedTournament;
             $match = $result->relatedMatch;
 
