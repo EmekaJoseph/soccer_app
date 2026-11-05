@@ -1,89 +1,77 @@
 <template>
-    <div class="container px-3">
-        <componentLoadingSpinner v-if="loading" />
-        <internetErrorComponent v-else-if="userData.apiError" />
-        <div v-else class="row gy-4">
-            <tourDropdownSelect v-model="selectedTournament" @change="changed" />
-
-            <div v-if="!selectedTournament" class="col-12">
-                <emptyDataComponent>Create a tournament on the dashboard first.</emptyDataComponent>
+    <TournamentPage v-model="selectedTournament" :loading="loading" @change="changed">
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <AdminCard title="Teams" :count="userData.tournamentTeams.length" class="h-100">
+                    <template #actions>
+                        <button class="ui-btn ui-btn-primary ui-btn-sm" @click="openForm()">
+                            <i class="bi bi-plus-lg"></i> New team
+                        </button>
+                    </template>
+                    <componentLoadingSpinner v-if="teamsLoading" />
+                    <emptyDataComponent v-else-if="!userData.tournamentTeams.length" icon="bi bi-shield">
+                        No teams yet.
+                        <div class="mt-3">
+                            <button class="ui-btn ui-btn-primary" @click="openForm()">Add the first team</button>
+                        </div>
+                    </emptyDataComponent>
+                    <ul v-else class="team-list">
+                        <li v-for="(team, index) in userData.tournamentTeams" :key="team.team_id">
+                            <button type="button" class="team-line" :class="{ active: activeTeam?.team_id == team.team_id }"
+                                :aria-current="activeTeam?.team_id == team.team_id ? 'true' : undefined" @click="activeTeamId = team.team_id">
+                                <span class="team-num">{{ index + 1 }}</span>
+                                <TeamBadge :badge="team.team_badge" :color="team.team_color" :size="22" />
+                                <span class="team-name">{{ team.team_name }}</span>
+                                <span v-if="team.group_in" class="tag">Group {{ team.group_in }}</span>
+                            </button>
+                        </li>
+                    </ul>
+                </AdminCard>
             </div>
 
-            <div v-else class="col-lg-12">
-                <div class="row gy-3">
-                    <div class="col-lg-6">
-                        <div class="card border-0">
-                            <div class="card-header text-muted bg-transparent border-0">
-                                TEAMS ({{ userData.tournamentTeams.length }})
-                                <button @click="openForm()" class="btn btn-primary-theme btn-sm float-end">
-                                    New Team <i class="bi bi-plus-lg"></i>
-                                </button>
-                            </div>
-                            <div class="card-body">
-                                <div class="card min-vh-50 h-100">
-                                    <componentLoadingSpinner v-if="teamsLoading" />
-                                    <div v-else class="card-body">
-                                        <emptyDataComponent v-if="!userData.tournamentTeams.length">No teams yet</emptyDataComponent>
-                                        <ul class="list-group list-group-flush">
-                                            <li v-for="(team, index) in userData.tournamentTeams" :key="team.team_id"
-                                                @click="activeTeamId = team.team_id"
-                                                class="list-group-item team-line-item my-1 d-flex align-items-center gap-2"
-                                                :class="{ 'active-team shadow-sm': activeTeam?.team_id == team.team_id }">
-                                                <span class="text-muted small">{{ index + 1 }}</span>
-                                                <TeamBadge :badge="team.team_badge" :color="team.team_color" :size="22" />
-                                                <span class="flex-grow-1">{{ team.team_name }}</span>
-                                                <span v-if="team.group_in" class="badge text-bg-light">Group {{ team.group_in }}</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
+            <div v-if="activeTeam" class="col-lg-6">
+                <AdminCard class="h-100">
+                    <template #title>
+                        <TeamBadge :badge="activeTeam.team_badge" :color="activeTeam.team_color" />
+                        <span class="active-name">{{ activeTeam.team_name }}</span>
+                    </template>
+                    <template #actions>
+                        <button class="btn-icon" title="Edit" aria-label="Edit team" @click="openForm(activeTeam)">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn-icon danger" title="Delete" aria-label="Delete team" @click="deleteTeam(activeTeam)">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </template>
+                    <dl class="details">
+                        <div>
+                            <dt>About</dt>
+                            <dd>{{ activeTeam.team_brief || '—' }}</dd>
                         </div>
-                    </div>
-
-                    <div class="col-lg-6" v-if="activeTeam">
-                        <div class="card border-0 h-100">
-                            <div class="card-header text-muted bg-transparent border-0 text-uppercase fw-bolder d-flex align-items-center gap-2">
-                                <TeamBadge :badge="activeTeam.team_badge" :color="activeTeam.team_color" />
-                                <span class="flex-grow-1">{{ activeTeam.team_name }}</span>
-                                <button class="btn-icon" title="Edit" @click="openForm(activeTeam)">
-                                    <i class="bi bi-pencil-fill"></i>
-                                </button>
-                                <button @click="deleteTeam(activeTeam)" class="btn-icon danger" title="Delete">
-                                    <i class="bi bi-trash3"></i>
-                                </button>
-                            </div>
-                            <div class="card-body">
-                                <ul class="list-group list-group-flush small">
-                                    <li class="list-group-item">
-                                        <div class="fw-bolder">ABOUT:</div>
-                                        {{ activeTeam.team_brief || '—' }}
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="fw-bolder">MANAGER:</div>
-                                        {{ activeTeam.manager || '—' }}
-                                    </li>
-                                    <li v-if="activeTeam.address" class="list-group-item">
-                                        <div class="fw-bolder">HOME GROUND:</div>
-                                        {{ activeTeam.address }}
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="fw-bolder">MATCHES PLAYED:</div>
-                                        {{ activeTeam.match_played }}
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="fw-bolder">PLAYERS:</div>
-                                        {{ activeTeam.players_count ?? 0 }}
-                                        <RouterLink to="/user/players" class="ms-2">Manage players</RouterLink>
-                                    </li>
-                                </ul>
-                            </div>
+                        <div>
+                            <dt>Manager</dt>
+                            <dd>{{ activeTeam.manager || '—' }}</dd>
                         </div>
-                    </div>
-                </div>
+                        <div v-if="activeTeam.address">
+                            <dt>Home ground</dt>
+                            <dd>{{ activeTeam.address }}</dd>
+                        </div>
+                        <div>
+                            <dt>Matches played</dt>
+                            <dd>{{ activeTeam.match_played }}</dd>
+                        </div>
+                        <div>
+                            <dt>Players</dt>
+                            <dd>
+                                {{ activeTeam.players_count ?? 0 }}
+                                <RouterLink :to="{ path: '/user/players', query: { team: activeTeam.team_id } }" class="ms-2">Manage players</RouterLink>
+                            </dd>
+                        </div>
+                    </dl>
+                </AdminCard>
             </div>
         </div>
-    </div>
+    </TournamentPage>
 
     <teamFormModal v-if="formOpen" :tournament="selectedTournament" :team="editingTeam"
         @close="formOpen = false" @saved="onSaved" />
@@ -143,24 +131,84 @@ async function deleteTeam(team: any) {
 </script>
 
 <style scoped>
-.team-line-item {
-    cursor: pointer;
-    font-size: 0.92rem;
-    border-radius: 12px !important;
-    border: 1px solid transparent !important;
+.team-list {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.team-line {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    width: 100%;
     padding: 0.6rem 0.75rem;
-    transition: background-color 0.15s, border-color 0.15s;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--fg);
+    font-size: 0.9375rem;
+    text-align: left;
+    transition: background-color 0.15s ease;
 }
 
-.team-line-item:hover {
-    background-color: #fff;
+.team-line:hover {
+    background: var(--surface-raised);
 }
 
-.active-team {
-    background-color: #fff;
-    border-color: #bfe6f7 !important;
-    box-shadow: 0 0 0 3px rgba(0, 200, 240, 0.12) !important;
-    font-weight: 600;
-    color: var(--text-strong);
+.team-line.active {
+    background: var(--volt-soft);
+}
+
+.team-num {
+    width: 1.25rem;
+    color: var(--fg-muted);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+}
+
+.team-name {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.active-name {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.details {
+    margin: 0;
+}
+
+.details > div {
+    padding-block: 0.75rem;
+}
+
+.details > div:first-child {
+    padding-top: 0;
+}
+
+.details > div + div {
+    border-top: 1px solid var(--line);
+}
+
+.details dt {
+    margin-bottom: 0.2rem;
+    font-size: 0.8125rem;
+    font-weight: 400;
+}
+
+.details dd {
+    margin: 0;
+    color: var(--fg);
+    font-size: 0.9375rem;
+}
+
+.details a {
+    font-size: 0.875rem;
 }
 </style>

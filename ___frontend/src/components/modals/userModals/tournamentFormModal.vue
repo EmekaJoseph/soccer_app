@@ -1,58 +1,45 @@
 <template>
-    <div class="modal fade bg-faint show d-block" tabindex="-1" role="dialog" aria-modal="true">
-        <div class="modal-dialog animate__animated animate__slideInDown animate__faster modal-dialog-scrollable" role="document">
-            <div class="modal-content border-0 px-lg-2">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title">{{ isEditing ? 'UPDATE TOURNAMENT' : 'NEW TOURNAMENT' }}</h5>
-                    <button @click="emit('close')" type="button" class="btn-close" aria-label="Close"></button>
+    <BaseModal :title="isEditing ? 'Update tournament' : 'New tournament'" @close="emit('close')">
+        <div class="modal-body">
+            <div v-if="formError" class="small text-danger mb-3" role="alert">{{ formError }}</div>
+
+            <form id="tournamentForm" class="row g-3" @submit.prevent="saveTournament">
+                <div class="col-md-8">
+                    <label class="w-100">Name
+                        <input type="text" class="form-control" v-model.trim="form.tour_title" required minlength="2" />
+                    </label>
                 </div>
-                <div class="modal-body">
-                    <div v-if="formError" class="alert alert-danger border-0" role="alert">
-                        <strong>{{ formError }}</strong>
+                <div class="col-md-4">
+                    <label class="w-100">Type
+                        <select v-model="form.tour_type" class="form-select" :disabled="isEditing && (editingData?.teams_count ?? 0) > 0">
+                            <option value="cup">Cup</option>
+                            <option value="league">League</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="col-12 small">
+                    <span v-html="tourTypeInformation"></span>
+                    <div v-if="isEditing && (editingData?.teams_count ?? 0) > 0">
+                        The format is locked because teams have been added.
                     </div>
-
-                    <form id="tournamentForm" @submit.prevent="saveTournament" class="row g-3">
-                        <div class="col-md-8">
-                            <label class="form-label" for="tourTitle">Name:</label>
-                            <input id="tourTitle" type="text" class="form-control" v-model.trim="form.tour_title"
-                                placeholder="tournament name..." required minlength="2" />
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label" for="tourType">Type:</label>
-                            <select id="tourType" v-model="form.tour_type" class="form-select"
-                                :disabled="isEditing && (editingData?.teams_count ?? 0) > 0">
-                                <option value="cup">CUP</option>
-                                <option value="league">LEAGUE</option>
-                            </select>
-                        </div>
-                        <div class="col-12">
-                            <span v-html="tourTypeInformation" class="small text-muted"></span>
-                            <div v-if="isEditing && (editingData?.teams_count ?? 0) > 0" class="small text-muted">
-                                The format is locked because teams have been added.
-                            </div>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label" for="tourDesc">Description:</label>
-                            <input id="tourDesc" type="text" class="form-control" v-model="form.tour_desc"
-                                placeholder="brief description..." />
-                        </div>
-
-                        <div class="col-md-3">
-                            <ImagePicker v-model="form.tour_logo" :current="editingData?.tour_logo" label="Logo" />
-                        </div>
-                    </form>
                 </div>
-                <div class="modal-footer border-0">
-                    <button form="tournamentForm" type="submit" :disabled="isSaving"
-                        class="btn btn-primary-theme float-end btn-lg" style="width: 200px;">
-                        <span v-if="isSaving" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                        <span v-else>{{ isEditing ? 'Update' : 'Create' }}</span>
-                    </button>
+                <div class="col-12">
+                    <label class="w-100">Description
+                        <input type="text" class="form-control" v-model="form.tour_desc" />
+                    </label>
                 </div>
-            </div>
+                <div class="col-12">
+                    <ImagePicker v-model="form.tour_logo" :current="editingData?.tour_logo" label="Logo" />
+                </div>
+            </form>
         </div>
-    </div>
+        <div class="modal-footer">
+            <button form="tournamentForm" type="submit" :disabled="isSaving" class="ui-btn ui-btn-primary ui-btn-lg w-100">
+                <span v-if="isSaving" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                <span v-else>{{ isEditing ? 'Update' : 'Create' }}</span>
+            </button>
+        </div>
+    </BaseModal>
 </template>
 
 <script setup lang="ts">

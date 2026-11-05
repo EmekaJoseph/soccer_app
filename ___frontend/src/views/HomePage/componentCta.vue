@@ -45,12 +45,12 @@ const auth = useAuthStore();
 
 .cta-btn {
     background: var(--on-volt);
-    color: var(--fg);
+    color: #fff;
 }
 
 .cta-btn:hover {
-    background: var(--ink-800);
-    color: var(--fg);
+    background: #262b28;
+    color: #fff;
 }
 
 .public-page .cta-btn:focus-visible {

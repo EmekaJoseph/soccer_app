@@ -53,8 +53,8 @@ const table = [
 .panel {
     border: 1px solid var(--line);
     border-radius: 16px;
-    background: var(--ink-900);
-    box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.8);
+    background: var(--surface);
+    box-shadow: var(--shadow-lg);
 }
 
 .panel-head {
@@ -70,7 +70,7 @@ const table = [
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    color: var(--volt);
+    color: var(--accent);
     font-family: var(--font-mono);
     font-size: 0.75rem;
     font-weight: 500;
@@ -102,7 +102,7 @@ const table = [
     height: 44px;
     border: 1px solid var(--line-strong);
     border-radius: 50%;
-    background: var(--ink-800);
+    background: var(--surface-raised);
     color: var(--fg-muted);
     font-family: var(--font-mono);
     font-size: 0.75rem;

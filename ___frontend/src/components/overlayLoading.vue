@@ -17,7 +17,7 @@
     width: 100%;
     height: 100%;
     position: fixed;
-    background: rgba(34, 33, 33, 0.178);
+    background: var(--scrim);
     z-index: 9999;
 }
 
@@ -37,13 +37,12 @@
 }
 
 .spinner {
-    width: 75px;
-    height: 75px;
+    width: 44px;
+    height: 44px;
     display: inline-block;
-    border-width: 5px;
-    /* border-color: rgba(255, 255, 255, 0.05); */
-    border-color: var(--bs-light);
-    border-top-color: var(--theme-color-3);
+    border-width: 3px;
+    border-color: var(--line-strong);
+    border-top-color: var(--accent);
     animation: spin 1s infinite linear;
     border-radius: 100%;
     border-style: solid;

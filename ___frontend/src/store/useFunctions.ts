@@ -35,7 +35,6 @@ export default {
             showCancelButton: true,
             confirmButtonText: btnText,
             cancelButtonText: 'Cancel',
-            confirmButtonColor: '#dc3545',
             reverseButtons: true,
             width: '320px',
             customClass: { confirmButton: 'swal-confirm-button-delete', cancelButton: 'swal-cancel-button' },

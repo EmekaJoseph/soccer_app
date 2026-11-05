@@ -1,3 +1,14 @@
+<template>
+    <div>
+        <div class="mb-2 small">{{ label }}</div>
+        <label class="image-circle cursor-pointer" :style="{ width: `${size}px`, height: `${size}px`, backgroundImage: src ? `url(${src})` : 'none' }">
+            <i v-if="!src" class="bi bi-camera"></i>
+            <input type="file" accept="image/*" class="d-none" @change="pick">
+        </label>
+        <div v-if="error" class="small text-danger mt-1">{{ error }}</div>
+    </div>
+</template>
+
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref } from 'vue'
 import fx from '@/store/useFunctions'
@@ -37,30 +48,21 @@ function pick(event: Event) {
 onBeforeUnmount(() => URL.revokeObjectURL(previewUrl.value))
 </script>
 
-<template>
-    <div>
-        <div class="mb-1">{{ label }}:</div>
-        <label class="image-circle cursor-pointer" :style="{ width: `${size}px`, height: `${size}px`, backgroundImage: src ? `url(${src})` : 'none' }">
-            <i v-if="!src" class="bi bi-camera text-muted"></i>
-            <input type="file" accept="image/*" class="d-none" @change="pick">
-        </label>
-        <div v-if="error" class="small text-danger mt-1">{{ error }}</div>
-    </div>
-</template>
-
 <style scoped>
 .image-circle {
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1px dashed var(--line-strong);
     border-radius: 50%;
-    background-color: var(--bs-light-bg-subtle);
-    border: 1px solid #e8e5e5;
-    background-size: cover;
+    background-color: var(--bg);
     background-position: center;
+    background-size: cover;
+    color: var(--fg-muted);
+    transition: border-color 0.15s ease;
 }
 
 .image-circle:hover {
-    border-color: #41b883;
+    border-color: var(--accent);
 }
 </style>

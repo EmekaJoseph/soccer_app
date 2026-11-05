@@ -71,7 +71,7 @@ const features = [
     padding: 28px;
     border: 1px solid var(--line);
     border-radius: 16px;
-    background: var(--ink-900);
+    background: var(--surface);
     transition: border-color 0.2s ease;
 }
 
@@ -93,7 +93,7 @@ const features = [
 
 .cell i {
     margin-bottom: 40px;
-    color: var(--volt);
+    color: var(--accent);
     font-size: 1.375rem;
     line-height: 1;
 }
@@ -147,7 +147,7 @@ const features = [
     padding: 14px 18px;
     border: 1px solid var(--line);
     border-radius: 10px;
-    background: var(--ink-950);
+    background: var(--bg);
     font-family: var(--font-mono);
     font-size: 0.875rem;
 }
@@ -156,7 +156,7 @@ const features = [
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    color: var(--volt);
+    color: var(--accent);
 }
 
 .live-score b {

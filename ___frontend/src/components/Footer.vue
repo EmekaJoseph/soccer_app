@@ -19,7 +19,7 @@ import BrandMark from './BrandMark.vue';
     width: 100%;
     padding-block: 28px;
     border-top: 1px solid var(--line);
-    background: var(--ink-950);
+    background: var(--bg);
     color: var(--fg-muted);
     font-family: var(--font-sans);
     font-size: 0.8125rem;

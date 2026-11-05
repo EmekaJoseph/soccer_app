@@ -16,11 +16,16 @@ export function useTournamentPicker(onSelect: (tourId: string, tournament: any) 
     async function changed() {
         if (!selectedTournament.value) return
         rememberedId.value = selectedTournament.value.tour_id
+        userData.apiError = false
         await onSelect(selectedTournament.value.tour_id, selectedTournament.value)
+        userData.pageError = userData.apiError
     }
 
     onMounted(async () => {
+        userData.apiError = false
+        userData.pageError = false
         await userData.getTournaments()
+        userData.pageError = userData.apiError
         selectedTournament.value =
             userData.tournaments.find((t) => t.tour_id === rememberedId.value) ?? userData.tournaments[0]
         await changed()

@@ -30,7 +30,7 @@ const stats = useStatsStore()
     width: 32px;
     height: 32px;
     border: 2px solid var(--line-strong);
-    border-top-color: var(--volt);
+    border-top-color: var(--accent);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }

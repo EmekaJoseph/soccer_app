@@ -3,9 +3,12 @@
         <ComponentSideBar />
         <ComponentHeader />
         <main class="main-content">
-            <RouterView v-slot="{ Component }">
+            <RouterView v-slot="{ Component, route }">
                 <Transition name="page" mode="out-in">
-                    <component :is="Component" />
+                    <!-- out-in needs one root element; pages with several would leave the view stuck blank. -->
+                    <div :key="route.path">
+                        <component :is="Component" />
+                    </div>
                 </Transition>
             </RouterView>
         </main>
@@ -20,14 +23,10 @@ import ComponentHeader from './ComponentHeader.vue'
 <style scoped>
 .page-enter-active,
 .page-leave-active {
-    transition: opacity 0.18s ease, transform 0.18s ease;
+    transition: opacity 0.15s ease;
 }
 
-.page-enter-from {
-    opacity: 0;
-    transform: translateY(6px);
-}
-
+.page-enter-from,
 .page-leave-to {
     opacity: 0;
 }

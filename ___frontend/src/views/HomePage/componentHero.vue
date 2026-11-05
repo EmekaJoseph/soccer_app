@@ -76,7 +76,7 @@ function scrollToHow() {
     width: 60%;
     aspect-ratio: 1;
     border-radius: 50%;
-    background: radial-gradient(closest-side, rgba(200, 243, 29, 0.11), transparent);
+    background: radial-gradient(closest-side, var(--glow), transparent);
     pointer-events: none;
 }
 
@@ -86,7 +86,7 @@ function scrollToHow() {
     left: 50%;
     bottom: -38%;
     width: max(1500px, 118%);
-    color: rgba(255, 255, 255, 0.1);
+    color: var(--pitch-line);
     stroke: currentColor;
     stroke-width: 1;
     transform: translateX(-50%) perspective(1400px) rotateX(62deg);
@@ -115,7 +115,7 @@ function scrollToHow() {
 }
 
 .hero-accent {
-    color: var(--volt);
+    color: var(--accent);
 }
 
 .hero-lead {

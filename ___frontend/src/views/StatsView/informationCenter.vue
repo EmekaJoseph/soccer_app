@@ -73,7 +73,7 @@ const statsOf = (team: any) => [
 .team-card {
     border: 1px solid var(--line);
     border-radius: 14px;
-    background: var(--ink-900);
+    background: var(--surface);
 }
 
 .team-head {
@@ -91,7 +91,7 @@ const statsOf = (team: any) => [
     height: 48px;
     border: 1px solid var(--line);
     border-radius: 50%;
-    background: var(--ink-800);
+    background: var(--surface-raised);
 }
 
 .team-id {
@@ -119,7 +119,7 @@ const statsOf = (team: any) => [
 }
 
 .rating-value {
-    color: var(--volt);
+    color: var(--accent);
     font-family: var(--font-mono);
     font-size: 1.125rem;
     font-weight: 500;
@@ -225,7 +225,7 @@ const statsOf = (team: any) => [
 .no-photo {
     display: grid;
     place-items: center;
-    background: var(--ink-800);
+    background: var(--surface-raised);
 }
 
 .player {

@@ -1,38 +1,31 @@
 <template>
-    <div class="wholePage">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="text-center imageS" style="font-size: 100px; color: #fff;  opacity: 0.2;">
-                    <i class="bi bi-exclamation-triangle-fill"></i>
-                </div>
-
-                <div class="text-center text-white fw-bold" style="font-size: 30px;">PAGE NOT FOUND</div>
-                <div class="col-md-4">
-                    <div class="text-center text-white">
-                        Requested link does not exist in this
-                        application, may be expired or broken.
-                    </div>
-                </div>
-                <div class="text-center mt-3">
-                    <router-link class="btn  text-decoration-none" to="/">
-                        Home Page
-                        <i class="bi bi-chevron-right"></i>
-                    </router-link>
-                </div>
-            </div>
-        </div>
-    </div>
+    <main class="public-page not-found">
+        <span class="ui-eyebrow">404</span>
+        <h1>This page doesn't exist.</h1>
+        <p>The link may have expired or been typed incorrectly.</p>
+        <RouterLink class="ui-btn ui-btn-primary ui-btn-lg" to="/">
+            Back to home <i class="bi bi-arrow-right" aria-hidden="true"></i>
+        </RouterLink>
+    </main>
 </template>
 
 <style scoped>
-.wholePage {
-    min-height: 100vh;
-    display: -ms-flexbox;
+.not-found {
     display: flex;
-    -ms-flex-pack: center;
-    justify-content: center;
-    -ms-flex-align: center;
+    flex-direction: column;
     align-items: center;
-    background-color: var(--theme-color-2);
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px 16px;
+    text-align: center;
+}
+
+.not-found h1 {
+    margin-bottom: 12px;
+    font-size: clamp(2rem, 6vw, 3.25rem);
+}
+
+.not-found p {
+    margin-bottom: 28px;
 }
 </style>

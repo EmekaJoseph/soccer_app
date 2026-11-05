@@ -1,218 +1,187 @@
 @import './base.css';
 
-:root {
-  --primary-gradient: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  --accent-color: #00f2fe;
-  --accent-gradient: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
-  --glass-bg: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.2);
-  --glass-blur: blur(12px);
-  --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-}
-
-.glass-card {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--card-shadow);
-  border-radius: 15px;
-}
-
-.text-gradient {
-  background: var(--accent-gradient);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
+/* Pieces that appear on every page, including those mounted outside the app root. */
 input:focus,
 select:focus,
 textarea:focus,
-button:focus,
 .page-link:focus {
   outline: none !important;
-  box-shadow: 0 0 0 0.25rem rgba(0, 242, 254, 0.25) !important;
-  border-color: var(--accent-color) !important;
+  box-shadow: 0 0 0 3px var(--volt-soft) !important;
+  border-color: var(--accent) !important;
 }
 
-.bg-primary-theme {
-  background: var(--primary-gradient) !important;
-}
-
-.btn-primary-theme:hover {
-  background-color: var(--btn-color-hover) !important;
-}
-
-.text-primary-theme {
-  color: var(--theme-color-1);
-}
-
-/* option:hover {
-  background-color: yellow !important;
-} */
-
-.bouncing {
-  animation: up-down 2s ease-in-out infinite alternate-reverse both;
-}
-
-.hover-tilt-X {
-  transition: all ease-in-out 0.4s;
-}
-
-
-.hover-tilt-X:hover {
-  transform: translateX(5px);
-}
-
-.hover-tilt-Y {
-  transition: all ease-in-out 0.4s;
-}
-
-
-.hover-tilt-Y:hover {
-  transform: translateY(-5px);
-}
-
-@-webkit-keyframes up-down {
-  0% {
-    transform: translateY(10px);
-  }
-
-  100% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes up-down {
-  0% {
-    transform: translateY(10px);
-  }
-
-  100% {
-    transform: translateY(-10px);
-  }
-}
-
-.general-body {
-  padding-bottom: 60px;
-  background-color: var(--bs-light);
-  background-color: var(--bs-white);
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 2px;
+  box-shadow: none !important;
 }
 
 .cursor-pointer {
   cursor: pointer;
 }
 
-
-
-
-
-
-
-.text-dim {
-  color: #b3b0b0;
+.text-danger {
+  color: var(--danger) !important;
 }
 
-
-.bg-gradient {
-  /* background-color: var(--bs-light); */
-  background-image: linear-gradient(90deg, #fff, #fcf5e1, #fff) !important;
-  /* background: url("@/assets/images/big_bg.jpg") no-repeat center/cover; */
+/* A dark team colour would otherwise vanish against the page. */
+.bi-shield-fill {
+  filter: drop-shadow(0 0 1px var(--badge-outline));
 }
 
-.blinker {
-  animation: blinker 1s linear infinite;
+/* Modals rendered with v-if (".show.d-block") get a blurred backdrop. */
+.modal.show.d-block,
+.bg-faint {
+  background: var(--scrim) !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 1;
 }
 
-@keyframes blinker {
-  50% {
-    opacity: 0;
-  }
-}
-
-
-.scrolling-text {
-  white-space: nowrap;
+.modal-content {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
-  animation: scroll 8s linear infinite;
 }
 
-@keyframes scroll {
-  0% {
-    transform: translateX(100%);
-  }
-
-  100% {
-    transform: translateX(-100%);
-  }
+.modal-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--line);
 }
 
-.card-header {
-  padding-block: 20px;
+.modal-title {
+  color: var(--fg);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
-.min-vh-50{
-  min-height: 50vh;
+.modal-body {
+  padding: 1.5rem;
 }
 
-/* .card-fixed-height {
-  max-height: 200px;
-  overflow-y: auto;
-} */
-
-
-
-
-
-
-
-/* Shared styles for all SweetAlert buttons */
-.swal-confirm-button,
-.swal-confirm-button-delete,
-.swal-cancel-button {
-    background: transparent !important;
-    text-transform: uppercase !important;
-    /* border: none !important; */
+.modal-footer {
+  padding: 0 1.5rem 1.5rem;
+  border-top: 0;
 }
 
-/* Specific styles for each button type */
-.swal-confirm-button {
-    color: var(--theme-color-3b) !important;
+.modal .form-control,
+.modal .form-select {
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background-color: var(--bg);
+  color: var(--fg);
 }
 
-.swal-confirm-button-delete {  
-    color: var(--bs-danger) !important; 
+.modal label {
+  color: var(--fg-muted);
+  font-size: 0.875rem;
 }
 
-.swal-cancel-button {
-    color: var(--bs-secondary) !important;
+.modal label > .form-control,
+.modal label > .form-select {
+  margin-top: 0.35rem;
 }
 
-.swal-cancel-button:hover, 
-.swal-confirm-button:hover,
-.swal-confirm-button-delete:hover{
-  background-color: #d4d1d12b !important;
+/* Bootstrap paints a solid chip behind floated labels. */
+.form-floating > label::after {
+  background: transparent !important;
+}
+
+/* SweetAlert dialogs */
+.swal2-popup {
+  padding: 1.5rem !important;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg) !important;
+  background: var(--surface) !important;
+  font-family: var(--font-sans) !important;
+}
+
+.swal2-html-container {
+  margin: 0 !important;
+  padding: 0 !important;
+  color: var(--fg) !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+  text-align: start !important;
 }
 
 .swal2-actions {
   display: flex !important;
-  align-items: end !important;
-  justify-content: end !important;
-  margin: unset !important;
-  margin-top: 30px !important;
+  flex-wrap: wrap;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px;
+  margin: 24px 0 0 !important;
 }
 
-.swal2-html-container{
-  text-align: start !important;
+.swal2-actions button {
+  margin: 0 !important;
+  padding: 9px 16px !important;
+  border-radius: var(--radius-sm) !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+}
+
+.swal-confirm-button {
+  background: var(--volt) !important;
+  color: var(--on-volt) !important;
+}
+
+.swal-confirm-button-delete {
+  background: var(--danger) !important;
+  color: var(--on-danger) !important;
+}
+
+.swal-cancel-button {
+  border: 1px solid var(--line-strong) !important;
+  background: transparent !important;
+  color: var(--fg) !important;
+}
+
+/* Toasts */
+.v-toast__item {
+  min-height: 3.2em !important;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md) !important;
+  background: var(--surface-raised) !important;
+  box-shadow: var(--shadow-lg) !important;
+  color: var(--fg) !important;
+  font-family: var(--font-sans);
+  font-weight: 500;
+}
+
+.v-toast__item--success,
+.v-toast__item--error {
+  border-color: transparent;
+}
+
+.v-toast__item--success {
+  background: var(--volt) !important;
+  color: var(--on-volt) !important;
+}
+
+.v-toast__item--error {
+  background: var(--danger) !important;
+  color: var(--on-danger) !important;
+}
+
+/* The library's icons are white; flip them where the toast text is dark. */
+.v-toast__item--success .v-toast__icon,
+[data-bs-theme='dark'] .v-toast__item--error .v-toast__icon {
+  filter: invert(1);
+}
+
+/* Primary button first in the DOM so Enter triggers it, but shown on the right. */
+.modal-actions {
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+.modal-actions > * {
+  margin: 0;
 }

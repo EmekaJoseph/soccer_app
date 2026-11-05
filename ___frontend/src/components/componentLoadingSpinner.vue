@@ -10,7 +10,7 @@
     height: 42px;
     border-radius: 50%;
     border: 3px solid rgba(125, 140, 155, 0.2);
-    border-top-color: #1fb6e8;
+    border-top-color: var(--accent);
     animation: spin 0.8s linear infinite;
 }
 

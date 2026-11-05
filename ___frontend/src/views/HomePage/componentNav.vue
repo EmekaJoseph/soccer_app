@@ -12,10 +12,11 @@
             </nav>
 
             <div class="d-flex align-items-center gap-2">
+                <ThemeToggle />
                 <RouterLink v-if="auth.isLoggedIn" to="/user/dashboard" class="ui-btn ui-btn-primary">Dashboard</RouterLink>
                 <template v-else>
                     <RouterLink to="/login" class="ui-btn ui-btn-ghost">Log in</RouterLink>
-                    <RouterLink to="/register" class="ui-btn ui-btn-primary">Get started</RouterLink>
+                    <RouterLink to="/register" class="ui-btn ui-btn-primary nav-start">Get started</RouterLink>
                 </template>
             </div>
         </div>
@@ -39,7 +40,7 @@ function scrollToSection(id: string) {
     top: 0;
     z-index: 1020;
     border-bottom: 1px solid var(--line);
-    background: rgba(10, 12, 11, 0.78);
+    background: var(--bar-bg);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
 }
@@ -64,5 +65,12 @@ function scrollToSection(id: string) {
 
 .nav-links a:hover {
     color: var(--fg);
+}
+
+/* The hero's main button covers this on the narrowest phones. */
+@media (max-width: 399.98px) {
+    .nav-start {
+        display: none;
+    }
 }
 </style>

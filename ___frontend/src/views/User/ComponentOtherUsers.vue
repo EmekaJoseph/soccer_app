@@ -1,55 +1,31 @@
 <template>
-    <div class="card shadow-sm h-100 border-0">
-        <div class="card-header text-muted fw-bold bg-transparent border-0">
-            SCORERS
-            <div class="small fw-normal">Helpers who can schedule matches, record results and run live scores.</div>
-        </div>
-        <div class="card-body">
-            <form @submit.prevent="submitUser" class="row g-3">
-                <div class="col-lg-12">
-                    <input v-model="usersForm.email" type="email" class="form-control" placeholder="E-mail" required>
-                </div>
-                <div class="col-lg-12">
-                    <input v-model="usersForm.password" type="text" class="form-control" placeholder="Password (min. 8 characters)" minlength="8" required>
-                </div>
-                <div v-if="usersForm.error" class="col-12 small text-danger">{{ usersForm.error }}</div>
-                <div class="col-lg-12">
-                    <button type="submit" :disabled="usersForm.isSaving" class="btn btn-primary-theme w-100">
-                        {{ usersForm.isSaving ? 'Adding…' : 'Add scorer' }}
-                    </button>
-                </div>
+    <AdminCard title="Scorers" :count="userData.subUsers.length" class="h-100"
+        hint="Helpers who can schedule matches, record results and run live scores.">
+        <form class="row g-3" @submit.prevent="submitUser">
+            <div class="col-12">
+                <input v-model="usersForm.email" type="email" class="form-control" placeholder="E-mail" aria-label="Scorer e-mail" required>
+            </div>
+            <div class="col-12">
+                <input v-model="usersForm.password" type="text" class="form-control" placeholder="Password (min. 8 characters)" aria-label="Scorer password" minlength="8" required>
+            </div>
+            <div v-if="usersForm.error" class="col-12 small text-danger">{{ usersForm.error }}</div>
+            <div class="col-12">
+                <button type="submit" :disabled="usersForm.isSaving" class="ui-btn ui-btn-primary w-100">
+                    {{ usersForm.isSaving ? 'Adding…' : 'Add scorer' }}
+                </button>
+            </div>
+        </form>
 
-                <div class="col-12 mt-4">
-                    <div class="card" style="height: 200px; overflow-y: auto;">
-                        <div class="card-body">
-                            <table v-if="userData.subUsers.length" class="table table-sm">
-                                <thead class="bg-light">
-                                    <tr>
-                                        <th>S/N</th>
-                                        <th>Email</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(user, i) in userData.subUsers" :key="user.subuser_id">
-                                        <th>{{ i + 1 }}</th>
-                                        <td>{{ user.email }}</td>
-                                        <td>
-                                            <button type="button" class="btn-icon danger" title="Remove"
-                                                @click="deleteUser(user)">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div v-else class="text-center small">No scorers yet</div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
+        <ul v-if="userData.subUsers.length" class="scorers">
+            <li v-for="user in userData.subUsers" :key="user.subuser_id">
+                <span class="scorer-email">{{ user.email }}</span>
+                <button type="button" class="btn-icon danger" title="Remove" :aria-label="`Remove ${user.email}`" @click="deleteUser(user)">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </li>
+        </ul>
+        <p v-else class="no-scorers">No scorers yet</p>
+    </AdminCard>
 </template>
 
 <script setup lang="ts">
@@ -86,9 +62,42 @@ async function deleteUser(user: any) {
 
     try {
         await api.deleteSubUser(user.subuser_id)
+        fx.toast.info('Scorer removed')
         userData.getSubUsers()
     } catch (error) {
         fx.toast.error(apiErrorMessage(error))
     }
 }
 </script>
+
+<style scoped>
+.scorers {
+    max-height: 200px;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+}
+
+.scorers li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--line);
+}
+
+.scorer-email {
+    min-width: 0;
+    color: var(--fg);
+    font-size: 0.875rem;
+    overflow-wrap: anywhere;
+}
+
+.no-scorers {
+    margin: 1.25rem 0 0;
+    font-size: 0.875rem;
+    text-align: center;
+}
+</style>

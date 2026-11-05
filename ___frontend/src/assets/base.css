@@ -1,78 +1,101 @@
-/* Design tokens shared by the public pages and the admin area. */
+/* Design tokens shared by every page. Dark is the default theme. */
 :root {
   scroll-behavior: smooth;
 
-  /* Brand */
-  --brand-navy-900: #0b1620;
-  --brand-navy-800: #0f2027;
-  --brand-navy-700: #16303b;
-  --brand-navy-600: #203a43;
-  --brand-cyan: #00f2fe;
-  --brand-blue: #4facfe;
+  /* Lime is a fill in both themes: use --accent for text, icons and outlines. */
+  --volt: #c8f31d;
+  --on-volt: #0a0c0b;
 
-  /* Surfaces (admin) */
-  --surface-canvas: #f3f6fa;
-  --surface-card: #ffffff;
-  --surface-muted: #f6f8fb;
-  --surface-border: #e6ebf1;
-
-  /* Text */
-  --text-strong: #0f1b24;
-  --text-body: #3d4b57;
-  --text-muted: #7b8a97;
-
-  /* Status */
-  --success: #16a34a;
-  --danger: #e5484d;
-  --warning: #f59e0b;
-
-  /* Shape & depth */
   --radius-sm: 10px;
   --radius-md: 14px;
-  --radius-lg: 20px;
-  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
-  --shadow-md: 0 1px 3px rgba(16, 24, 40, 0.06), 0 8px 24px -6px rgba(16, 24, 40, 0.08);
-  --shadow-lg: 0 20px 48px -12px rgba(16, 24, 40, 0.25);
+  --radius-lg: 16px;
 
-  --font-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Outfit', 'Inter', system-ui, sans-serif;
+  --font-sans: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+}
 
-  /* Redesign palette: home page, auth forms and footer so far */
-  --ink-950: #0a0c0b;
-  --ink-900: #111412;
-  --ink-800: #191d1a;
+:root,
+[data-bs-theme='dark'] {
+  --bg: #0a0c0b;
+  --surface: #111412;
+  --surface-raised: #191d1a;
   --line: rgba(255, 255, 255, 0.09);
   --line-strong: rgba(255, 255, 255, 0.18);
   --fg: #f2f5f0;
   --fg-muted: #a0a8a2;
-  --volt: #c8f31d;
+  --accent: #c8f31d;
   --volt-soft: rgba(200, 243, 29, 0.12);
-  --on-volt: #0a0c0b;
-  --font-sans: 'Geist', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'Geist Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --danger: #ff8a80;
+  --on-danger: #0a0c0b;
+  --danger-soft: rgba(255, 138, 128, 0.12);
+  --danger-border: rgba(255, 138, 128, 0.4);
+  --hover-tint: rgba(255, 255, 255, 0.07);
+  --bar-bg: rgba(10, 12, 11, 0.82);
+  --scrim: rgba(5, 6, 6, 0.6);
+  --table-mask: rgba(17, 20, 18, 0.7);
+  --shadow-lg: 0 24px 60px -24px rgba(0, 0, 0, 0.8);
+  --badge-outline: rgba(255, 255, 255, 0.55);
+  --pitch-line: rgba(255, 255, 255, 0.1);
+  --glow: rgba(200, 243, 29, 0.11);
 
-  /* Legacy names still referenced by older components */
-  --theme-color-1: #1f8fd1;
-  --theme-color-2: #0f2027;
-  --theme-color-3: #3c708a;
-  --theme-color-3b: #0c384e;
-  --theme-color-4: var(--brand-cyan);
-  --theme-color-7: var(--brand-navy-900);
-  --btn-color: #27566d;
-  --btn-color-hover: #193f52;
+  --bs-body-bg-rgb: 10, 12, 11;
+  --bs-link-color-rgb: 200, 243, 29;
+  --bs-link-hover-color-rgb: 200, 243, 29;
+}
+
+[data-bs-theme='light'] {
+  --bg: #f6f7f4;
+  --surface: #ffffff;
+  --surface-raised: #eef0eb;
+  --line: rgba(10, 12, 11, 0.1);
+  --line-strong: rgba(10, 12, 11, 0.22);
+  --fg: #111412;
+  --fg-muted: #575f59;
+  --accent: #4d6600;
+  --volt-soft: rgba(150, 190, 0, 0.16);
+  --danger: #c4342a;
+  --on-danger: #ffffff;
+  --danger-soft: rgba(196, 52, 42, 0.1);
+  --danger-border: rgba(196, 52, 42, 0.4);
+  --hover-tint: rgba(10, 12, 11, 0.05);
+  --bar-bg: rgba(246, 247, 244, 0.85);
+  --scrim: rgba(20, 24, 20, 0.35);
+  --table-mask: rgba(255, 255, 255, 0.7);
+  --shadow-lg: 0 20px 48px -24px rgba(10, 12, 11, 0.22);
+  --badge-outline: rgba(10, 12, 11, 0.5);
+  --pitch-line: rgba(10, 12, 11, 0.12);
+  --glow: rgba(170, 215, 0, 0.2);
+
+  --bs-body-bg-rgb: 246, 247, 244;
+  --bs-link-color-rgb: 77, 102, 0;
+  --bs-link-hover-color-rgb: 77, 102, 0;
+}
+
+/* Bootstrap's themes, tuned to the palettes above. */
+[data-bs-theme] {
+  --bs-body-bg: var(--bg);
+  --bs-body-color: var(--fg-muted);
+  --bs-body-font-family: var(--font-sans);
+  --bs-heading-color: var(--fg);
+  --bs-emphasis-color: var(--fg);
+  --bs-secondary-color: var(--fg-muted);
+  --bs-tertiary-bg: var(--surface-raised);
+  --bs-border-color: var(--line);
+  --bs-link-color: var(--accent);
+  --bs-link-hover-color: var(--accent);
 }
 
 html,
 body {
-  font-family: var(--font-ui);
+  font-family: var(--font-sans);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4, h5, .display-font {
-  font-family: var(--font-display);
-  letter-spacing: -0.01em;
+h1, h2, h3, h4, h5 {
+  font-family: var(--font-sans);
+  letter-spacing: -0.02em;
 }
 
 *,
@@ -86,7 +109,6 @@ body {
   position: relative;
   min-height: 100vh;
   font-size: 0.95rem;
-  color: var(--text-body);
 }
 
 ::-webkit-scrollbar {
@@ -99,10 +121,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(120, 135, 150, 0.45);
+  background-color: rgba(120, 128, 122, 0.4);
   border-radius: 8px;
 }
 
 ::selection {
-  background: rgba(0, 242, 254, 0.25);
+  background: rgba(170, 215, 0, 0.3);
 }

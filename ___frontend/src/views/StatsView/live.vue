@@ -47,7 +47,7 @@ const stats = useStatsStore()
 .live-card {
     border: 1px solid var(--line-strong);
     border-radius: 16px;
-    background: var(--ink-900);
+    background: var(--surface);
 }
 
 .live-head {
@@ -63,7 +63,7 @@ const stats = useStatsStore()
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    color: var(--volt);
+    color: var(--accent);
     font-family: var(--font-mono);
     font-size: 0.8125rem;
     font-weight: 500;
@@ -109,7 +109,7 @@ const stats = useStatsStore()
     height: 56px;
     border: 1px solid var(--line);
     border-radius: 50%;
-    background: var(--ink-800);
+    background: var(--surface-raised);
 }
 
 .score {
@@ -135,7 +135,7 @@ const stats = useStatsStore()
 
 @keyframes score-change {
     from {
-        color: var(--volt);
+        color: var(--accent);
         transform: translateY(-6px);
     }
 }

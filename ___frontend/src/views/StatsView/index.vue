@@ -1,13 +1,14 @@
 <template>
-    <main class="public-page stats-page" data-bs-theme="dark">
+    <main class="public-page stats-page">
         <div class="stats-wrap topbar">
             <RouterLink to="/" class="d-inline-flex text-decoration-none" aria-label="SoccerApp home">
                 <BrandMark />
             </RouterLink>
             <div class="d-flex gap-2">
-                <button v-if="stats.tourTeamsInfo.length >= 3 && !hasPredicted" class="ui-btn ui-btn-ghost" @click="predictionOpen = true">
-                    <i class="bi bi-trophy" aria-hidden="true"></i> Predict
+                <button v-if="stats.tourTeamsInfo.length >= 3 && !hasPredicted" class="ui-btn ui-btn-ghost" aria-label="Predict" @click="predictionOpen = true">
+                    <i class="bi bi-trophy" aria-hidden="true"></i> <span class="predict-label">Predict</span>
                 </button>
+                <ThemeToggle />
                 <button class="ui-btn ui-btn-ghost" title="Send feedback" aria-label="Send feedback" @click="feedbackOpen = true">
                     <i class="bi bi-chat" aria-hidden="true"></i>
                 </button>
@@ -37,6 +38,9 @@
 
         <div class="stats-wrap content">
             <StatsLayout>
+                <SyncBanner v-if="stats.syncError" :busy="retrying" @retry="retryNow">
+                    Couldn't update just now. You're seeing the latest we have, and we'll keep trying.
+                </SyncBanner>
                 <div :key="currentShowing" class="animate__animated animate__fadeIn animate__faster">
                     <component :is="panels[currentShowing]" />
                 </div>
@@ -68,6 +72,7 @@ import predictionModal from '@/components/modals/predictionModal.vue'
 import feedbackModal from '@/components/modals/feedbackModal.vue'
 
 const REFRESH_EVERY_MS = 3 * 60 * 1000
+const RETRY_EVERY_MS = 30 * 1000
 
 const panels = { live: LivePanel, fixtures: SchedulePanel, results: ResultsPanel, table: StandingsPanel, teams: InfoPanel }
 type PanelId = keyof typeof panels
@@ -132,10 +137,37 @@ watch(() => route.params.tour_id as string, async (tourId) => {
     })
 }, { immediate: true })
 
-const refreshTimer = setInterval(() => stats.refresh(), REFRESH_EVERY_MS)
+// Refreshes stay on a slow schedule until one fails, then retry sooner until they recover.
+let refreshTimer: ReturnType<typeof setTimeout> | undefined
+let leftPage = false
+
+function scheduleRefresh() {
+    refreshTimer = setTimeout(async () => {
+        if (!stats.apiError && !stats.notFound) await stats.refresh()
+        if (!leftPage) scheduleRefresh()
+    }, stats.syncError ? RETRY_EVERY_MS : REFRESH_EVERY_MS)
+}
+
+scheduleRefresh()
+
+const retrying = ref(false)
+
+async function retryNow() {
+    retrying.value = true
+    await stats.refresh()
+    retrying.value = false
+    clearTimeout(refreshTimer)
+    scheduleRefresh()
+}
+
+// Coming back online is the best moment to catch up.
+watch(() => stats.isOnline, (online) => {
+    if (online && stats.syncError) retryNow()
+})
 
 onUnmounted(() => {
-    clearInterval(refreshTimer)
+    leftPage = true
+    clearTimeout(refreshTimer)
     stopListening()
 })
 </script>
@@ -194,7 +226,7 @@ onUnmounted(() => {
 }
 
 .tour-type {
-    color: var(--volt);
+    color: var(--accent);
     text-transform: capitalize;
 }
 
@@ -210,7 +242,7 @@ onUnmounted(() => {
     top: 0;
     z-index: 1020;
     border-block: 1px solid var(--line);
-    background: rgba(10, 12, 11, 0.82);
+    background: var(--bar-bg);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
 }
@@ -246,7 +278,7 @@ onUnmounted(() => {
 }
 
 .tab.active {
-    border-bottom-color: var(--volt);
+    border-bottom-color: var(--accent);
     color: var(--fg);
 }
 
@@ -261,6 +293,12 @@ onUnmounted(() => {
 
 .content {
     padding-top: 28px;
+}
+
+@media (max-width: 399.98px) {
+    .predict-label {
+        display: none;
+    }
 }
 
 @media (max-width: 575.98px) {

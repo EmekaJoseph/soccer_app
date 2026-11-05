@@ -56,7 +56,7 @@ const steps = [
 .step-num {
     display: block;
     margin-bottom: 48px;
-    color: var(--volt);
+    color: var(--accent);
     font-family: var(--font-mono);
     font-size: 0.875rem;
 }

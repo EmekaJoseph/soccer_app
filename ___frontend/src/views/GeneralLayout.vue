@@ -18,6 +18,6 @@ import footerVue from '@/components/Footer.vue';
 
 /* Keeps short pages from showing a white band above the footer. */
 .layout-body {
-    background: var(--ink-950);
+    background: var(--bg);
 }
 </style>

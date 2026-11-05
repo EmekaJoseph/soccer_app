@@ -64,7 +64,7 @@ const signed = (value: number) => (value > 0 ? `+${value}` : `${value}`)
     overflow-x: auto;
     border: 1px solid var(--line);
     border-radius: 14px;
-    background: var(--ink-900);
+    background: var(--surface);
 }
 
 table {

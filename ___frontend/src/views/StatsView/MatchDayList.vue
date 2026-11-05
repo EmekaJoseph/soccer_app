@@ -36,7 +36,7 @@ const groups = computed(() => groupByMatchDay(props.items, props.dateOf))
 .day-card {
     border: 1px solid var(--line);
     border-radius: 14px;
-    background: var(--ink-900);
+    background: var(--surface);
 }
 
 .day-row + .day-row {

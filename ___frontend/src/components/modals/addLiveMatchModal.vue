@@ -1,38 +1,30 @@
 <template>
-    <div class="modal fade bg-faint show d-block" tabindex="-1" role="dialog" aria-modal="true">
-        <div class="modal-dialog modal-dialog-scrollable animate__animated animate__slideInDown animate__faster">
-            <div class="modal-content">
-                <div class="modal-header border-0 bg-light">
-                    <span class="fw-bold">New live match</span>
-                    <button class="btn btn-close" aria-label="Close" @click="emit('close')"></button>
+    <BaseModal title="New live match" @close="emit('close')">
+        <div class="modal-body">
+            <componentLoadingSpinner v-if="isLoading" />
+            <form v-else class="row g-3" @submit.prevent="start">
+                <div class="col-12">
+                    <label class="w-100">Select match
+                        <select v-model="selectedMatch" class="form-select" required>
+                            <option :value="null" disabled>
+                                {{ startable.length ? 'Select' : 'No scheduled matches left' }}
+                            </option>
+                            <option v-for="m in startable" :key="m.match_id" :value="m">
+                                {{ m.home_team.team_name }} v {{ m.away_team.team_name }}
+                                <template v-if="m.match_stage">({{ fx.stageLabel(m.match_stage) }})</template>
+                            </option>
+                        </select>
+                    </label>
                 </div>
-                <div class="modal-body p-sm-4">
-                    <componentLoadingSpinner v-if="isLoading" />
-                    <form v-else class="row g-3" @submit.prevent="start">
-                        <div class="col-12">
-                            <label class="w-100">Select match:
-                                <select v-model="selectedMatch" class="form-select text-uppercase" required>
-                                    <option :value="null" disabled>
-                                        {{ startable.length ? '-- select --' : 'No scheduled matches left' }}
-                                    </option>
-                                    <option v-for="m in startable" :key="m.match_id" :value="m">
-                                        {{ m.home_team.team_name }} VS {{ m.away_team.team_name }}
-                                        <template v-if="m.match_stage">({{ fx.stageLabel(m.match_stage) }})</template>
-                                    </option>
-                                </select>
-                            </label>
-                        </div>
-                        <div v-if="error" class="col-12 small text-danger">{{ error }}</div>
-                        <div class="col-md-12 mt-4">
-                            <button type="submit" :disabled="!selectedMatch || isSaving" class="btn btn-primary-theme btn-lg w-100">
-                                {{ isSaving ? 'Starting…' : 'Start now!' }}
-                            </button>
-                        </div>
-                    </form>
+                <div v-if="error" class="col-12 small text-danger">{{ error }}</div>
+                <div class="col-12">
+                    <button type="submit" :disabled="!selectedMatch || isSaving" class="ui-btn ui-btn-primary ui-btn-lg w-100">
+                        {{ isSaving ? 'Starting…' : 'Start now' }}
+                    </button>
                 </div>
-            </div>
+            </form>
         </div>
-    </div>
+    </BaseModal>
 </template>
 
 <script setup lang="ts">

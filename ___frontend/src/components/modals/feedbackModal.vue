@@ -1,30 +1,26 @@
 <template>
-    <div class="modal fade bg-faint show d-block" tabindex="-1" role="dialog" aria-modal="true">
-        <div class="modal-dialog modal-dialog-centered modal-sm animate__animated animate__slideInDown animate__faster">
-            <div class="modal-content">
-                <div class="modal-header py-3">
-                    <span class="fw-bold">Feedback</span>
-                    <button type="button" class="btn-close" aria-label="Close" @click="emit('close')"></button>
-                </div>
-                <form class="modal-body row justify-content-center g-3" @submit.prevent="sendFeedBack">
-                    <div class="small">{{ fx.greet() }}{{ name ? `, ${name}` : '' }}!</div>
+    <BaseModal title="Feedback" @close="emit('close')">
+        <div class="modal-body">
+            <form class="row g-3" @submit.prevent="sendFeedBack">
+                <div class="col-12">
+                    <div class="small mb-1">{{ fx.greet() }}{{ name ? `, ${name}` : '' }}!</div>
                     <p class="m-0">What do you think of this page? Tell the organisers.</p>
-                    <div class="col-12">
-                        <textarea v-model.trim="form.feedbackText" placeholder="Type here…" class="form-control" rows="4" maxlength="2000" required></textarea>
-                    </div>
-                    <div v-if="!name" class="col-12">
-                        <input v-model.trim="form.name" class="form-control py-2" type="text" placeholder="Your name (optional)" maxlength="255">
-                    </div>
-                    <div v-if="error" class="col-12 small text-danger">{{ error }}</div>
-                    <div class="col-12">
-                        <button type="submit" :disabled="isSending" class="ui-btn ui-btn-primary ui-btn-lg w-100">
-                            {{ isSending ? 'Sending…' : 'Send' }}
-                        </button>
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div class="col-12">
+                    <textarea v-model.trim="form.feedbackText" placeholder="Type here…" aria-label="Your feedback" class="form-control" rows="4" maxlength="2000" required></textarea>
+                </div>
+                <div v-if="!name" class="col-12">
+                    <input v-model.trim="form.name" class="form-control py-2" type="text" placeholder="Your name (optional)" aria-label="Your name (optional)" maxlength="255">
+                </div>
+                <div v-if="error" class="col-12 small text-danger">{{ error }}</div>
+                <div class="col-12">
+                    <button type="submit" :disabled="isSending" class="ui-btn ui-btn-primary ui-btn-lg w-100">
+                        {{ isSending ? 'Sending…' : 'Send' }}
+                    </button>
+                </div>
+            </form>
         </div>
-    </div>
+    </BaseModal>
 </template>
 
 <script setup lang="ts">

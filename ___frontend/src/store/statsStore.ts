@@ -21,12 +21,22 @@ export const useStatsStore = defineStore('stats', () => {
   const apiError = ref(false)
   const notFound = ref(false)
   const apiLoading = ref(true)
+  /** A refresh failed: what is on screen is still valid, but may be out of date. */
+  const syncError = ref(false)
+  let initialLoadDone = false
 
+  /** Returns false when the request failed. Late replies for a tournament no longer open are dropped. */
   async function fetchInto(target: { value: any }, request: () => Promise<{ data: any }>) {
+    const requestedFor = tour_id.value
     try {
-      target.value = (await request()).data
+      const { data } = await request()
+      if (requestedFor === tour_id.value) target.value = data
+      return true
     } catch {
-      apiError.value = true
+      if (requestedFor !== tour_id.value) return true
+      if (initialLoadDone) syncError.value = true
+      else apiError.value = true
+      return false
     }
   }
 
@@ -39,7 +49,8 @@ export const useStatsStore = defineStore('stats', () => {
 
   /** Refresh the panels that change as matches are played. */
   async function refresh() {
-    await Promise.all([getStandings(), getMatches(), getResults(), getLiveMatches(), getTourTeamsInfo()])
+    const outcomes = await Promise.all([getStandings(), getMatches(), getResults(), getLiveMatches(), getTourTeamsInfo()])
+    if (initialLoadDone && outcomes.every(Boolean)) syncError.value = false
   }
 
   /** Load a tournament from scratch (also clears whatever tournament was open before). */
@@ -48,6 +59,8 @@ export const useStatsStore = defineStore('stats', () => {
     apiLoading.value = true
     apiError.value = false
     notFound.value = false
+    syncError.value = false
+    initialLoadDone = false
     for (const list of [tourStandings, tourResults, tourMatches, tourTeamsInfo, tourPlayers, tourLives]) list.value = []
 
     try {
@@ -57,6 +70,7 @@ export const useStatsStore = defineStore('stats', () => {
       tour_logo.value = data.tour_logo
       tour_desc.value = data.tour_desc
       await Promise.all([refresh(), getPlayers()])
+      initialLoadDone = !apiError.value
     } catch (error: any) {
       notFound.value = error?.response?.status === 404
       apiError.value = true
@@ -84,6 +98,7 @@ export const useStatsStore = defineStore('stats', () => {
 
   return {
     apiError,
+    syncError,
     apiLoading,
     notFound,
     isOnline,

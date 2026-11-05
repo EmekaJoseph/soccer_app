@@ -1,121 +1,117 @@
 <template>
-    <div class="container">
-        <internetErrorComponent v-if="userData.apiError && !userData.tournaments.length" />
-        <div v-else class="row justify-content-center gy-4">
-            <div class="col-12">
-                <div class="welcome">
-                    <div>
-                        <h2 class="mb-1">{{ fx.greet() }}, {{ authStore.user?.firstname || 'coach' }} 👋</h2>
-                        <div class="text-muted">Here's what's happening across your tournaments.</div>
-                    </div>
-                    <button v-if="authStore.isAdmin" class="btn btn-primary-theme px-3" @click="openTourModal()">
-                        <i class="bi bi-plus-lg me-1"></i> New tournament
-                    </button>
-                </div>
+    <internetErrorComponent v-if="userData.apiError && !userData.tournaments.length" />
+    <div v-else class="dash">
+        <div class="welcome">
+            <div>
+                <h2>{{ fx.greet() }}, {{ authStore.user?.firstname || 'coach' }}</h2>
+                <p>Here's what's happening across your tournaments.</p>
             </div>
+            <button v-if="authStore.isAdmin" class="ui-btn ui-btn-primary" @click="openTourModal()">
+                <i class="bi bi-plus-lg"></i> New tournament
+            </button>
+        </div>
 
-            <div v-for="card in statCards" :key="card.label" class="col-6 col-md-4 col-xl">
-                <div class="card h-100 hover-tilt-Y">
-                    <div class="stat-tile">
-                        <span class="stat-icon" :class="card.tint"><i :class="card.icon"></i></span>
-                        <div>
-                            <div class="stat-value">{{ userData.dashboardFigures?.[card.key] ?? 0 }}</div>
-                            <div class="stat-label">{{ card.label }}</div>
+        <AdminCard v-if="showSetup" title="Get started" class="setup" hint="Finish these and your tournament is ready for fans.">
+            <ol class="setup-steps">
+                <li v-for="(step, i) in setupSteps" :key="step.label" :class="{ done: step.done }">
+                    <span class="step-mark">
+                        <i v-if="step.done" class="bi bi-check-lg" aria-label="Done"></i>
+                        <template v-else>{{ i + 1 }}</template>
+                    </span>
+                    <span class="step-label">{{ step.label }}</span>
+                    <template v-if="step === nextStep">
+                        <button v-if="!step.link" class="ui-btn ui-btn-primary ui-btn-sm" @click="openTourModal()">Create</button>
+                        <RouterLink v-else :to="step.link" class="ui-btn ui-btn-primary ui-btn-sm">Open</RouterLink>
+                    </template>
+                </li>
+            </ol>
+        </AdminCard>
+
+        <dl class="stat-strip">
+            <div v-for="card in statCards" :key="card.key" class="stat">
+                <dt>
+                    <span v-if="card.key == 'live' && userData.dashboardFigures?.live" class="ui-live-dot"></span>
+                    {{ card.label }}
+                </dt>
+                <dd>{{ userData.dashboardFigures?.[card.key] ?? 0 }}</dd>
+            </div>
+        </dl>
+
+        <div class="row g-4">
+            <div :class="authStore.isAdmin ? 'col-xl-8' : 'col-12'">
+                <AdminCard title="Tournaments" :count="userData.tournaments.length" class="h-100">
+                    <componentLoadingSpinner v-if="dataIsLoading" />
+                    <emptyDataComponent v-else-if="!userData.tournaments.length" icon="bi bi-trophy">
+                        You don't have any tournaments yet.
+                        <div v-if="authStore.isAdmin && !showSetup" class="mt-3">
+                            <button class="ui-btn ui-btn-primary" @click="openTourModal()">Create your first tournament</button>
                         </div>
-                    </div>
-                </div>
+                    </emptyDataComponent>
+                    <EasyDataTable v-else class="sticky-actions" :headers="headers" :items="userData.tournaments">
+                        <template #item-tour_logo="item">
+                            <div class="tour-logo" :style="{ backgroundImage: item.tour_logo ? `url(${fx.resolvePhotoSrc(item.tour_logo)})` : 'none' }">
+                                <i v-if="!item.tour_logo" class="bi bi-trophy"></i>
+                            </div>
+                        </template>
+
+                        <template #item-tour_title="item">
+                            <button class="tour-name" title="Manage this tournament" @click="openTournament(item)">{{ item.tour_title }}</button>
+                        </template>
+
+                        <template #item-tour_type="item">
+                            <span class="tag type-tag">{{ item.tour_type }}</span>
+                        </template>
+
+                        <template #item-link="item">
+                            <button class="share-btn" @click="openTournamentLinkModal(item.tour_id)">
+                                <i class="bi bi-link-45deg"></i> Share
+                            </button>
+                        </template>
+
+                        <template #item-actions="item">
+                            <div v-if="authStore.isAdmin" class="d-flex gap-2 justify-content-end">
+                                <button class="btn-icon" title="Edit" aria-label="Edit" @click="openTourModal(true, item)">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn-icon danger" title="Delete" aria-label="Delete" @click="deleteTournament(item)">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </div>
+                        </template>
+                    </EasyDataTable>
+                </AdminCard>
             </div>
 
-            <div :class="authStore.isAdmin ? 'col-lg-8' : 'col-12'">
-                <div class="card border-0">
-                    <div class="card-header text-muted bg-transparent border-0">
-                        TOURNAMENTS
-                        <span class="badge rounded-pill text-bg-secondary fw-lighter xsmall">{{ userData.tournaments.length }}</span>
-                        
-                    </div>
-                    <div class="card-body">
-                        <div class="card-fixed-height">
-                            <componentLoadingSpinner v-if="dataIsLoading" />
-                            <div v-else-if="!userData.tournaments.length" class="card-body d-flex justify-content-center align-items-center">
-                                <emptyDataComponent icon="bi bi-trophy">
-                                    You don't have any tournaments yet.
-                                    <div v-if="authStore.isAdmin" class="mt-3">
-                                        <button @click="openTourModal()" class="btn btn-primary-theme btn-sm px-3">Create your first tournament</button>
-                                    </div>
-                                </emptyDataComponent>
-                            </div>
-                            <div v-else class="card-body p-0">
-                                <EasyDataTable class="border-0" :headers="headers" :items="userData.tournaments" show-index>
-                                    <template #header="header">
-                                        <div class="fw-bolder">{{ header.text == '#' ? 'S/N' : header.text }}</div>
-                                    </template>
-
-                                    <template #item-tour_logo="item">
-                                        <div class="image-circle" :style="{ backgroundImage: item.tour_logo ? `url(${fx.resolvePhotoSrc(item.tour_logo)})` : 'none' }">
-                                            <i v-if="!item.tour_logo" class="bi bi-trophy"></i>
-                                        </div>
-                                    </template>
-
-                                    <template #item-link="item">
-                                        <button @click="openTournamentLinkModal(item.tour_id)"
-                                            class="btn btn-link text-primary-theme btn-sm text-decoration-none border-0 p-0 m-0">
-                                            <i class="bi bi-box-arrow-up-right"></i> Share
-                                        </button>
-                                    </template>
-
-                                    <template #item-actions="item">
-                                        <div v-if="authStore.isAdmin" class="d-flex gap-2 justify-content-end">
-                                            <button class="btn-icon" title="Edit" @click="openTourModal(true, item)">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn-icon danger" title="Delete" @click="deleteTournament(item)">
-                                                <i class="bi bi-trash3"></i>
-                                            </button>
-                                        </div>
-                                    </template>
-                                </EasyDataTable>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div v-if="authStore.isAdmin" class="col-lg-4">
+            <div v-if="authStore.isAdmin" class="col-xl-4">
                 <ComponentOtherUsers />
             </div>
 
             <div v-if="authStore.isAdmin" class="col-12">
-                <div class="card shadow-sm border-0">
-                    <div class="card-header text-muted fw-bold bg-transparent border-0">
-                        FAN FEEDBACK
-                        <span class="badge rounded-pill text-bg-secondary fw-lighter xsmall">{{ userData.feedback.length }}</span>
+                <AdminCard title="Fan feedback" :count="userData.feedback.length">
+                    <emptyDataComponent v-if="!userData.feedback.length" icon="bi bi-chat">
+                        No feedback yet. Fans can send it from your tournament's public page.
+                    </emptyDataComponent>
+                    <div v-else class="table-responsive" style="max-height: 360px;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Tournament</th>
+                                    <th>Name</th>
+                                    <th>Feedback</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="feedback in userData.feedback" :key="feedback.feedback_id">
+                                    <td class="text-nowrap">{{ feedback.tour_title }}</td>
+                                    <td>{{ feedback.name || '—' }}</td>
+                                    <td>{{ feedback.feedbackText }}</td>
+                                    <td class="text-nowrap">{{ fx.dateDisplay(feedback.created_at, true) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="card-body">
-                        <div v-if="!userData.feedback.length" class="text-center text-muted py-3">
-                            No feedback yet. Fans can send feedback from your tournament's public page.
-                        </div>
-                        <div v-else class="table-responsive" style="max-height: 360px;">
-                            <table class="table table-sm small">
-                                <thead>
-                                    <tr>
-                                        <th>Tournament</th>
-                                        <th>Name</th>
-                                        <th>Feedback</th>
-                                        <th>Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="feedback in userData.feedback" :key="feedback.feedback_id">
-                                        <td class="text-nowrap">{{ feedback.tour_title }}</td>
-                                        <td>{{ feedback.name || '-' }}</td>
-                                        <td>{{ feedback.feedbackText }}</td>
-                                        <td class="text-nowrap">{{ fx.dateDisplay(feedback.created_at, true) }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+                </AdminCard>
             </div>
         </div>
     </div>
@@ -126,7 +122,9 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStorage } from '@vueuse/core'
 import type { Header } from 'vue3-easy-data-table'
 import { useUserDataStore } from '@/store/userDataStore'
 import api, { apiErrorMessage } from '@/store/axiosManager'
@@ -138,13 +136,34 @@ import ComponentOtherUsers from './ComponentOtherUsers.vue'
 
 const authStore = useAuthStore()
 const userData = useUserDataStore()
+const router = useRouter()
+// Same key as useTournamentPicker, so the page opened below starts on this tournament.
+const rememberedTournament = useStorage('socc_selected_tournament', '')
+
+/** Takes a tournament to the next place it needs work. Scorers cannot open Teams. */
+function openTournament(tournament: any) {
+    rememberedTournament.value = tournament.tour_id
+    router.push(authStore.isAdmin && !tournament.teams_count ? '/user/teams' : '/user/matches')
+}
+
+const setupSteps = computed(() => {
+    const figures = userData.dashboardFigures
+    if (!figures || !authStore.isAdmin) return []
+    return [
+        { label: 'Create a tournament', done: (figures.tournaments ?? 0) > 0, link: '' },
+        { label: 'Add at least two teams', done: (figures.teams ?? 0) >= 2, link: '/user/teams' },
+        { label: 'Schedule your first match', done: (figures.matches ?? 0) > 0, link: '/user/matches' },
+    ]
+})
+const nextStep = computed(() => setupSteps.value.find((step) => !step.done))
+const showSetup = computed(() => Boolean(nextStep.value))
 
 const statCards = [
-    { key: 'tournaments', label: 'Tournaments', icon: 'bi bi-trophy', tint: 'tint-blue' },
-    { key: 'teams', label: 'Teams', icon: 'bi bi-people', tint: 'tint-amber' },
-    { key: 'matches', label: 'Matches', icon: 'bi bi-calendar2-event', tint: 'tint-violet' },
-    { key: 'results', label: 'Results', icon: 'bi bi-check2-circle', tint: 'tint-green' },
-    { key: 'live', label: 'Live now', icon: 'bi bi-broadcast', tint: 'tint-red' },
+    { key: 'tournaments', label: 'Tournaments' },
+    { key: 'teams', label: 'Teams' },
+    { key: 'matches', label: 'Matches' },
+    { key: 'results', label: 'Results' },
+    { key: 'live', label: 'Live now' },
 ]
 
 const headers: Header[] = [
@@ -187,6 +206,7 @@ function refresh() {
 }
 
 onMounted(async () => {
+    userData.apiError = false
     await userData.getTournaments()
     dataIsLoading.value = false
     userData.getDashboardFigures()
@@ -210,35 +230,177 @@ async function deleteTournament(tournament: any) {
 <style scoped>
 .welcome {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    flex-wrap: wrap;
+    margin-bottom: 1.75rem;
 }
 
 .welcome h2 {
-    font-weight: 800;
-    font-size: 1.6rem;
-    color: var(--text-strong);
+    margin: 0 0 0.25rem;
+    color: var(--fg);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
 }
 
-.image-circle {
-    height: 36px;
-    width: 36px;
-    border-radius: 10px;
+.welcome p {
+    margin: 0;
+}
+
+.stat-strip {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    margin: 0 0 1.5rem;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+}
+
+.stat {
+    padding: 1rem 1.25rem;
+}
+
+.stat + .stat {
+    border-left: 1px solid var(--line);
+}
+
+.stat dt {
     display: flex;
     align-items: center;
-    justify-content: center;
-    color: var(--text-muted);
-    background-color: var(--bs-light-bg-subtle);
-    border: 1px solid var(--surface-border);
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
+    gap: 8px;
+    font-size: 0.8125rem;
+    font-weight: 400;
 }
 
-.large-text {
-    font-size: 2.3rem;
-    font-weight: bolder;
+.stat dd {
+    margin: 0.35rem 0 0;
+    color: var(--fg);
+    font-family: var(--font-mono);
+    font-size: 1.625rem;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+}
+
+.setup {
+    margin-bottom: 1.5rem;
+}
+
+.setup-steps {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.setup-steps li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 40px;
+    color: var(--fg);
+    font-size: 0.9375rem;
+}
+
+.setup-steps li.done .step-label {
+    color: var(--fg-muted);
+    text-decoration: line-through;
+}
+
+.step-mark {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+}
+
+.done .step-mark {
+    border-color: transparent;
+    background: var(--volt);
+    color: var(--on-volt);
+}
+
+.step-label {
+    flex: 1;
+    min-width: 0;
+}
+
+.tour-name {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--fg);
+    font-weight: 500;
+    text-align: left;
+}
+
+.tour-name:hover {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+.tour-logo {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background-color: var(--surface-raised);
+    background-position: center;
+    background-size: cover;
+    color: var(--fg-muted);
+}
+
+.type-tag {
+    text-transform: capitalize;
+}
+
+.share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--accent);
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+
+.share-btn:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 767.98px) {
+    .stat-strip {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stat {
+        border-bottom: 1px solid var(--line);
+    }
+
+    .stat + .stat {
+        border-left: 0;
+    }
+
+    .stat:nth-child(even) {
+        border-left: 1px solid var(--line);
+    }
+
+    .stat:last-child {
+        grid-column: span 2;
+        border-bottom: 0;
+    }
 }
 </style>

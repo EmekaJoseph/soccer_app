@@ -21,6 +21,11 @@ import internetErrorComponent from '@/components/InternetError.vue'
 import emptyDataComponent from '@/components/emptyData.vue'
 import tourDropdownSelect from '@/components/tourDropdownSelect.vue'
 import componentLoadingSpinner from '@/components/componentLoadingSpinner.vue'
+import AdminCard from '@/components/AdminCard.vue'
+import TournamentPage from '@/components/TournamentPage.vue'
+import BaseModal from '@/components/modals/BaseModal.vue'
+import ThemeToggle from '@/components/ThemeToggle.vue'
+import SyncBanner from '@/components/SyncBanner.vue'
 
 const app = createApp(App)
 
@@ -29,6 +34,11 @@ app.component('emptyDataComponent', emptyDataComponent)
 app.component('tourDropdownSelect', tourDropdownSelect)
 app.component('componentLoadingSpinner', componentLoadingSpinner)
 app.component('EasyDataTable', Vue3EasyDataTable)
+app.component('AdminCard', AdminCard)
+app.component('TournamentPage', TournamentPage)
+app.component('BaseModal', BaseModal)
+app.component('ThemeToggle', ThemeToggle)
+app.component('SyncBanner', SyncBanner)
 
 app.use(createPinia())
 app.use(router)

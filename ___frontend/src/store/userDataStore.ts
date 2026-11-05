@@ -7,7 +7,10 @@ export const GROUPS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L
 
 /** Data for the signed-in dashboard. Every loader records `apiError` instead of throwing. */
 export const useUserDataStore = defineStore('dataStore', () => {
+  /** Some request failed since the page last (re)loaded. */
   const apiError = ref(false)
+  /** The page's own data never arrived, so there is nothing useful to show. */
+  const pageError = ref(false)
   const apiLoading = ref(true)
   const tournaments = ref<any[]>([])
   const tournamentTeams = ref<any[]>([])
@@ -45,6 +48,7 @@ export const useUserDataStore = defineStore('dataStore', () => {
   return {
     apiLoading,
     apiError,
+    pageError,
     getTournaments,
     getTournamentTeams,
     getTournamentMatches,

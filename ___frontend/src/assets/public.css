@@ -1,7 +1,6 @@
-/* Dark theme shared by the public pages: home, auth forms and tournament stats. */
+/* Public page frame and the buttons used across the whole app. */
 .public-page {
-  --accent-color: var(--volt);
-  background: var(--ink-950);
+  background: var(--bg);
   color: var(--fg-muted);
   font-family: var(--font-sans);
   font-size: 1rem;
@@ -20,18 +19,6 @@
 
 .public-page section {
   scroll-margin-top: 64px;
-}
-
-/* custom.css forces a cyan ring on every focused control. */
-.public-page input:focus,
-.public-page button:focus {
-  box-shadow: 0 0 0 3px var(--volt-soft) !important;
-}
-
-.public-page a:focus-visible,
-.public-page button:focus-visible {
-  outline: 2px solid var(--volt) !important;
-  outline-offset: 2px;
 }
 
 .ui-section {
@@ -53,7 +40,7 @@
 .ui-eyebrow {
   display: block;
   margin-bottom: 16px;
-  color: var(--volt);
+  color: var(--accent);
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 500;
@@ -105,8 +92,25 @@
 }
 
 .ui-btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--hover-tint);
   color: var(--fg);
+}
+
+.ui-btn-sm {
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+}
+
+.ui-btn-danger {
+  background: transparent;
+  border-color: var(--danger-border);
+  color: var(--danger);
+}
+
+.ui-btn-danger:hover {
+  background: var(--danger-soft);
+  color: var(--danger);
 }
 
 .ui-live-dot {
@@ -131,50 +135,4 @@
   .ui-live-dot {
     animation: none;
   }
-}
-
-/* Bootstrap pieces rendered inside public pages: buttons, inputs and modals. */
-.public-page .btn-primary-theme,
-.public-page .btn-primary-theme:hover {
-  border: 0;
-  background: var(--volt) !important;
-  color: var(--on-volt) !important;
-}
-
-.public-page .modal-content {
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: var(--ink-900);
-}
-
-.public-page .modal-header,
-.public-page .modal-footer {
-  border-color: var(--line);
-}
-
-.public-page .modal .form-control,
-.public-page .modal .form-select {
-  border-color: var(--line-strong);
-  border-radius: 10px;
-  background-color: var(--ink-950);
-  color: var(--fg);
-}
-
-.public-page .modal .form-select:focus {
-  box-shadow: 0 0 0 3px var(--volt-soft) !important;
-}
-
-.public-page .text-danger {
-  color: #ff8a80 !important;
-}
-
-/* A dark team colour would otherwise vanish against the page. */
-.public-page .bi-shield-fill {
-  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.55));
-}
-
-/* admin.css colours modal headings for its light theme. */
-.public-page .modal-header .modal-title,
-.public-page .modal-header .fw-bold {
-  color: var(--fg);
 }

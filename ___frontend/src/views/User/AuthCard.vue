@@ -18,8 +18,8 @@ defineProps<{ title: string; subtitle: string }>()
     padding: clamp(24px, 4vw, 40px);
     border: 1px solid var(--line);
     border-radius: 16px;
-    background: var(--ink-900);
-    box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.8);
+    background: var(--surface);
+    box-shadow: var(--shadow-lg);
 }
 
 .auth-card .auth-title {
@@ -33,20 +33,20 @@ defineProps<{ title: string; subtitle: string }>()
 }
 
 .auth-card .form-floating .form-control {
-    background: var(--ink-950);
+    background: var(--bg);
     border: 1px solid var(--line-strong);
     border-radius: 10px;
     color: var(--fg);
 }
 
 .auth-card .form-floating .form-control:focus {
-    background: var(--ink-950);
-    border-color: var(--volt) !important;
+    background: var(--bg);
+    border-color: var(--accent) !important;
 }
 
 .auth-card .form-floating .form-control:-webkit-autofill {
     -webkit-text-fill-color: var(--fg);
-    box-shadow: inset 0 0 0 100px var(--ink-950);
+    box-shadow: inset 0 0 0 100px var(--bg);
 }
 
 .auth-card .form-floating > label {
@@ -59,7 +59,7 @@ defineProps<{ title: string; subtitle: string }>()
 }
 
 .auth-card .input-group-text {
-    background: var(--ink-950);
+    background: var(--bg);
     border: 1px solid var(--line-strong);
     border-radius: 0 10px 10px 0;
     color: var(--fg-muted);
@@ -70,15 +70,15 @@ defineProps<{ title: string; subtitle: string }>()
 }
 
 .auth-card .form-control.is-invalid {
-    border-color: #ff8a80 !important;
+    border-color: var(--danger) !important;
 }
 
 .auth-card .text-danger {
-    color: #ff8a80 !important;
+    color: var(--danger) !important;
 }
 
 .auth-card .auth-link {
-    color: var(--volt);
+    color: var(--accent);
     font-weight: 500;
     text-decoration: none;
 }
@@ -89,13 +89,13 @@ defineProps<{ title: string; subtitle: string }>()
 
 .auth-card .auth-alert {
     border: 0;
-    background: rgba(255, 138, 128, 0.12);
-    color: #ff8a80;
+    background: var(--danger-soft);
+    color: var(--danger);
 }
 
 .auth-card .auth-success {
     border: 0;
     background: var(--volt-soft);
-    color: var(--volt);
+    color: var(--accent);
 }
 </style>

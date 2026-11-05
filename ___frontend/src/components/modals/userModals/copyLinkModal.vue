@@ -1,35 +1,19 @@
 <template>
-    <div class="modal fade bg-faint show d-block " id="copyLinkModal" tabindex="-1" data-bs-backdrop="static"
-        data-bs-keyboard="false" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
-        <div class="modal-dialog  modal-dialog-centered animate__animated animate__slideInDown animate__faster"
-            role="document">
-            <div class="modal-content border-0">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title" id="modalTitleId">
-
-                    </h5>
-                    <button @click="emit('close')" type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body py-0">
-                    <div class="card bg-warning-subtle fw-bold p-3 border-0 text-muted">{{ linkToCopy }}</div>
-
-                </div>
-                <div class="modal-footer border-0">
-                    <button @click="copy(linkToCopy)" v-if="!copied" type="button" class="btn btn-primary-theme w-100">
-                        <i class="bi bi-clipboard"></i> Copy
-                    </button>
-
-                    <button v-else type="button" class="btn btn-light bg-success-subtle w-100">
-                        <i class="bi bi-check-lg"></i> Copied
-                    </button>
-                </div>
-            </div>
+    <BaseModal title="Share your public page" @close="emit('close')">
+        <div class="modal-body">
+            <p class="small mb-2">Anyone with this link can follow your tournament.</p>
+            <div class="link-box">{{ linkToCopy }}</div>
         </div>
-    </div>
-
+        <div class="modal-footer">
+            <button v-if="!copied" type="button" class="ui-btn ui-btn-primary ui-btn-lg w-100" @click="copy(linkToCopy)">
+                <i class="bi bi-clipboard"></i> Copy link
+            </button>
+            <button v-else type="button" class="ui-btn ui-btn-ghost ui-btn-lg w-100">
+                <i class="bi bi-check-lg"></i> Copied
+            </button>
+        </div>
+    </BaseModal>
 </template>
-
 
 <script setup lang="ts">
 import { useClipboard } from '@vueuse/core'
@@ -39,3 +23,16 @@ const { copy, isSupported, copied } = useClipboard()
 const emit = defineEmits(['close'])
 defineProps(['linkToCopy'])
 </script>
+
+<style scoped>
+.link-box {
+    padding: 0.75rem 0.85rem;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    overflow-wrap: anywhere;
+}
+</style>

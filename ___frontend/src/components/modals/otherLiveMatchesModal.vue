@@ -1,30 +1,18 @@
 <template>
-    <div class="modal fade bg-faint show d-block" tabindex="-1" role="dialog" aria-modal="true">
-        <div class="modal-dialog modal-dialog-scrollable animate__animated animate__slideInDown animate__faster">
-            <div class="modal-content">
-                <div class="modal-header border-0 bg-light">
-                    <span class="fw-bold">All live matches</span>
-                    <button class="btn btn-close" aria-label="Close" @click="emit('close')"></button>
-                </div>
-                <div class="modal-body">
-                    <componentLoadingSpinner v-if="isLoading" />
-                    <div v-else-if="error" class="text-danger text-center my-4">{{ error }}</div>
-                    <ul v-else-if="liveMatchesList.length" class="list-group list-group-flush">
-                        <li v-for="live in liveMatchesList" :key="live.live_id" class="list-group-item text-center">
-                            <div>
-                                {{ live.home_team }} <span class="fw-bold">VS</span> {{ live.away_team }}
-                                ({{ live.curr_time }}')
-                            </div>
-                            <div class="fs-5 fw-bold">{{ live.home_team_score }} : {{ live.away_team_score }}</div>
-                            <small class="text-muted">scored by: </small>
-                            <span>{{ live.isMe ?? live.creator?.email ?? 'unknown' }}</span>
-                        </li>
-                    </ul>
-                    <div v-else class="text-center my-5">NO LIVE MATCHES</div>
-                </div>
-            </div>
+    <BaseModal title="All live matches" @close="emit('close')">
+        <div class="modal-body">
+            <componentLoadingSpinner v-if="isLoading" />
+            <div v-else-if="error" class="text-danger text-center my-4">{{ error }}</div>
+            <ul v-else-if="liveMatchesList.length" class="live-list">
+                <li v-for="live in liveMatchesList" :key="live.live_id">
+                    <div class="live-teams">{{ live.home_team }} v {{ live.away_team }} <span class="tag tag-live">{{ live.curr_time }}'</span></div>
+                    <div class="live-score">{{ live.home_team_score }}–{{ live.away_team_score }}</div>
+                    <small>Scored by {{ live.isMe ?? live.creator?.email ?? 'unknown' }}</small>
+                </li>
+            </ul>
+            <emptyDataComponent v-else icon="bi bi-broadcast">No live matches</emptyDataComponent>
         </div>
-    </div>
+    </BaseModal>
 </template>
 
 <script setup lang="ts">
@@ -48,3 +36,33 @@ onMounted(async () => {
     }
 })
 </script>
+
+<style scoped>
+.live-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.live-list li {
+    padding-block: 0.85rem;
+    text-align: center;
+}
+
+.live-list li + li {
+    border-top: 1px solid var(--line);
+}
+
+.live-teams {
+    color: var(--fg);
+    overflow-wrap: anywhere;
+}
+
+.live-score {
+    margin-block: 0.25rem;
+    color: var(--fg);
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+</style>

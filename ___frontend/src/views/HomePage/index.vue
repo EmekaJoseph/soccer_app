@@ -1,5 +1,5 @@
 <template>
-    <main class="public-page" data-bs-theme="dark">
+    <main class="public-page">
         <ComponentNav />
         <ComponentHero />
         <ComponentSteps />

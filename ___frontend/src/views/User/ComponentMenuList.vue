@@ -1,11 +1,14 @@
 <template>
     <nav class="menu" aria-label="Main">
-        <div class="menu-label">Menu</div>
-        <RouterLink v-for="menu in visibleMenu" :key="menu.link" :to="menu.link" class="menu-item"
-            :class="{ current: route.path.startsWith(menu.link) }" @click="emit('navigate')">
-            <i :class="menu.icon"></i>
-            <span>{{ menu.name }}</span>
-        </RouterLink>
+        <template v-for="group in visibleGroups" :key="group.section">
+            <div v-if="group.section" class="menu-section">{{ group.section }}</div>
+            <RouterLink v-for="menu in group.items" :key="menu.link" :to="menu.link" class="menu-item"
+                :class="{ current: route.path.startsWith(menu.link) }"
+                :aria-current="route.path.startsWith(menu.link) ? 'page' : undefined" @click="emit('navigate')">
+                <i :class="menu.icon" aria-hidden="true"></i>
+                <span>{{ menu.name }}</span>
+            </RouterLink>
+        </template>
     </nav>
 </template>
 
@@ -19,7 +22,18 @@ const emit = defineEmits<{ navigate: [] }>()
 const authStore = useAuthStore()
 const route = useRoute()
 
-const visibleMenu = computed(() => menuItems.filter((m) => authStore.user && m.roles.includes(authStore.user.role)))
+/** Menu items for this role, grouped in display order. Empty sections disappear. */
+const visibleGroups = computed(() => {
+    const groups: { section: string; items: typeof menuItems }[] = []
+    for (const item of menuItems) {
+        if (!authStore.user || !item.roles.includes(authStore.user.role)) continue
+        const section = item.section ?? ''
+        const group = groups.find((g) => g.section === section)
+        if (group) group.items.push(item)
+        else groups.push({ section, items: [item] })
+    }
+    return groups
+})
 </script>
 
 <style scoped>
@@ -27,67 +41,48 @@ const visibleMenu = computed(() => menuItems.filter((m) => authStore.user && m.r
     display: flex;
     flex-direction: column;
     gap: 2px;
+    margin-top: 0.75rem;
 }
 
-.menu-label {
-    font-size: 0.68rem;
-    letter-spacing: 0.12em;
+.menu-section {
+    margin-top: 1rem;
+    padding: 0 0.75rem 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.35);
-    padding: 0 0.75rem 0.5rem;
 }
 
 .menu-item {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.65rem 0.75rem;
-    border-radius: 12px;
-    color: rgba(255, 255, 255, 0.68);
-    text-decoration: none;
+    gap: 0.7rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 8px;
+    color: var(--fg-muted);
+    font-size: 0.875rem;
     font-weight: 500;
-    font-size: 0.93rem;
-    transition: background-color 0.15s, color 0.15s;
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .menu-item i {
-    font-size: 1.05rem;
-    width: 1.2rem;
+    width: 1.1rem;
+    font-size: 1rem;
     text-align: center;
 }
 
 .menu-item:hover {
-    background: rgba(255, 255, 255, 0.06);
-    color: #fff;
+    background: var(--surface);
+    color: var(--fg);
 }
 
 .menu-item.current {
-    background: linear-gradient(135deg, rgba(79, 172, 254, 0.22), rgba(0, 242, 254, 0.12));
-    color: #fff;
-    box-shadow: inset 0 0 0 1px rgba(0, 242, 254, 0.25);
+    background: var(--surface-raised);
+    color: var(--fg);
 }
 
 .menu-item.current i {
-    color: var(--brand-cyan);
-}
-
-/* Light variant used inside the mobile offcanvas */
-:global(.offcanvas) .menu-label {
-    color: var(--text-muted);
-}
-
-:global(.offcanvas) .menu-item {
-    color: var(--text-body);
-}
-
-:global(.offcanvas) .menu-item:hover,
-:global(.offcanvas) .menu-item.current {
-    background: #eef6fb;
-    color: var(--text-strong);
-    box-shadow: none;
-}
-
-:global(.offcanvas) .menu-item.current i {
-    color: #1f8fd1;
+    color: var(--accent);
 }
 </style>

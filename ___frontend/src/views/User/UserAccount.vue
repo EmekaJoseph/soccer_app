@@ -1,70 +1,60 @@
 <template>
-    <div class="container px-3">
-        <div class="row g-4">
-            <div class="col-lg-6">
-                <div class="card border-0 h-100">
-                    <div class="card-header text-muted bg-transparent border-0 fw-bold">PROFILE</div>
-                    <div class="card-body">
-                        <form class="row g-3" @submit.prevent="saveProfile">
-                            <div class="col-12">
-                                <label class="w-100">E-mail
-                                    <input :value="authStore.user?.email" class="form-control" disabled>
-                                </label>
-                            </div>
-                            <div class="col-6">
-                                <label class="w-100">First name
-                                    <input v-model.trim="profile.firstname" class="form-control" maxlength="100">
-                                </label>
-                            </div>
-                            <div class="col-6">
-                                <label class="w-100">Last name
-                                    <input v-model.trim="profile.lastname" class="form-control" maxlength="100">
-                                </label>
-                            </div>
-                            <div class="col-12 small text-muted">
-                                Role: <b>{{ authStore.isAdmin ? 'Tournament owner' : 'Scorer' }}</b>
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary-theme" :disabled="savingProfile">
-                                    {{ savingProfile ? 'Saving…' : 'Save profile' }}
-                                </button>
-                            </div>
-                        </form>
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <AdminCard title="Profile" class="h-100">
+                <form class="row g-3" @submit.prevent="saveProfile">
+                    <div class="col-12">
+                        <label class="w-100">E-mail
+                            <input :value="authStore.user?.email" class="form-control" disabled>
+                        </label>
                     </div>
-                </div>
-            </div>
+                    <div class="col-6">
+                        <label class="w-100">First name
+                            <input v-model.trim="profile.firstname" class="form-control" maxlength="100">
+                        </label>
+                    </div>
+                    <div class="col-6">
+                        <label class="w-100">Last name
+                            <input v-model.trim="profile.lastname" class="form-control" maxlength="100">
+                        </label>
+                    </div>
+                    <div class="col-12 small">Role: {{ authStore.isAdmin ? 'Tournament owner' : 'Scorer' }}</div>
+                    <div class="col-12">
+                        <button type="submit" class="ui-btn ui-btn-primary" :disabled="savingProfile">
+                            {{ savingProfile ? 'Saving…' : 'Save profile' }}
+                        </button>
+                    </div>
+                </form>
+            </AdminCard>
+        </div>
 
-            <div class="col-lg-6">
-                <div class="card border-0 h-100">
-                    <div class="card-header text-muted bg-transparent border-0 fw-bold">CHANGE PASSWORD</div>
-                    <div class="card-body">
-                        <form class="row g-3" @submit.prevent="changePassword">
-                            <div class="col-12">
-                                <label class="w-100">Current password
-                                    <input v-model="password.current_password" type="password" class="form-control" autocomplete="current-password" required>
-                                </label>
-                            </div>
-                            <div class="col-6">
-                                <label class="w-100">New password
-                                    <input v-model="password.password" type="password" class="form-control" minlength="8" autocomplete="new-password" required>
-                                </label>
-                            </div>
-                            <div class="col-6">
-                                <label class="w-100">Repeat new password
-                                    <input v-model="password.password_confirmation" type="password" class="form-control" minlength="8" autocomplete="new-password" required>
-                                </label>
-                            </div>
-                            <div v-if="passwordError" class="col-12 small text-danger">{{ passwordError }}</div>
-                            <div class="col-12 small text-muted">Changing your password signs you out on other devices.</div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary-theme" :disabled="savingPassword">
-                                    {{ savingPassword ? 'Updating…' : 'Update password' }}
-                                </button>
-                            </div>
-                        </form>
+        <div class="col-lg-6">
+            <AdminCard title="Change password" class="h-100">
+                <form class="row g-3" @submit.prevent="changePassword">
+                    <div class="col-12">
+                        <label class="w-100">Current password
+                            <input v-model="password.current_password" type="password" class="form-control" autocomplete="current-password" required>
+                        </label>
                     </div>
-                </div>
-            </div>
+                    <div class="col-sm-6">
+                        <label class="w-100">New password
+                            <input v-model="password.password" type="password" class="form-control" minlength="8" autocomplete="new-password" required>
+                        </label>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="w-100">Repeat new password
+                            <input v-model="password.password_confirmation" type="password" class="form-control" minlength="8" autocomplete="new-password" required>
+                        </label>
+                    </div>
+                    <div v-if="passwordError" class="col-12 small text-danger">{{ passwordError }}</div>
+                    <div class="col-12 small">Changing your password signs you out on other devices.</div>
+                    <div class="col-12">
+                        <button type="submit" class="ui-btn ui-btn-primary" :disabled="savingPassword">
+                            {{ savingPassword ? 'Updating…' : 'Update password' }}
+                        </button>
+                    </div>
+                </form>
+            </AdminCard>
         </div>
     </div>
 </template>

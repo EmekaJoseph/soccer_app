@@ -1,48 +1,44 @@
 <template>
     <OverlayLoading v-if="ending" />
-    <div class="col-12 col-md-6 col-xl-4">
+    <div class="col-12 col-md-6 col-xxl-4">
         <div class="scoreboard">
             <div class="board-head">
-                <div class="d-flex justify-content-between align-items-center">
-                    <span class="stage">{{ fx.stageLabel(teamData.match_stage, 'Match') }}</span>
-                    <span v-if="live.isPaused" class="state paused">PAUSED</span>
-                    <span v-else class="state on"><span class="dot"></span>LIVE</span>
-                </div>
-                <div class="clock">{{ live.curr_time }}<span>'</span></div>
-                <div class="clock-controls">
-                    <button class="ctl" aria-label="Minus one minute" @click="live.curr_time = Math.max(0, live.curr_time - 1)">−1'</button>
-                    <button class="ctl wide" @click="live.isPaused = !live.isPaused">
-                        <i :class="live.isPaused ? 'bi bi-play-fill' : 'bi bi-pause-fill'"></i>
-                        {{ live.isPaused ? 'Resume' : 'Pause' }}
-                    </button>
-                    <button class="ctl" aria-label="Plus one minute" @click="live.curr_time = Math.min(200, live.curr_time + 1)">+1'</button>
-                </div>
+                <span class="stage">{{ fx.stageLabel(teamData.match_stage, 'Match') }}</span>
+                <span v-if="live.isPaused" class="tag">Paused</span>
+                <span v-else class="tag tag-live"><span class="ui-live-dot"></span>Live</span>
             </div>
 
-            <div class="board-body">
-                <div v-for="side in sides" :key="side.key" class="team-row">
-                    <span class="team-name text-truncate">{{ side.name }}</span>
-                    <button class="goal-btn minus" :disabled="live[side.key] === 0"
-                        :aria-label="`Remove goal for ${side.name}`" @click="live[side.key]--">
-                        <i class="bi bi-dash-lg"></i>
-                    </button>
-                    <span class="score">{{ live[side.key] }}</span>
-                    <button class="goal-btn plus" :aria-label="`Goal for ${side.name}`" @click="live[side.key]++">
-                        <i class="bi bi-plus-lg"></i>
-                    </button>
-                </div>
+            <div class="clock">{{ live.curr_time }}<span>'</span></div>
+            <div class="clock-controls">
+                <button class="ui-btn ui-btn-ghost" aria-label="Minus one minute" @click="live.curr_time = Math.max(0, live.curr_time - 1)">−1'</button>
+                <button class="ui-btn ui-btn-ghost" @click="live.isPaused = !live.isPaused">
+                    <i :class="live.isPaused ? 'bi bi-play-fill' : 'bi bi-pause-fill'"></i>
+                    {{ live.isPaused ? 'Resume' : 'Pause' }}
+                </button>
+                <button class="ui-btn ui-btn-ghost" aria-label="Plus one minute" @click="live.curr_time = Math.min(200, live.curr_time + 1)">+1'</button>
+            </div>
 
-                <div class="sync">
-                    <template v-if="syncState === 'saving'"><span class="spinner-border spinner-border-sm"></span> Saving…</template>
-                    <span v-else-if="syncState === 'error'" class="text-danger"><i class="bi bi-exclamation-triangle"></i> Not saved — check connection</span>
-                    <span v-else-if="syncState === 'saved'" class="text-success"><i class="bi bi-check2-circle"></i> Fans are up to date</span>
-                    <span v-else>&nbsp;</span>
-                </div>
-
-                <button @click="endLive" class="btn btn-outline-danger w-100">
-                    <i class="bi bi-stop-circle me-1"></i> End match
+            <div v-for="side in sides" :key="side.key" class="team-row">
+                <span class="team-name">{{ side.name }}</span>
+                <button class="goal-btn" :disabled="live[side.key] === 0"
+                    :aria-label="`Remove goal for ${side.name}`" @click="live[side.key]--">
+                    <i class="bi bi-dash-lg"></i>
+                </button>
+                <span class="score">{{ live[side.key] }}</span>
+                <button class="goal-btn plus" :aria-label="`Goal for ${side.name}`" @click="live[side.key]++">
+                    <i class="bi bi-plus-lg"></i>
                 </button>
             </div>
+
+            <div class="sync" role="status">
+                <template v-if="syncState === 'saving'"><span class="spinner-border spinner-border-sm"></span> Saving…</template>
+                <span v-else-if="syncState === 'error'" class="text-danger"><i class="bi bi-exclamation-triangle"></i> Not saved. Check your connection.</span>
+                <span v-else-if="syncState === 'saved'" class="synced"><i class="bi bi-check2-circle"></i> Fans are up to date</span>
+            </div>
+
+            <button class="ui-btn ui-btn-danger w-100" @click="endLive">
+                <i class="bi bi-stop-circle"></i> End match
+            </button>
         </div>
     </div>
 </template>
@@ -98,8 +94,8 @@ onUnmounted(() => {
 async function endLive() {
     const tap = await fx.confirmOptions(
         `End ${props.teamData.home_team} ${live.home_team_score} - ${live.away_team_score} ${props.teamData.away_team}?`,
-        'END & SAVE RESULT',
-        'END ONLY',
+        'End & save result',
+        'End only',
     )
     if (!tap.isConfirmed && !tap.isDenied) return
 
@@ -121,157 +117,112 @@ async function endLive() {
 
 <style scoped>
 .scoreboard {
+    padding: 1.25rem;
+    border: 1px solid var(--line-strong);
     border-radius: var(--radius-lg);
-    overflow: hidden;
-    background: var(--surface-card);
-    border: 1px solid var(--surface-border);
-    box-shadow: var(--shadow-md);
+    background: var(--surface);
 }
 
 .board-head {
-    padding: 1rem 1.1rem 1.1rem;
-    color: #fff;
-    background:
-        radial-gradient(120% 120% at 100% 0%, rgba(0, 242, 254, 0.18), transparent 55%),
-        linear-gradient(160deg, var(--brand-navy-700), var(--brand-navy-900));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
 }
 
 .stage {
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.6);
-}
-
-.state {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    padding: 0.2rem 0.55rem;
-    border-radius: 999px;
-}
-
-.state.on {
-    background: rgba(34, 197, 94, 0.18);
-    color: #4ade80;
-}
-
-.state.paused {
-    background: rgba(245, 158, 11, 0.2);
-    color: #fbbf24;
-}
-
-.dot {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: currentColor;
-    margin-right: 5px;
-    vertical-align: middle;
-    animation: blink 1s infinite;
-}
-
-@keyframes blink {
-    50% { opacity: 0.2; }
+    font-size: 0.8125rem;
 }
 
 .clock {
-    font-family: var(--font-display);
-    font-weight: 900;
-    font-size: 3.2rem;
+    margin-block: 1rem 0.75rem;
+    color: var(--fg);
+    font-family: var(--font-mono);
+    font-size: 3.5rem;
+    font-weight: 500;
+    letter-spacing: -0.05em;
+    line-height: 1;
     text-align: center;
-    line-height: 1.1;
-    margin: 0.4rem 0 0.6rem;
 }
 
 .clock span {
-    color: var(--brand-cyan);
+    color: var(--accent);
 }
 
 .clock-controls {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     gap: 0.5rem;
-}
-
-.ctl {
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    background: rgba(255, 255, 255, 0.08);
-    color: #fff;
-    border-radius: 10px;
-    padding: 0.4rem;
-    font-weight: 600;
-    font-size: 0.85rem;
-}
-
-.ctl:hover {
-    background: rgba(255, 255, 255, 0.16);
-}
-
-.board-body {
-    padding: 1rem 1.1rem 1.1rem;
+    margin-bottom: 1rem;
 }
 
 .team-row {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    padding: 0.55rem 0;
-}
-
-.team-row + .team-row {
-    border-top: 1px dashed var(--surface-border);
+    padding-block: 0.75rem;
+    border-top: 1px solid var(--line);
 }
 
 .team-name {
     flex: 1;
-    font-weight: 700;
-    color: var(--text-strong);
-    text-transform: uppercase;
-    font-size: 0.9rem;
+    min-width: 0;
+    color: var(--fg);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
 }
 
 .score {
-    font-family: var(--font-display);
-    font-weight: 900;
-    font-size: 1.9rem;
     min-width: 2ch;
+    color: var(--fg);
+    font-family: var(--font-mono);
+    font-size: 1.75rem;
+    font-weight: 500;
     text-align: center;
-    color: var(--text-strong);
 }
 
+/* Sized for tapping quickly from the touchline. */
 .goal-btn {
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-    border: 1px solid var(--surface-border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--fg);
 }
 
-.goal-btn.minus {
-    background: var(--surface-muted);
-    color: var(--text-body);
+.goal-btn:hover:not(:disabled) {
+    background: var(--surface-raised);
 }
 
 .goal-btn.plus {
-    border: 0;
-    background: linear-gradient(135deg, #22c55e, #16a34a);
-    color: #fff;
-    box-shadow: 0 6px 14px -6px rgba(22, 163, 74, 0.7);
+    border-color: transparent;
+    background: var(--volt);
+    color: var(--on-volt);
+}
+
+.goal-btn.plus:hover {
+    background: #d8ff3f;
 }
 
 .goal-btn:disabled {
-    opacity: 0.4;
+    opacity: 0.35;
 }
 
 .sync {
-    font-size: 0.8rem;
-    color: var(--text-muted);
+    min-height: 2.5rem;
+    padding-block: 0.6rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.8125rem;
     text-align: center;
-    margin: 0.5rem 0 0.9rem;
-    min-height: 1.3em;
+}
+
+.synced {
+    color: var(--accent);
 }
 </style>

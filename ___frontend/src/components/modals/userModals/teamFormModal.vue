@@ -1,73 +1,56 @@
 <template>
-    <div class="modal fade bg-faint show d-block" tabindex="-1" role="dialog" aria-modal="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable animate__animated animate__slideInDown animate__faster" role="document">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title">{{ team ? `Edit ${team.team_name}` : 'New team' }}</h5>
-                    <button type="button" class="btn-close" aria-label="Close" @click="emit('close')"></button>
+    <BaseModal :title="team ? `Edit ${team.team_name}` : 'New team'" @close="emit('close')">
+        <div class="modal-body">
+            <div v-if="formError" class="small text-danger mb-3" role="alert">{{ formError }}</div>
+
+            <form id="teamForm" class="row g-3" @submit.prevent="save">
+                <div class="col-12">
+                    <label class="w-100">Team name
+                        <input v-model.trim="form.team_name" type="text" class="form-control" required />
+                    </label>
                 </div>
-                <div class="modal-body">
-                    <div v-if="formError" class="alert alert-danger border-0 small">{{ formError }}</div>
-
-                    <form id="teamForm" class="row g-3" @submit.prevent="save">
-                        <div class="col-md-12">
-                            <div class="form-floating">
-                                <input v-model.trim="form.team_name" type="text" class="form-control" id="teamName" placeholder="" required />
-                                <label for="teamName">Team name</label>
-                            </div>
-                        </div>
-
-                        <div v-if="tournament.type == 'cup'" class="col-6">
-                            <div class="form-floating">
-                                <select id="teamGroup" v-model="form.group_in" class="form-select text-uppercase" required>
-                                    <option v-for="g in GROUPS" :key="g" :value="g">{{ g }}</option>
-                                </select>
-                                <label for="teamGroup">Group</label>
-                            </div>
-                        </div>
-
-                        <div class="col-6">
-                            <label class="card h-100 px-3 d-flex flex-row align-items-center justify-content-between cursor-pointer">
-                                <span>Team colour</span>
-                                <input v-model="form.team_color" type="color" class="form-control form-control-color border-0">
-                            </label>
-                        </div>
-
-                        <div class="col-md-12">
-                            <div class="form-floating">
-                                <input v-model="form.manager" type="text" class="form-control" id="teamManager" placeholder="" />
-                                <label for="teamManager">Manager's name</label>
-                            </div>
-                        </div>
-
-                        <div class="col-md-12">
-                            <div class="form-floating">
-                                <input v-model="form.address" type="text" class="form-control" id="teamAddress" placeholder="" />
-                                <label for="teamAddress">Home ground / address (optional)</label>
-                            </div>
-                        </div>
-
-                        <div class="col-md-12">
-                            <div class="form-floating">
-                                <textarea id="teamBrief" v-model="form.team_brief" style="height: 120px;" class="form-control" placeholder=""></textarea>
-                                <label for="teamBrief">About the team (optional)</label>
-                            </div>
-                        </div>
-
-                        <div class="col-12">
-                            <ImagePicker v-model="form.team_badge" :current="team?.team_badge" label="Badge" :size="60" />
-                        </div>
-                    </form>
+                <div v-if="tournament.type == 'cup'" class="col-6">
+                    <label class="w-100">Group
+                        <select v-model="form.group_in" class="form-select" required>
+                            <option v-for="g in GROUPS" :key="g" :value="g">{{ g }}</option>
+                        </select>
+                    </label>
                 </div>
-                <div class="modal-footer border-0">
-                    <button form="teamForm" type="submit" :disabled="isSaving" class="btn btn-primary-theme w-100">
-                        <span v-if="isSaving" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                        {{ isSaving ? 'Saving…' : 'Save' }}
-                    </button>
+                <div class="col-6">
+                    <label class="w-100">Team colour
+                        <input v-model="form.team_color" type="color" class="form-control form-control-color w-100">
+                    </label>
                 </div>
-            </div>
+                <div class="col-12">
+                    <label class="w-100">Manager's name
+                        <input v-model="form.manager" type="text" class="form-control" />
+                    </label>
+                </div>
+                <div class="col-12">
+                    <label class="w-100">Home ground / address (optional)
+                        <input v-model="form.address" type="text" class="form-control" />
+                    </label>
+                </div>
+                <div class="col-12">
+                    <label class="w-100">About the team (optional)
+                        <textarea v-model="form.team_brief" rows="3" class="form-control"></textarea>
+                    </label>
+                </div>
+                <div class="col-12">
+                    <ImagePicker :key="pickerKey" v-model="form.team_badge" :current="team?.team_badge" label="Badge" :size="60" />
+                </div>
+            </form>
         </div>
-    </div>
+        <div class="modal-footer modal-actions">
+            <button form="teamForm" type="submit" :disabled="isSaving" class="ui-btn ui-btn-primary" @click="addAnother = false">
+                <span v-if="isSaving" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                {{ isSaving ? 'Saving…' : 'Save team' }}
+            </button>
+            <button v-if="!team" form="teamForm" type="submit" :disabled="isSaving" class="ui-btn ui-btn-ghost" @click="addAnother = true">
+                Save &amp; add another
+            </button>
+        </div>
+    </BaseModal>
 </template>
 
 <script setup lang="ts">
@@ -87,6 +70,8 @@ const emit = defineEmits<{ close: []; saved: [team: any] }>()
 
 const isSaving = ref(false)
 const formError = ref('')
+const addAnother = ref(false)
+const pickerKey = ref(0) // clears the badge preview when adding another
 
 const form = reactive({
     team_name: props.team?.team_name ?? '',
@@ -114,7 +99,13 @@ async function save() {
             : await api.createTeam(fields)
         fx.toast.success(props.team ? 'Team updated' : 'Team added')
         emit('saved', data)
-        emit('close')
+        if (addAnother.value) {
+            // Keep the group: teams are usually entered one group at a time.
+            Object.assign(form, { team_name: '', manager: '', address: '', team_brief: '', team_badge: null })
+            pickerKey.value++
+        } else {
+            emit('close')
+        }
     } catch (error) {
         formError.value = apiErrorMessage(error)
     } finally {
