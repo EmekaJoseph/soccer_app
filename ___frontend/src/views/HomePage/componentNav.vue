@@ -1,7 +1,7 @@
 <template>
     <header class="nav-bar">
         <div class="container nav-inner">
-            <RouterLink to="/" class="d-inline-flex text-decoration-none" aria-label="SoccerApp home">
+            <RouterLink to="/" class="d-inline-flex text-decoration-none" aria-label="LiveFixtura home">
                 <BrandMark />
             </RouterLink>
 

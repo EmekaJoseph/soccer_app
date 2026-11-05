@@ -1,7 +1,7 @@
 <template>
     <main class="public-page stats-page">
         <div class="stats-wrap topbar">
-            <RouterLink to="/" class="d-inline-flex text-decoration-none" aria-label="SoccerApp home">
+            <RouterLink to="/" class="d-inline-flex text-decoration-none" aria-label="LiveFixtura home">
                 <BrandMark />
             </RouterLink>
             <div class="d-flex gap-2">
@@ -20,7 +20,6 @@
                 <img v-if="stats.tour_logo" class="tour-logo" :src="fx.resolvePhotoSrc(stats.tour_logo)" alt="">
                 <div class="tour-text">
                     <h1>{{ stats.tour_title }}</h1>
-                    <p class="tour-meta"><span class="tour-type">{{ stats.tour_type }}</span> · {{ today_date }}</p>
                     <p v-if="stats.tour_desc" class="tour-desc">{{ stats.tour_desc }}</p>
                 </div>
             </header>
@@ -57,7 +56,7 @@
 <script setup lang="ts">
 import { computed, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useNow, useDateFormat, useStorage, useVibrate } from '@vueuse/core'
+import { useStorage, useVibrate } from '@vueuse/core'
 import { useStatsStore } from '@/store/statsStore'
 import { isLiveConnected, listenToTournament } from '@/lib/echo'
 import fx from '@/store/useFunctions'
@@ -78,7 +77,6 @@ const LIVE_FALLBACK_EVERY_MS = 30 * 1000
 const panels = { live: LivePanel, fixtures: SchedulePanel, results: ResultsPanel, table: StandingsPanel, teams: InfoPanel }
 type PanelId = keyof typeof panels
 
-const today_date = useDateFormat(useNow(), 'ddd D MMM YYYY')
 const { vibrate } = useVibrate({ pattern: [300, 100, 300] })
 
 const stats = useStatsStore()
@@ -225,17 +223,6 @@ onUnmounted(() => {
     font-size: clamp(1.75rem, 5vw, 2.75rem);
     line-height: 1.08;
     letter-spacing: -0.04em;
-}
-
-.tour-meta {
-    margin: 8px 0 0;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-}
-
-.tour-type {
-    color: var(--accent);
-    text-transform: capitalize;
 }
 
 .tour-desc {

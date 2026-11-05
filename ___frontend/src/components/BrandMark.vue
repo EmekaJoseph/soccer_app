@@ -7,7 +7,7 @@
                 <path d="M12 7.8V2M16 10.7 21.5 8.9M14.5 15.4 17.9 20M9.5 15.4 6.1 20M8 10.7 2.5 8.9" fill="none" />
             </g>
         </svg>
-        SoccerApp
+        LiveFixtura
     </span>
 </template>
 

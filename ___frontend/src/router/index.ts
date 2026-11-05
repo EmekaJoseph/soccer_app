@@ -42,7 +42,7 @@ router.beforeEach((to) => {
 })
 
 router.afterEach((to) => {
-  document.title = `SOCC | ${String(to.name ?? '')}`
+  document.title = `LiveFixtura | ${String(to.name ?? '')}`
 })
 
 export default router

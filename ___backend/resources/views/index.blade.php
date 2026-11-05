@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>SFS</title>
+    <title>LiveFixtura</title>
     <style>
         html {
             line-height: 1.15;

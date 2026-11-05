@@ -1,4 +1,4 @@
-# Soccer App
+# LiveFixtura
 
 A football tournament manager. Owners create **cup** (groups + knock-outs) or **league** tournaments, add teams and players,
 schedule fixtures, record results (with penalty shoot-outs) and score matches **live**. Every tournament gets a public stats

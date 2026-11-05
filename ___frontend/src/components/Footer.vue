@@ -1,10 +1,10 @@
 <template>
     <footer class="site-footer">
         <div class="container footer-inner">
-            <RouterLink to="/" class="d-inline-flex text-decoration-none" aria-label="SoccerApp home">
+            <RouterLink to="/" class="d-inline-flex text-decoration-none" aria-label="LiveFixtura home">
                 <BrandMark />
             </RouterLink>
-            <p class="mb-0">&copy; {{ (new Date()).getFullYear() }} Tournament Manager. All rights reserved.</p>
+            <p class="mb-0">&copy; {{ (new Date()).getFullYear() }} LiveFixtura. All rights reserved.</p>
             <p class="mb-0">Designed by <span class="footer-credit">ProfficTech</span></p>
         </div>
     </footer>
